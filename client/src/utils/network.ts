@@ -2,6 +2,13 @@
  * Utility functions for handling online/offline status
  */
 
+// Define interface for ServiceWorkerRegistration with sync
+interface SyncServiceWorkerRegistration extends ServiceWorkerRegistration {
+  sync: {
+    register(tag: string): Promise<void>;
+  }
+}
+
 // Function to check if the user is online
 export const isOnline = (): boolean => {
   return typeof navigator !== 'undefined' && navigator.onLine;
@@ -49,7 +56,7 @@ export const checkConnectionQuality = async (): Promise<'good' | 'poor' | 'offli
 export const registerBackgroundSync = async (): Promise<boolean> => {
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
     try {
-      const registration = await navigator.serviceWorker.ready;
+      const registration = await navigator.serviceWorker.ready as SyncServiceWorkerRegistration;
       await registration.sync.register('sync-submissions');
       return true;
     } catch (error) {

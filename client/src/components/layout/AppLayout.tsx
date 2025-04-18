@@ -1,5 +1,5 @@
 import { ReactNode, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useNetwork } from '../../hooks/useNetwork';
 import Sidebar from './Sidebar';
@@ -17,10 +17,9 @@ interface AppLayoutProps {
 }
 
 const AppLayout = ({ children }: AppLayoutProps) => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const { online, connectionQuality, offlineSubmissionsCount, syncNow, syncingOfflineData } = useNetwork();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = () => {

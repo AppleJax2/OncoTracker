@@ -159,7 +159,20 @@ const StudyPage = () => {
       }));
       
       // Create submission data
-      const submissionData = {
+      interface SubmissionData {
+        studyId: any;
+        accessToken: string;
+        symptoms: { symptomId: string; name: string; rating: number; notes: string; }[];
+        customResponses: { questionId: string; question: string; response: any; }[];
+        additionalNotes: string;
+        submittedBy: { name: string; role: 'owner' | 'vet' | 'system'; };
+        timestamp: string;
+        offlineSubmitted: boolean;
+        deviceInfo?: { browser: string; os: string; device: string; };
+        location?: { latitude: number; longitude: number; };
+      }
+      
+      const submissionData: SubmissionData = {
         studyId: study.studyId,
         accessToken,
         symptoms,

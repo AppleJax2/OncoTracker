@@ -1,5 +1,5 @@
 import api from './api';
-import { Study, ToxicityScales, Submission, AggregateData } from '../types';
+import { Study, ToxicityScales, Submission } from '../types';
 
 interface CreateStudyData {
   title: string;
@@ -67,6 +67,11 @@ export const getStudySubmissions = async (studyId: string): Promise<Submission[]
 
 export const getToxicityScales = async (): Promise<ToxicityScales> => {
   const response = await api.get<ToxicityScales>('/studies/scales');
+  return response.data;
+};
+
+export const getOwnerSubmissions = async (accessToken: string): Promise<Submission[]> => {
+  const response = await api.get<Submission[]>(`/submissions/study/${accessToken}`);
   return response.data;
 };
 
