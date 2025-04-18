@@ -48,7 +48,4 @@ if (process.env.NODE_ENV === 'production') {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// Export JWT_SECRET for use in auth middleware
-module.exports = { JWT_SECRET }; 
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 

@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../index');
 const User = require('../models/User');
 
 // Middleware to authenticate token
@@ -13,8 +12,8 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ msg: 'No token, authorization denied' });
     }
 
-    // Verify token
-    const decoded = jwt.verify(token, JWT_SECRET);
+    // Verify token using process.env.JWT_SECRET
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'oncotracker_secure_jwt_secret_2025'); // Added default fallback matching index.js
     
     // Add user from payload
     const user = await User.findById(decoded.id).select('-password');

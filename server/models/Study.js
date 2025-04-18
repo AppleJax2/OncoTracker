@@ -108,6 +108,7 @@ StudySchema.virtual('shareableUrl').get(function() {
 
 // Generate QR code data (later can be used with a QR code library)
 StudySchema.virtual('qrCodeData').get(function() {
+  // Fix for path-to-regexp error - avoid template literals with URLs
   const baseUrl = process.env.FRONTEND_URL || 'https://oncosymptomtracker.netlify.app';
   return baseUrl + '/study/' + this.accessToken;
 });
