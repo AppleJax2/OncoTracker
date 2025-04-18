@@ -30,6 +30,7 @@ mongoose.connect(MONGODB_URI)
   .catch(err => console.error('Could not connect to MongoDB:', err));
 
 // Routes
+console.log('Setting up API routes...');
 app.use('/api/auth', authRoutes);
 app.use('/api/patients', patientRoutes);
 app.use('/api/studies', studyRoutes);
@@ -37,11 +38,13 @@ app.use('/api/submissions', submissionRoutes);
 
 // Handle production
 if (process.env.NODE_ENV === 'production') {
+  console.log('Setting up static assets for production...');
   // Static folder
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // Handle SPA
-  app.get('*', (req, res) => {
+  // Handle SPA - POTENTIAL ISSUE: Change wildcard route to be more explicit
+  app.get('/*', (req, res) => {
+    console.log('Serving SPA for path:', req.path);
     res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
   });
 }
