@@ -42,8 +42,9 @@ if (process.env.NODE_ENV === 'production') {
   // Static folder
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // Handle SPA - POTENTIAL ISSUE: Change wildcard route to be more explicit
-  app.get('/*', (req, res) => {
+  // Handle SPA - POTENTIAL ISSUE: Change wildcard route to be even more explicit
+  // Instead of '/*', use a named parameter with a wildcard matching pattern
+  app.get('/:path(*)', (req, res) => {
     console.log('Serving SPA for path:', req.path);
     res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
   });
