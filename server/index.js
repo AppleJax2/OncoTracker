@@ -49,18 +49,19 @@ app.use('/api/patients', patientRoutes);
 app.use('/api/studies', studyRoutes);
 app.use('/api/submissions', submissionRoutes);
 
-// Handle production
-if (process.env.NODE_ENV === 'production') {
-  console.log('Setting up static assets for production...');
-  // Static folder
-  app.use(express.static(path.join(__dirname, '../client/dist')));
+// Handle production - REMOVED STATIC FILE SERVING
+// The frontend is served by Netlify, the backend only serves the API
+// if (process.env.NODE_ENV === 'production') {
+//   console.log('Setting up static assets for production...');
+//   // Static folder
+//   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // Handle SPA
-  app.get('/:path(*)', (req, res) => {
-    console.log('Serving SPA for path:', req.path);
-    res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
-  });
-}
+//   // Handle SPA
+//   app.get('/:path(*)', (req, res) => {
+//     console.log('Serving SPA for path:', req.path);
+//     res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
+//   });
+// }
 
 // Start server
 const PORT = process.env.PORT || 5000;
