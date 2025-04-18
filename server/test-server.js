@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 // Load environment variables
@@ -13,18 +12,6 @@ const port = process.env.PORT || 5000;
 // Basic middleware
 app.use(cors());
 app.use(express.json());
-
-// MongoDB Connection - attempt to connect but continue if it fails
-if (process.env.MONGODB_URI) {
-  console.log('Attempting to connect to MongoDB...');
-  mongoose.connect(process.env.MONGODB_URI, { 
-    serverSelectionTimeoutMS: 5000 // 5 second timeout
-  })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => {
-      console.error('Could not connect to MongoDB, continuing without database:', err.message);
-    });
-}
 
 // API Routes
 console.log('Setting up API routes...');
@@ -49,8 +36,7 @@ if (process.env.NODE_ENV === 'production') {
   // Serve static files
   app.use(express.static(path.join(__dirname, '../client/dist')));
   
-  // Simple SPA handler - NO REGEX!
-  // This must be AFTER all API routes and BEFORE the 404 handler
+  // Simple SPA handler
   app.use((req, res, next) => {
     // Skip API requests
     if (req.url.startsWith('/api')) {

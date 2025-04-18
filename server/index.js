@@ -20,12 +20,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Connection URI
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://jacksonlnull:Y1reji6kqUVmFP5Y@cluster0.tse5h4s.mongodb.net/OncoTracker?retryWrites=true&w=majority&appName=Cluster0';
-const JWT_SECRET = process.env.JWT_SECRET || 'oncotracker_secure_jwt_secret_2025';
+// MongoDB Connection URI - use environment variables only
+const MONGODB_URI = process.env.MONGODB_URI;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!MONGODB_URI) {
+  console.error('MONGODB_URI environment variable is not set. Database connections will fail.');
+}
+
+if (!JWT_SECRET) {
+  console.error('JWT_SECRET environment variable is not set. Authentication will fail.');
+}
 
 // Connect to MongoDB
-mongoose.connect(MONGODB_URI)
+mongoose.connect(MONGODB_URI, {
+  // Add robust connection options
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000 // 5 second timeout
+})
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Could not connect to MongoDB:', err));
 
@@ -42,8 +55,7 @@ if (process.env.NODE_ENV === 'production') {
   // Static folder
   app.use(express.static(path.join(__dirname, '../client/dist')));
 
-  // Handle SPA - POTENTIAL ISSUE: Change wildcard route to be even more explicit
-  // Instead of '/*', use a named parameter with a wildcard matching pattern
+  // Handle SPA
   app.get('/:path(*)', (req, res) => {
     console.log('Serving SPA for path:', req.path);
     res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
