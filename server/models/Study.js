@@ -108,7 +108,8 @@ StudySchema.virtual('shareableUrl').get(function() {
 
 // Generate QR code data (later can be used with a QR code library)
 StudySchema.virtual('qrCodeData').get(function() {
-  return `${process.env.FRONTEND_URL || 'https://oncosymptomtracker.netlify.app'}/study/${this.accessToken}`;
+  const baseUrl = process.env.FRONTEND_URL || 'https://oncosymptomtracker.netlify.app';
+  return baseUrl + '/study/' + this.accessToken;
 });
 
 module.exports = mongoose.model('Study', StudySchema); 
