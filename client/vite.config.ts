@@ -36,7 +36,7 @@ export default defineConfig({
       workbox: {
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.oncotracker\.com\/.*/i,
+            urlPattern: /^https:\/\/oncotracker-api\.onrender\.com\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',

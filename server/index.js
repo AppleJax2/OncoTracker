@@ -17,7 +17,25 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+// Define allowed origins
+const allowedOrigins = [
+  'https://oncotracker.netlify.app', // Your primary Netlify domain
+  'http://localhost:5173'        // For local development (if you use port 5173)
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true // If you need to handle cookies or authorization headers
+}));
+// app.use(cors()); // Remove or comment out the original generic cors middleware
 app.use(express.json());
 
 // MongoDB Connection URI - use environment variables only
