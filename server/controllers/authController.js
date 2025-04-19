@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../index');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -31,9 +30,12 @@ exports.register = async (req, res) => {
       id: user.id
     };
 
+    // Use process.env instead of imported JWT_SECRET
+    const jwtSecret = process.env.JWT_SECRET || 'oncotracker_secure_jwt_secret_2025';
+    
     jwt.sign(
       payload,
-      JWT_SECRET,
+      jwtSecret,
       { expiresIn: '7d' },
       (err, token) => {
         if (err) throw err;
@@ -79,9 +81,12 @@ exports.login = async (req, res) => {
       id: user.id
     };
 
+    // Use process.env instead of imported JWT_SECRET
+    const jwtSecret = process.env.JWT_SECRET || 'oncotracker_secure_jwt_secret_2025';
+    
     jwt.sign(
       payload,
-      JWT_SECRET,
+      jwtSecret,
       { expiresIn: '7d' },
       (err, token) => {
         if (err) throw err;
