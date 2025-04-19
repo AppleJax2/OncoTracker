@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:prod": "tsc -b && VITE_API_URL=https://oncotracker-api.onrender.com vite build",
+    "build:prod": "tsc -b && set VITE_API_URL=https://oncotracker.onrender.com&& vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
