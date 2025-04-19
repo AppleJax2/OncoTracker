@@ -83,7 +83,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       
-      const response = await authService.register({ name, email, password, practice });
+      // Ensure practice is properly formatted
+      let practiceData = undefined;
+      if (practice && practice.name) {
+        practiceData = {
+          name: practice.name,
+          address: practice.address || '',
+          phone: practice.phone || ''
+        };
+      }
+      
+      const response = await authService.register({ 
+        name, 
+        email, 
+        password, 
+        practice: practiceData 
+      });
       
       localStorage.setItem('token', response.token);
       
@@ -94,13 +109,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         user: response.user,
         error: null
       });
-    } catch (error: any) {
+    } catch (err: any) {
+      console.error('Registration error:', err);
       setAuthState(prev => ({
         ...prev,
         loading: false,
-        error: error.msg || 'Registration failed. Please try again.'
+        error: err?.msg || 'Registration failed. Please try again.'
       }));
-      throw error;
     }
   };
 
