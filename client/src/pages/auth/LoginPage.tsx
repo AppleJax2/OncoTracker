@@ -32,7 +32,9 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
+      console.log('Login attempt with:', { email });
       const loggedInUser = await login({ email, password });
+      console.log('Login successful, user data received:', loggedInUser);
       
       if (loggedInUser) {
         // Navigate based on role
@@ -45,13 +47,17 @@ const LoginPage: React.FC = () => {
         setError('Login succeeded but failed to retrieve user data. Please try again.');
       }
     } catch (err: any) {
-      // Attempt to get a user-friendly message from the error
+      console.error('Login form error:', err);
+      
+      // Enhanced error handling
       let message = 'Login failed. Please check your credentials.';
       
-      if (err?.response?.data?.message) {
-        message = err.response.data.message;
-      } else if (err.message) {
+      if (err.message) {
         message = err.message;
+      } else if (err.details?.message) {
+        message = err.details.message;
+      } else if (err?.response?.data?.message) {
+        message = err.response.data.message;
       } else if (!navigator.onLine) {
         message = 'You appear to be offline. Please check your internet connection.';
       }

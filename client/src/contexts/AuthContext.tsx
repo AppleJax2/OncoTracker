@@ -63,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       // Accept any response structure and then determine format
+      console.log('Login attempt with:', { email: credentials.email });
       const response = await api.post('/api/auth/login', credentials);
       console.log('Login response:', response.data); // Add debug logging
 
@@ -92,13 +93,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         return userData;
       } else {
+        console.error('Login response missing user data or token:', response.data);
         throw new Error(response.data?.message || 'Login succeeded but could not extract user data or token from response.');
       }
     } catch (error: any) {
       console.error('Login error:', error); // Add debug logging
+      
+      // Extract detailed error message
+      let errorMessage = 'Login failed. Please check your credentials and try again.';
+      
+      if (error.response) {
+        console.error('Error response details:', error.response);
+        // Server responded with error
+        errorMessage = error.response.data?.message || 
+                      error.response.data?.error || 
+                      `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        // Request made but no response received
+        errorMessage = 'No response from server. Please check your connection.';
+      } else if (error.message) {
+        // Something else went wrong
+        errorMessage = error.message;
+      }
+      
       setUser(null);
       setIsAuthenticated(false);
-      throw error;
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }

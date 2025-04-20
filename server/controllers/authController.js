@@ -64,10 +64,13 @@ exports.register = async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 exports.login = catchAsync(async (req, res, next) => {
+  console.log('Login request received for email:', req.body.email);
+  
   const { email, password } = req.body;
 
   // 1) Check if email and password exist
   if (!email || !password) {
+    console.log('Login failed: Missing email or password');
     return next(new AppError('Please provide email and password!', 400));
   }
 
@@ -75,11 +78,19 @@ exports.login = catchAsync(async (req, res, next) => {
   // Need to explicitly select password as it's excluded by default
   const user = await User.findOne({ email }).select('+password');
 
-  if (!user || !(await user.correctPassword(password, user.password))) {
+  if (!user) {
+    console.log('Login failed: User not found with email:', email);
+    return next(new AppError('Incorrect email or password', 401));
+  }
+  
+  const isPasswordCorrect = await user.correctPassword(password, user.password);
+  if (!isPasswordCorrect) {
+    console.log('Login failed: Incorrect password for user:', email);
     return next(new AppError('Incorrect email or password', 401));
   }
 
   // 3) If everything ok, send token to client
+  console.log('User logged in successfully:', user._id);
   createSendToken(user, 200, res);
 });
 
