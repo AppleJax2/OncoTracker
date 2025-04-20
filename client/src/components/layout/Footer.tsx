@@ -1,17 +1,32 @@
 import React from 'react';
+import { Box, Container, Typography } from '@mui/material';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-200 text-slate-600 text-sm py-4 mt-8">
-      <div className="container mx-auto px-4 text-center">
-        &copy; {currentYear} OncoTracker. All Rights Reserved.
-        {/* Add other footer links if needed */}
-        {/* <span className="mx-2">|</span>
-        <a href="/privacy" className="hover:text-sky-600">Privacy Policy</a> */}
-      </div>
-    </footer>
+    <Box 
+      component="footer" 
+      sx={{ 
+        bgcolor: 'grey.100', 
+        color: 'text.secondary',
+        py: 2, 
+        mt: 6
+      }}
+    >
+      <Container maxWidth="lg">
+        <Typography 
+          variant="body2" 
+          align="center"
+          color="inherit"
+        >
+          &copy; {currentYear} OncoTracker. All Rights Reserved.
+          {/* Add other footer links if needed */}
+          {/* <span style={{ margin: '0 8px' }}>|</span>
+          <Link href="/privacy" sx={{ '&:hover': { color: 'primary.main' } }}>Privacy Policy</Link> */}
+        </Typography>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,10 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { 
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  useTheme,
+  Container
+} from '@mui/material';
+import {
+  LogoutOutlined as LogoutIcon,
+  SettingsOutlined as SettingsIcon
+} from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
-import { ArrowLeftOnRectangleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'; // Removed unused UserCircleIcon
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
+  const theme = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -12,53 +26,90 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Logo/Brand */}
-        <Link to="/" className="text-2xl font-bold text-sky-600 hover:text-sky-700">
-          OncoTracker
-        </Link>
+    <AppBar position="sticky" elevation={2} color="inherit">
+      <Container maxWidth="lg">
+        <Toolbar sx={{ py: 0.5, px: { xs: 1, sm: 2 } }}>
+          {/* Logo/Brand */}
+          <Box
+            component={Link}
+            to="/"
+            sx={{
+              typography: 'h6',
+              fontWeight: 'bold',
+              color: 'primary.main',
+              textDecoration: 'none',
+              '&:hover': { color: 'primary.dark' },
+              flexGrow: 1,
+            }}
+          >
+            OncoTracker
+          </Box>
 
-        {/* Navigation/User Actions */}
-        <div className="flex items-center space-x-4">
-          {isAuthenticated && user ? (
-            <>
-              <span className="text-sm text-slate-600 hidden sm:inline">
-                Welcome, {user.firstName} ({user.role === 'vet' ? 'Veterinarian' : 'Pet Owner'})
-              </span>
-              {/* Settings Link */}
-              <Link
-                to="/settings"
-                className="p-2 text-slate-500 hover:text-sky-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-                title="Settings"
-              >
-                <Cog6ToothIcon className="h-6 w-6" />
-              </Link>
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="p-2 text-slate-500 hover:text-red-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                title="Logout"
-              >
-                <ArrowLeftOnRectangleIcon className="h-6 w-6" />
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="text-slate-600 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-              >
-                Sign Up
-              </Link>
-            </>
-          )}
-        </div>
-      </nav>
-    </header>
+          {/* Navigation/User Actions */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+            {isAuthenticated && user ? (
+              <>
+                <Typography 
+                  variant="body2" 
+                  color="text.secondary" 
+                  sx={{ display: { xs: 'none', sm: 'block' } }}
+                >
+                  Welcome, {user.firstName} ({user.role === 'vet' ? 'Veterinarian' : 'Pet Owner'})
+                </Typography>
+                
+                {/* Settings Link */}
+                <IconButton
+                  component={Link}
+                  to="/settings"
+                  color="inherit"
+                  aria-label="settings"
+                  edge="end"
+                  size="medium"
+                  sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                >
+                  <SettingsIcon />
+                </IconButton>
+                
+                {/* Logout Button */}
+                <IconButton
+                  onClick={handleLogout}
+                  color="inherit"
+                  aria-label="logout"
+                  edge="end"
+                  size="medium"
+                  sx={{ color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+                >
+                  <LogoutIcon />
+                </IconButton>
+              </>
+            ) : (
+              <>
+                <Button 
+                  component={Link} 
+                  to="/login" 
+                  color="inherit"
+                  sx={{ 
+                    color: 'text.secondary',
+                    '&:hover': { color: 'primary.main' }
+                  }}
+                >
+                  Login
+                </Button>
+                <Button
+                  component={Link}
+                  to="/signup"
+                  variant="contained"
+                  color="primary"
+                  disableElevation
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
 

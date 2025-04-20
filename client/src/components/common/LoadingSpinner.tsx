@@ -1,31 +1,34 @@
 import React from 'react';
+import { CircularProgress, Box } from '@mui/material';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
-  color?: string; // e.g., 'text-sky-600'
-  className?: string; // Allow additional classes
+  color?: 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' | 'inherit';
+  className?: string;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
   size = 'medium', 
-  color = 'text-sky-600', 
+  color = 'primary', 
   className = '' 
 }) => {
-  const sizeClasses = {
-    small: 'h-5 w-5',
-    medium: 'h-8 w-8',
-    large: 'h-12 w-12',
+  const sizeMap = {
+    small: 24,
+    medium: 40,
+    large: 56,
   };
 
   return (
-    <div
-      className={`animate-spin rounded-full border-t-2 border-b-2 border-transparent ${sizeClasses[size]} ${color} ${className}`}
-      style={{ borderTopColor: 'currentColor', borderBottomColor: 'currentColor' }} // Use currentColor for spinner segments
-      role="status"
-      aria-live="polite"
-    >
-      <span className="sr-only">Loading...</span>
-    </div>
+    <Box className={className} display="flex" justifyContent="center" alignItems="center" role="status" aria-live="polite">
+      <CircularProgress 
+        size={sizeMap[size]} 
+        color={color} 
+        thickness={4}
+      />
+      <span style={{ position: 'absolute', width: '1px', height: '1px', padding: '0', margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: '0' }}>
+        Loading...
+      </span>
+    </Box>
   );
 };
 

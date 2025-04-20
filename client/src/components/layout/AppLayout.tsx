@@ -1,90 +1,139 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { 
+  Box, 
+  Drawer, 
+  AppBar, 
+  Toolbar, 
+  IconButton, 
+  Typography,
+  useTheme,
+  useMediaQuery,
+  styled
+} from '@mui/material';
+import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 import Header from './Header';
 import Footer from './Footer';
 import Sidebar from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+
+const drawerWidth = 240;
+
+const Main = styled(Box)(({ theme }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+  transition: theme.transitions.create('margin', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  marginLeft: 0,
+}));
 
 const AppLayout: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleDrawerToggle = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       {isAuthenticated ? (
-        <div className="flex h-screen overflow-hidden">
-          {/* Mobile sidebar */}
-          <div className={`fixed inset-0 z-40 flex md:hidden ${sidebarOpen ? 'visible' : 'invisible'}`} role="dialog" aria-modal="true">
-            {/* Sidebar backdrop */}
-            <div 
-              className={`fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity ${sidebarOpen ? 'opacity-100 ease-out duration-300' : 'opacity-0 ease-in duration-200'}`} 
-              aria-hidden="true"
-              onClick={() => setSidebarOpen(false)}
-            ></div>
-            
-            {/* Sidebar panel */}
-            <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-white transition ${sidebarOpen ? 'transform translate-x-0 ease-out duration-300' : 'transform -translate-x-full ease-in duration-200'}`}>
-              <div className="absolute top-0 right-0 -mr-12 pt-2">
-                <button
-                  type="button"
-                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                  onClick={() => setSidebarOpen(false)}
+        <>
+          {/* Mobile/tablet header */}
+          {isMobile && (
+            <AppBar
+              position="fixed"
+              sx={{
+                width: '100%',
+                boxShadow: 1,
+                zIndex: theme.zIndex.drawer + 1,
+                bgcolor: 'background.paper',
+                color: 'text.primary'
+              }}
+            >
+              <Toolbar>
+                <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  edge="start"
+                  onClick={handleDrawerToggle}
+                  sx={{ mr: 2 }}
                 >
-                  <span className="sr-only">Close sidebar</span>
-                  <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
-                </button>
-              </div>
-              <Sidebar closeSidebar={() => setSidebarOpen(false)} />
-            </div>
-          </div>
-          
-          {/* Static sidebar for desktop */}
-          <div className="hidden md:flex md:flex-shrink-0">
-            <div className="flex flex-col w-64">
-              <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white shadow-soft">
-                <Sidebar />
-              </div>
-            </div>
-          </div>
-          
+                  <MenuIcon />
+                </IconButton>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <img style={{ height: 32, width: 'auto' }} src="/logo.svg" alt="OncoTracker" />
+                  <Typography variant="h6" component="div" sx={{ ml: 1, fontWeight: 700, color: 'primary.main' }}>
+                    OncoTracker
+                  </Typography>
+                </Box>
+              </Toolbar>
+            </AppBar>
+          )}
+
+          {/* Sidebar for mobile (drawer) and desktop (permanent) */}
+          <Drawer
+            variant={isMobile ? "temporary" : "permanent"}
+            open={isMobile ? sidebarOpen : true}
+            onClose={isMobile ? handleDrawerToggle : undefined}
+            sx={{
+              width: drawerWidth,
+              flexShrink: 0,
+              [`& .MuiDrawer-paper`]: { 
+                width: drawerWidth, 
+                boxSizing: 'border-box',
+                boxShadow: isMobile ? 3 : 1,
+                bgcolor: 'background.paper'
+              },
+            }}
+          >
+            {isMobile && (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', p: 1 }}>
+                <IconButton onClick={handleDrawerToggle}>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+            )}
+            <Sidebar closeSidebar={isMobile ? handleDrawerToggle : undefined} />
+          </Drawer>
+
           {/* Main content */}
-          <div className="flex flex-col w-0 flex-1 overflow-hidden">
-            <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm md:hidden">
-              <button
-                type="button"
-                className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <span className="sr-only">Open sidebar</span>
-                <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-              </button>
-              <div className="flex-1 px-4 flex justify-between">
-                <div className="flex-1 flex items-center">
-                  <img className="h-8 w-auto" src="/logo.svg" alt="OncoTracker" />
-                  <span className="ml-2 text-xl font-bold text-primary-700">OncoTracker</span>
-                </div>
-              </div>
-            </div>
-            
-            <main className="flex-1 relative overflow-y-auto focus:outline-none bg-gray-50 pb-6">
-              <div className="py-6 px-4 sm:px-6 lg:px-8">
-                <Outlet />
-              </div>
-            </main>
-          </div>
-        </div>
+          <Main sx={{ 
+            mt: isMobile ? 8 : 0, // Add top margin for mobile to account for AppBar
+            ml: isMobile ? 0 : `${drawerWidth}px`, // Add left margin for desktop to account for drawer
+            width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
+            bgcolor: 'background.default',
+            flexGrow: 1,
+            p: 3
+          }}>
+            <Outlet />
+          </Main>
+        </>
       ) : (
         // Non-authenticated layout
-        <div className="flex flex-col min-h-screen">
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
           <Header />
-          <main className="flex-grow container mx-auto px-4 py-8">
+          <Box 
+            component="main" 
+            sx={{ 
+              flexGrow: 1, 
+              maxWidth: 'lg', 
+              mx: 'auto', 
+              width: '100%', 
+              px: 2, 
+              py: 4 
+            }}
+          >
             <Outlet />
-          </main>
+          </Box>
           <Footer />
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 
