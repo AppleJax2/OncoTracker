@@ -7,7 +7,6 @@ import {
   Typography,
   Button,
   IconButton,
-  useTheme,
   Container
 } from '@mui/material';
 import {
@@ -18,7 +17,6 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
-  const theme = useTheme();
 
   const handleLogout = () => {
     logout();
