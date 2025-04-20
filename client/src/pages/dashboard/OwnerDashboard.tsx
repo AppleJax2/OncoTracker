@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Pet } from '../../types';
 import api from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { PlusIcon } from '@heroicons/react/24/solid';
 

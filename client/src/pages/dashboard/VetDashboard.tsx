@@ -5,7 +5,6 @@ import { Pet } from '../../types';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
-import { useAuth } from '../../contexts/AuthContext';
 
 const VetDashboard: React.FC = () => {
   const [patients, setPatients] = useState<Pet[]>([]);
