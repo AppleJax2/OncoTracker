@@ -64,20 +64,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await api.post<{ data: { user: User }, token: string, status: string, message?: string }>('/api/auth/login', credentials);
 
-      // Check if the expected user data is present in the response
-      if (response.data && response.data.data && response.data.data.user) {
-        const userData = response.data.data.user;
-        
-        // Store the token in localStorage if it exists in the response
-        if (response.data.token) {
-          setAuthToken(response.data.token);
-        }
+      // Correct check based on backend structure in createSendToken
+      if (response.data?.data?.user && response.data?.token) {
+        const userData = response.data.data.user; 
+
+        // Store the token in localStorage
+        setAuthToken(response.data.token);
         
         setUser(userData);
         setIsAuthenticated(true);
         return userData;
       } else {
-        throw new Error(response.data?.message || 'Login succeeded but received invalid data structure.');
+        throw new Error(response.data?.message || 'Login succeeded but received unexpected data structure.');
       }
     } catch (error: any) {
       setUser(null);
