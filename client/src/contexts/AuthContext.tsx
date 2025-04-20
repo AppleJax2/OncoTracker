@@ -27,10 +27,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkAuthStatus = async () => {
       setIsLoading(true);
       try {
-        // Attempt to fetch current user data (relies on cookie being sent)
-        const response = await api.get('/auth/me');
-        if (response.data && response.data.status === 'success') {
-          setUser(response.data.data.user);
+        console.log('AuthContext: Checking authentication status...');
+        // Attempt to fetch user data using the stored token
+        const response = await api.get('/api/auth/me'); // Add /api prefix
+        if (response.data && response.data.user) {
+          console.log('AuthContext: User found, setting auth state:', response.data.user);
+          setUser(response.data.user);
           setIsAuthenticated(true);
         } else {
           // Clear local state if /me fails (e.g., invalid/expired cookie)

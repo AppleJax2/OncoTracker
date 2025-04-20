@@ -45,7 +45,7 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
 
 export const getCurrentUser = async (): Promise<User> => {
   try {
-    const response = await api.get<User>('/auth/me');
+    const response = await api.get<User>('/api/auth/me');
     return response.data;
   } catch (error: any) {
     console.error('Get user API error:', error.response?.data || error);
