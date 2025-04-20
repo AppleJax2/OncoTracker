@@ -113,12 +113,12 @@ const OwnerDashboard: React.FC = () => {
                       <div className="rounded-full bg-warm-100 p-2 mr-3">
                         <HeartIcon className="h-5 w-5 text-warm-600" />
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-800 group-hover:text-primary-600 truncate">{pet.name}</h3>
+                      <h3 className="text-xl font-semibold text-gray-800 group-hover:text-primary-600 truncate">{pet.name || 'Unnamed Pet'}</h3>
                     </div>
                     <div className="space-y-2">
                       <p className="text-sm text-gray-600 capitalize flex items-center">
                         <span className="font-medium text-gray-700 mr-2">Type:</span>
-                        {pet.species} - {pet.breed}
+                        {pet.species || 'N/A'} - {pet.breed || 'N/A'}
                       </p>
                       <p className="text-sm text-gray-600 flex items-center">
                         <span className="font-medium text-gray-700 mr-2">Age:</span>
