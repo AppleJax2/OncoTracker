@@ -47,6 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     // Prevent auth check on public routes to avoid redirect loop
+    // Also, run check only once on initial load or when pathname changes
     const publicPaths = ['/', '/login', '/signup']; // Correct path to /signup
     if (!publicPaths.includes(location.pathname)) {
         checkAuthStatus();
