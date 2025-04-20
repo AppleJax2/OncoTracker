@@ -5,8 +5,8 @@ import apiService from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useAuth } from '../../contexts/AuthContext';
 import { Pet, Report, ReportEntry } from '../../types'; // Assuming Report type exists
-import ReportHistoryChart from '../../components/dashboard/ReportHistoryChart'; // Assume chart component exists
-import { PencilSquareIcon, TrashIcon, LinkIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+// import ReportHistoryChart from '../../components/dashboard/ReportHistoryChart'; // Removed unused import
+import { TrashIcon, LinkIcon, ChartBarIcon } from '@heroicons/react/24/outline'; // Removed unused PencilSquareIcon
 
 const PetDetail: React.FC = () => {
   const { petId } = useParams<{ petId: string }>();

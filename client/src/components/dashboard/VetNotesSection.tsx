@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { VetNote } from '../../types';
 import apiService from '../../services/apiService';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { TrashIcon, PencilIcon } from '@heroicons/react/24/solid';
+import { TrashIcon } from '@heroicons/react/24/solid';
 
 interface VetNotesSectionProps {
   petId: string;
@@ -102,8 +102,6 @@ const VetNotesSection: React.FC<VetNotesSectionProps> = ({ petId, notes, loading
                     <p className="text-sm text-slate-800 whitespace-pre-wrap flex-1 mr-4">{note.note}</p>
                     <div className="flex-shrink-0 flex items-center space-x-2">
                         <span className="text-xs text-slate-500 whitespace-nowrap">{formatDate(note.createdAt)}</span>
-                        {/* Add Edit button later if needed */}
-                        {/* <button title="Edit Note" className="text-slate-400 hover:text-sky-600"><PencilIcon className="h-4 w-4" /></button> */} 
                         <button 
                             onClick={() => handleDeleteNote(note._id)} 
                             title="Delete Note" 

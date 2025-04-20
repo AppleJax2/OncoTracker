@@ -1,7 +1,7 @@
 // Placeholder VetDashboard Component
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+// import { useAuth } from '../../contexts/AuthContext'; // Removed unused import
 import apiService from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { Pet } from '../../types'; 
@@ -11,7 +11,7 @@ const VetDashboard: React.FC = () => {
   const [patients, setPatients] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth(); // Vet info
+  // const { user } = useAuth(); // Removed unused variable
 
   useEffect(() => {
     const fetchPatients = async () => {

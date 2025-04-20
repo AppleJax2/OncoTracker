@@ -1,12 +1,9 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import Header from './Header'; // Assume Header component exists
-import Footer from './Footer'; // Assume Footer component exists
+import { Outlet } from 'react-router-dom';
+import Header from './Header';
+import Footer from './Footer';
 
 const AppLayout: React.FC = () => {
-  const { isAuthenticated, isLoading, user } = useAuth();
-
   // Optional: You could show a layout-specific loading state
   // if (isLoading) {
   //   return <div>Loading application layout...</div>;

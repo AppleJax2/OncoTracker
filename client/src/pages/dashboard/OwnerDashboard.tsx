@@ -1,7 +1,7 @@
 // Placeholder OwnerDashboard Component
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+// import { useAuth } from '../../contexts/AuthContext'; // Removed unused import
 import apiService from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { Pet } from '../../types'; // Assuming Pet type exists in types/index.ts
@@ -11,7 +11,7 @@ const OwnerDashboard: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth(); // Get user info if needed
+  // const { user } = useAuth(); // Removed unused variable
 
   useEffect(() => {
     const fetchPets = async () => {

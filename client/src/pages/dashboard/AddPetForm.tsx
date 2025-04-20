@@ -3,11 +3,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiService from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { useAuth } from '../../contexts/AuthContext'; // Needed for owner ID, though set by backend ideally
 
 const AddPetForm: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     species: 'dog', // Default species

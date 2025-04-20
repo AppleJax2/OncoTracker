@@ -1,24 +1,21 @@
 // Placeholder VetPatientDetail Component
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import apiService from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { useAuth } from '../../contexts/AuthContext';
-import { Pet, Report, User, VetNote, ReportEntry } from '../../types'; // Added ReportEntry
+import { Pet, Report, VetNote, ReportEntry } from '../../types';
 import ReportHistoryChart from '../../components/dashboard/ReportHistoryChart'; 
-import VetNotesSection from '../../components/dashboard/VetNotesSection'; // Assume vet notes component exists
+import VetNotesSection from '../../components/dashboard/VetNotesSection';
 import { ChartBarIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 const VetPatientDetail: React.FC = () => {
   const { petId } = useParams<{ petId: string }>();
-  const navigate = useNavigate();
-  const { user } = useAuth(); // Vet info
   const [pet, setPet] = useState<Pet | null>(null);
   const [reports, setReports] = useState<Report[]>([]);
-  const [vetNotes, setVetNotes] = useState<VetNote[]>([]); // State for vet notes
+  const [vetNotes, setVetNotes] = useState<VetNote[]>([]);
   const [loadingPet, setLoadingPet] = useState(true);
   const [loadingReports, setLoadingReports] = useState(true);
-  const [loadingNotes, setLoadingNotes] = useState(true); // Loading state for notes
+  const [loadingNotes, setLoadingNotes] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -29,14 +26,12 @@ const VetPatientDetail: React.FC = () => {
       setError(null);
 
       try {
-          // Fetch all data concurrently
           const [petRes, reportRes, notesRes] = await Promise.all([
               apiService.get(`/pets/${petId}`),
               apiService.get(`/pets/${petId}/reports`),
-              apiService.get(`/pets/${petId}/vetnotes`) // Fetch vet notes
+              apiService.get(`/pets/${petId}/vetnotes`)
           ]);
 
-          // Process Pet Data
           if (petRes.data?.status === 'success') {
               setPet(petRes.data.data.pet);
           } else {
@@ -44,7 +39,6 @@ const VetPatientDetail: React.FC = () => {
           }
           setLoadingPet(false);
 
-          // Process Reports Data
           if (reportRes.data?.status === 'success') {
               setReports(reportRes.data.data.reports);
           } else {
@@ -52,7 +46,6 @@ const VetPatientDetail: React.FC = () => {
           }
           setLoadingReports(false);
 
-          // Process Vet Notes Data
           if (notesRes.data?.status === 'success') {
               setVetNotes(notesRes.data.data.vetNotes);
           } else {
@@ -62,7 +55,6 @@ const VetPatientDetail: React.FC = () => {
 
       } catch (err: any) {
           console.error('Error fetching patient data for vet:', err);
-          // Prioritize pet loading error message if it exists
           const message = err?.response?.data?.message || err.message || 'Could not load patient information.';
           setError(message);
           setLoadingPet(false);
@@ -75,9 +67,7 @@ const VetPatientDetail: React.FC = () => {
     fetchData();
   }, [petId]);
 
-  // Callback function to refresh notes after adding/deleting one
   const refreshNotes = () => {
-      // Only refetch notes, not all data
       const fetchNotes = async () => {
           if (!petId) return;
           setLoadingNotes(true);
@@ -90,7 +80,6 @@ const VetPatientDetail: React.FC = () => {
               }
           } catch (err: any) {
               console.error('Error refreshing vet notes:', err);
-              // Set a temporary error maybe? Or just log it.
           } finally {
               setLoadingNotes(false);
           }
@@ -102,7 +91,7 @@ const VetPatientDetail: React.FC = () => {
     return <div className="text-center py-10"><LoadingSpinner size="large" /></div>;
   }
 
-  if (error && !pet) { // Show primary error if pet failed to load
+  if (error && !pet) {
     return (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
           <strong className="font-bold">Error: </strong>
@@ -116,7 +105,6 @@ const VetPatientDetail: React.FC = () => {
     return <div className="text-center py-10 text-slate-600">Patient not found.</div>;
   }
 
-  // Ensure owner is populated and is an object before accessing properties
   const ownerName = typeof pet.owner === 'object' ? `${pet.owner.firstName} ${pet.owner.lastName}` : 'N/A';
   const ownerEmail = typeof pet.owner === 'object' ? pet.owner.email : 'N/A';
 
@@ -129,13 +117,11 @@ const VetPatientDetail: React.FC = () => {
 
   return (
     <div className="space-y-8">
-        {/* Back Button */}
         <Link to="/vet/dashboard" className="inline-flex items-center text-sm text-sky-600 hover:text-sky-800 mb-4">
             <ArrowLeftIcon className="h-4 w-4 mr-1" />
             Back to Patient List
         </Link>
 
-      {/* Patient Header Section */}
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
@@ -147,18 +133,13 @@ const VetPatientDetail: React.FC = () => {
                 <p className="text-sm text-slate-500">Diagnosis: {pet.diagnosis || 'N/A'}</p>
                 <p className="text-sm text-slate-500 mt-2">Owner: {ownerName} ({ownerEmail})</p>
             </div>
-            {/* Vet Actions Placeholder - Add any vet-specific actions here */}
-            <div className="mt-4 md:mt-0">
-                {/* e.g., Button to export data, modify treatment plan (future features) */}
-            </div>
         </div>
       </div>
 
-      {/* Report History Section - Same as owner view */}
       <div className="bg-white p-6 rounded-lg shadow">
         <h2 className="text-2xl font-semibold text-slate-700 mb-4">Owner Reported History</h2>
         {loadingReports && <div className="text-center py-5"><LoadingSpinner /></div>}
-        {error && !loadingReports && ( // Show report-specific error if pet loaded ok
+        {error && !loadingReports && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative my-4" role="alert">
                 Could not load reports: {error}
             </div>
@@ -168,16 +149,13 @@ const VetPatientDetail: React.FC = () => {
         )}
         {!loadingReports && !error && reports.length > 0 && (
              <div className="space-y-4">
-                {/* Chart Placeholder/Component */}
                 <div className="mb-6 p-4 border rounded-md bg-slate-50">
                     <h3 className="text-lg font-medium text-slate-600 mb-2 flex items-center">
                         <ChartBarIcon className="h-5 w-5 mr-2 text-sky-600"/> Symptom Trends (Placeholder)
                     </h3>
                     <ReportHistoryChart reports={reports} />
-                    {/* <p className="text-sm text-slate-500">Chart component placeholder.</p> */}
                 </div>
 
-                {/* List of Reports */}
                 <h3 className="text-lg font-medium text-slate-600 mb-2">Recent Reports:</h3>
                 <ul className="divide-y divide-slate-200">
                     {reports.slice(0, 10).map((report: Report) => (
@@ -216,14 +194,13 @@ const VetPatientDetail: React.FC = () => {
         )}
       </div>
       
-      {/* Vet Notes Section */}
-       <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-2xl font-semibold text-slate-700 mb-4">Veterinarian Notes</h2>
             <VetNotesSection 
                 petId={petId!} 
                 notes={vetNotes} 
                 loading={loadingNotes} 
-                onNoteChange={refreshNotes} // Pass callback to refresh list after add/delete
+                onNoteChange={refreshNotes}
             />
        </div>
 

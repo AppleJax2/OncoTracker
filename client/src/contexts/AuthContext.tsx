@@ -115,6 +115,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
+export { AuthContext }; // Export the context itself if needed elsewhere, though useAuth is preferred
+
 // Custom hook to use the AuthContext
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);

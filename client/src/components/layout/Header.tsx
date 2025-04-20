@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { ArrowLeftOnRectangleIcon, UserCircleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'; // Example icons
+import { ArrowLeftOnRectangleIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'; // Removed unused UserCircleIcon
 
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();

@@ -1,6 +1,6 @@
 // Placeholder SignupPage Component
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
@@ -17,7 +17,6 @@ const SignupPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
-  const navigate = useNavigate();
 
   const { firstName, lastName, email, password, passwordConfirm, role, clinicName } = formData;
 

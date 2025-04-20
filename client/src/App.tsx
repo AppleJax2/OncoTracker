@@ -74,10 +74,10 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
 };
 
 const App = () => {
-  const { isLoading } = useAuth();
+  // const { isLoading } = useAuth(); // Removed unused variable
 
   // Optional: Show a global loading state while checking auth initially
-  // if (isLoading) {
+  // if (isLoading) { // isLoading check removed as variable is unused
   //   return <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>;
   // }
 

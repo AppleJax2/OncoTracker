@@ -130,7 +130,7 @@ const ReportForm: React.FC = () => {
                 {/* Symptom Grades */}
                 <div className="space-y-6">
                     <h2 className="text-lg font-semibold text-slate-700 border-b pb-2">Symptom Grades (0 = Normal)</h2>
-                    {vcogDefinitions.map((def: VCOGDefinition, index: number) => {
+                    {vcogDefinitions.map((def: VCOGDefinition) => {
                         const currentEntry = symptomEntries.find(e => e.symptom === def.symptom) || { grade: 0 };
                         return (
                             <div key={def.symptom} className="p-4 rounded-md border border-slate-200 bg-slate-50/50">
