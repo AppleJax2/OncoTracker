@@ -24,7 +24,7 @@ interface AuthResponse {
 
 export const login = async (loginData: LoginData): Promise<AuthResponse> => {
   try {
-    const response = await api.post<AuthResponse>('/api/auth/login', loginData);
+    const response = await api.post<AuthResponse>('/auth/login', loginData);
     return response.data;
   } catch (error: any) {
     console.error('Login API error:', error.response?.data || error);
@@ -35,7 +35,7 @@ export const login = async (loginData: LoginData): Promise<AuthResponse> => {
 export const register = async (registerData: RegisterData): Promise<AuthResponse> => {
   try {
     console.log('Sending registration data:', JSON.stringify(registerData));
-    const response = await api.post<AuthResponse>('/api/auth/register', registerData);
+    const response = await api.post<AuthResponse>('/auth/register', registerData);
     return response.data;
   } catch (error: any) {
     console.error('Registration API error:', error.response?.data || error);
@@ -45,7 +45,7 @@ export const register = async (registerData: RegisterData): Promise<AuthResponse
 
 export const getCurrentUser = async (): Promise<User> => {
   try {
-    const response = await api.get<User>('/api/auth/me');
+    const response = await api.get<User>('/auth/me');
     return response.data;
   } catch (error: any) {
     console.error('Get user API error:', error.response?.data || error);
