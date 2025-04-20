@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Get base URL from environment variables with a fallback
-const API_URL = import.meta.env.VITE_API_URL || '';
-const baseURL = API_URL ? API_URL : '/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://oncotracker.onrender.com';
+const baseURL = API_URL;
 
 // Create an axios instance
 const api = axios.create({
@@ -17,6 +17,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // No need to manually add token - cookies are sent automatically
+    console.log('API Request to:', config.url);
     return config;
   },
   (error) => {
@@ -37,6 +38,13 @@ api.interceptors.response.use(
         message: 'Network error. Please check your connection.'
       });
     }
+
+    // Log error details for debugging
+    console.error('API Error:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      data: error.response?.data
+    });
 
     // Handle authentication errors
     if (error.response.status === 401) {
