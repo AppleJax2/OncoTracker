@@ -1,6 +1,6 @@
 // Placeholder FindVetPage Component
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import apiService from '../../services/apiService';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { User } from '../../types';
@@ -8,7 +8,6 @@ import { MagnifyingGlassIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/re
 
 const FindVetPage: React.FC = () => {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
     const petId = searchParams.get('petId'); // Get petId from query params if linking a specific pet
 
     const [searchTerm, setSearchTerm] = useState('');

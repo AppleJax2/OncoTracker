@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   HomeIcon,
   UsersIcon,
@@ -63,11 +63,11 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
         <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
           <div className="flex items-center">
             <div className="h-9 w-9 bg-primary-200 text-primary-700 rounded-full flex items-center justify-center">
-              <span className="text-base font-medium">{user.name.charAt(0)}</span>
+              <span className="text-base font-medium">{user.firstName.charAt(0)}</span>
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-700">{user.name}</p>
-              <p className="text-xs font-medium text-gray-500">{user.practice?.name || 'Veterinarian'}</p>
+              <p className="text-sm font-medium text-gray-700">{user.firstName}</p>
+              <p className="text-xs font-medium text-gray-500">{user.clinicName || 'Veterinarian'}</p>
             </div>
           </div>
         </div>
