@@ -82,7 +82,7 @@ const VetNotesSection: React.FC<VetNotesSectionProps> = ({ petId, notes, loading
                 disabled={submitting || loading || !newNote.trim()}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-             {submitting ? <LoadingSpinner size="small" color="text-white" /> : 'Add Note'}
+             {submitting ? <LoadingSpinner size="small" color="inherit" /> : 'Add Note'}
             </button>
         </div>
       </form>

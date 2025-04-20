@@ -148,7 +148,7 @@ const SignupPage: React.FC = () => {
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <LoadingSpinner size="small" color="text-white" />
+                <LoadingSpinner size="small" color="inherit" />
               ) : (
                 'Sign up'
               )}

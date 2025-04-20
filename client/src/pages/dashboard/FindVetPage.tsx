@@ -96,7 +96,7 @@ const FindVetPage: React.FC = () => {
                     disabled={loadingSearch || !petId}
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50"
                 >
-                    {loadingSearch ? <LoadingSpinner size="small" color="text-white"/> : <MagnifyingGlassIcon className="h-5 w-5"/>}
+                    {loadingSearch ? <LoadingSpinner size="small" color="inherit"/> : <MagnifyingGlassIcon className="h-5 w-5"/>}
                     <span className="ml-2">Search</span>
                 </button>
             </form>
@@ -137,7 +137,7 @@ const FindVetPage: React.FC = () => {
                                             : 'bg-emerald-600 hover:bg-emerald-700 focus:ring-emerald-500'}
                                         ${!petId ? 'opacity-50 cursor-not-allowed' : ''}`}
                                 >
-                                    {requestStatus[vet._id] === 'sending' && <LoadingSpinner size="small" color="text-white" className="mr-2"/>}
+                                    {requestStatus[vet._id] === 'sending' && <LoadingSpinner size="small" color="inherit" className="mr-2"/>}
                                     {requestStatus[vet._id] === 'success' && <CheckCircleIcon className="h-4 w-4 mr-1"/>}
                                     {requestStatus[vet._id] === 'error' && <XCircleIcon className="h-4 w-4 mr-1"/>}
                                     {requestStatus[vet._id] === 'success' ? 'Request Sent' : requestStatus[vet._id] === 'error' ? 'Retry Request' : requestStatus[vet._id] === 'sending' ? 'Sending...' : 'Send Link Request'}

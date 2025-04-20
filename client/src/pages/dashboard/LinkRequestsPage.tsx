@@ -112,7 +112,7 @@ const LinkRequestsPage: React.FC = () => {
                         ${responseStatus[req._id] === 'success' || responseStatus[req._id] === 'error' ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
                     >
-                        {responseStatus[req._id] === 'processing' ? <LoadingSpinner size="small" color="text-white" className="mr-1"/> : <CheckIcon className="h-4 w-4 mr-1" />}
+                        {responseStatus[req._id] === 'processing' ? <LoadingSpinner size="small" color="inherit" className="mr-1"/> : <CheckIcon className="h-4 w-4 mr-1" />}
                         Approve
                     </button>
                     <button
@@ -122,7 +122,7 @@ const LinkRequestsPage: React.FC = () => {
                         ${responseStatus[req._id] === 'processing' || responseStatus[req._id] === 'success' || responseStatus[req._id] === 'error' ? 'opacity-50 cursor-not-allowed' : ''}
                        `}
                     >
-                       {responseStatus[req._id] === 'processing' ? <LoadingSpinner size="small" color="text-slate-700" className="mr-1"/> : <XMarkIcon className="h-4 w-4 mr-1" />}
+                       {responseStatus[req._id] === 'processing' ? <LoadingSpinner size="small" color="inherit" className="mr-1"/> : <XMarkIcon className="h-4 w-4 mr-1" />}
                         Reject
                     </button>
                   </div>
