@@ -110,8 +110,18 @@ const SignupPage: React.FC = () => {
       navigate('/login');
     } catch (err: any) {
       console.error('Signup Failed:', err);
-      const message = err?.response?.data?.message || err.message || 'Signup failed. Please try again.';
-      setError(message);
+      // Handle different error formats
+      let errorMessage = 'Signup failed. Please try again.';
+      
+      if (err.message) {
+        errorMessage = err.message;
+      } else if (err.details?.message) {
+        errorMessage = err.details.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

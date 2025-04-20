@@ -98,24 +98,44 @@ exports.getCurrentUser = async (req, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  console.log('Signup request received:', req.body);
+
   const { email, password, passwordConfirm, firstName, lastName, role, clinicName } = req.body;
 
   // Basic validation (more robust validation can be added)
   if (!email || !password || !passwordConfirm || !firstName || !lastName || !role) {
+    console.log('Signup validation failed:', { 
+      email: !!email, 
+      password: !!password, 
+      passwordConfirm: !!passwordConfirm, 
+      firstName: !!firstName, 
+      lastName: !!lastName, 
+      role: !!role 
+    });
     return next(new AppError('Please provide email, password, confirm password, first name, last name, and role.', 400));
   }
 
   if (password !== passwordConfirm) {
+    console.log('Passwords do not match');
     return next(new AppError('Passwords do not match', 400));
+  }
+
+  // Check if user with this email already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    console.log('User already exists with email:', email);
+    return next(new AppError('A user with this email already exists', 400));
   }
 
   // Ensure role is valid
   if (!['owner', 'vet'].includes(role)) {
+    console.log('Invalid role specified:', role);
     return next(new AppError('Invalid role specified.', 400));
   }
 
   // Check if clinicName is provided for vet role
   if (role === 'vet' && !clinicName) {
+    console.log('Clinic name missing for vet account');
     return next(new AppError('Clinic name is required for veterinarian accounts.', 400));
   }
 
@@ -132,11 +152,21 @@ exports.signup = catchAsync(async (req, res, next) => {
     // isVerified defaults to false in the model for vets
   }
 
-  // Create user (password will be hashed by Mongoose middleware)
-  const newUser = await User.create(userData);
+  try {
+    // Create user (password will be hashed by Mongoose middleware)
+    const newUser = await User.create(userData);
+    console.log('User created successfully:', newUser._id);
 
-  // Send token and user data (excluding password)
-  createSendToken(newUser, 201, res);
+    // Send token and user data (excluding password)
+    createSendToken(newUser, 201, res);
+  } catch (err) {
+    console.error('Error creating user:', err);
+    if (err.code === 11000) {
+      // Duplicate key error (likely email)
+      return next(new AppError('A user with this email already exists', 400));
+    }
+    return next(new AppError(`Failed to create user: ${err.message}`, 400));
+  }
 });
 
 exports.logout = (req, res) => {

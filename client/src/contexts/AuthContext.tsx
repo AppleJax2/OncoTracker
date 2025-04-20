@@ -107,22 +107,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (userData: any) => {
     setIsLoading(true);
     try {
+      console.log('Signup data:', userData); // Log the userData being sent
       const response = await api.post('/api/auth/signup', userData);
-      if (response.data && response.data.status === 'success') {
+      console.log('Signup response:', response.data); // Log successful response
+      
+      if (response.data && (response.data.status === 'success' || response.data.token)) {
         // Store the token in localStorage if it exists in the response
         if (response.data.token) {
           setAuthToken(response.data.token);
         }
         
-        setUser(response.data.data.user);
+        // Handle different response formats
+        if (response.data.data?.user) {
+          setUser(response.data.data.user);
+        } else if (response.data.user) {
+          setUser(response.data.user);  
+        }
+        
         setIsAuthenticated(true);
       } else {
-        throw new Error(response.data?.message || 'Signup failed');
+        throw new Error(response.data?.message || 'Signup succeeded but response format was unexpected');
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      
+      // Extract detailed error message
+      let errorMessage = 'Signup failed. Please try again.';
+      
+      if (error.response) {
+        console.error('Error response:', error.response);
+        // Server responded with error
+        errorMessage = error.response.data?.message || 
+                      error.response.data?.error || 
+                      `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        // Request made but no response received
+        errorMessage = 'No response from server. Please check your connection.';
+      } else if (error.message) {
+        // Something else went wrong
+        errorMessage = error.message;
+      }
+      
       setUser(null);
       setIsAuthenticated(false);
-      throw error;
+      throw new Error(errorMessage);
     } finally {
       setIsLoading(false);
     }

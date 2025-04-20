@@ -48,6 +48,14 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Add detailed logging for development
+    console.error('API Error:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+
     // Handle network errors (no response received)
     if (!error.response) {
       return Promise.reject({
@@ -62,7 +70,12 @@ api.interceptors.response.use(
       window.location.href = '/login';
     }
 
-    return Promise.reject(error.response.data);
+    // Return a standardized error object
+    return Promise.reject({
+      status: error.response.status,
+      message: error.response.data?.message || error.response.data?.error || 'An error occurred',
+      details: error.response.data
+    });
   }
 );
 
