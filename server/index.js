@@ -68,14 +68,25 @@ app.get('/api', (req, res) => {
 
 if (process.env.NODE_ENV === 'production') {
   console.log('Setting up static assets for production...');
-  app.use(express.static(path.join(__dirname, '../client/dist')));
+  const clientDistPath = path.join(__dirname, '../client/dist');
+  app.use(express.static(clientDistPath));
   
-  app.get('*', (req, res) => {
+  app.get('*', (req, res, next) => {
     if (req.originalUrl.startsWith('/api/')) {
-       return res.status(404).json({ status: 'fail', message: 'API route not found.' });
+       return next();
     }
     console.log('Serving SPA index.html for path:', req.originalUrl);
-    res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
+    const indexPath = path.join(clientDistPath, 'index.html');
+    res.sendFile(indexPath, (err) => {
+        if (err) {
+            console.error('ERROR 💥 Serving index.html:', err);
+            if (err.code === 'ENOENT') {
+                 next(new AppError('Client application not found', 404));
+            } else {
+                 next(err);
+            }
+        }
+    });
   });
 }
 
