@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
 const mongoose = require('mongoose');
+const fs = require('fs');
 
 // Load environment variables
 dotenv.config();
@@ -68,7 +69,18 @@ app.get('/api', (req, res) => {
 
 if (process.env.NODE_ENV === 'production') {
   console.log('Setting up static assets for production...');
-  const clientDistPath = path.join(__dirname, '../client/dist');
+  
+  // Use environment variable or fallback to relative path
+  const clientDistPath = process.env.CLIENT_DIST_PATH || path.join(__dirname, '../client/dist');
+  
+  // Log the path for debugging purposes
+  console.log('Client dist path:', clientDistPath);
+  
+  // Check if directory exists
+  if (!fs.existsSync(clientDistPath)) {
+    console.warn(`WARNING: Client dist directory not found at ${clientDistPath}`);
+  }
+  
   app.use(express.static(clientDistPath));
   
   app.get('*', (req, res, next) => {
@@ -77,6 +89,13 @@ if (process.env.NODE_ENV === 'production') {
     }
     console.log('Serving SPA index.html for path:', req.originalUrl);
     const indexPath = path.join(clientDistPath, 'index.html');
+    
+    // Check if file exists first
+    if (!fs.existsSync(indexPath)) {
+      console.error(`ERROR: index.html not found at ${indexPath}`);
+      return next(new AppError('Client application not found', 404));
+    }
+    
     res.sendFile(indexPath, (err) => {
         if (err) {
             console.error('ERROR 💥 Serving index.html:', err);

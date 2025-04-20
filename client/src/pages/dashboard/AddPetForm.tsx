@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { useAuth } from '../../contexts/AuthContext';
 
 const AddPetForm: React.FC = () => {
   const navigate = useNavigate();

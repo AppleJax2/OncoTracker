@@ -11,7 +11,8 @@ const VetDashboard: React.FC = () => {
   const [patients, setPatients] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  // Commented out unused variable
+  // const { user } = useAuth();
 
   useEffect(() => {
     const fetchPatients = async () => {

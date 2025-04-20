@@ -1,6 +1,6 @@
 // Placeholder OwnerDashboard Component
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Pet } from '../../types';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -11,7 +11,8 @@ const OwnerDashboard: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  // Commented out unused variable
+  // const { user } = useAuth();
 
   useEffect(() => {
     const fetchPets = async () => {
