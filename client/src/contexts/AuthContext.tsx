@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom'; // Import useLocation
 import api from '../services/api'; // Adjusted import
 import { User } from '../types'; // Assuming a User type exists
 
@@ -21,6 +22,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Start loading on initial check
+  const location = useLocation(); // Get current location
 
   // Check authentication status on initial load
   useEffect(() => {
@@ -28,20 +30,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       try {
         console.log('AuthContext: Checking authentication status...');
-        // Attempt to fetch user data using the stored token
-        const response = await api.get('/api/auth/me'); // Add /api prefix
+        const response = await api.get('/api/auth/me');
         if (response.data && response.data.user) {
           console.log('AuthContext: User found, setting auth state:', response.data.user);
           setUser(response.data.user);
           setIsAuthenticated(true);
         } else {
-          // Clear local state if /me fails (e.g., invalid/expired cookie)
           setUser(null);
           setIsAuthenticated(false);
         }
-      } catch (error) {
-        // Expected error if not logged in (e.g., 401 from protect middleware)
-        console.log('Auth check failed (likely not logged in):', error);
+      } catch (error: any) {
+        // Check if error has response and status before accessing them
+        const status = error?.response?.status;
+        // Don't log expected 401s triggered by the interceptor redirect
+        if (status !== 401) {
+           console.log('Auth check failed (likely not logged in):', error);
+        }
         setUser(null);
         setIsAuthenticated(false);
       } finally {
@@ -49,8 +53,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
-    checkAuthStatus();
-  }, []);
+    // Prevent auth check on public routes to avoid redirect loop
+    const publicPaths = ['/login', '/register']; // Add any other public paths
+    if (!publicPaths.includes(location.pathname)) {
+        console.log(`AuthContext: Not on a public path (${location.pathname}), checking auth status.`);
+        checkAuthStatus();
+    } else {
+        console.log(`AuthContext: On public path (${location.pathname}), skipping initial auth check.`);
+        setUser(null); // Ensure user is null if on public path
+        setIsAuthenticated(false);
+        setIsLoading(false); // Ensure loading is set to false
+    }
+
+  }, [location.pathname]); // Re-run effect if path changes
 
   const login = async (credentials: { email: string; password: string }) => {
     setIsLoading(true);
