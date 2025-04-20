@@ -135,7 +135,8 @@ const HomePage: React.FC = () => {
 
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
-              <Paper
+              <Box
+                component={Paper}
                 elevation={2}
                 sx={{
                   p: 4,
@@ -161,11 +162,12 @@ const HomePage: React.FC = () => {
                 <Typography variant="body1" color="text.secondary">
                   Track treatment side effects and symptoms with an easy-to-use interface for both veterinarians and pet owners.
                 </Typography>
-              </Paper>
+              </Box>
             </Grid>
             
             <Grid item xs={12} md={4}>
-              <Paper
+              <Box
+                component={Paper}
                 elevation={2}
                 sx={{
                   p: 4,
@@ -191,11 +193,12 @@ const HomePage: React.FC = () => {
                 <Typography variant="body1" color="text.secondary">
                   Organize and manage complex treatment protocols, medication schedules, and appointment reminders in one place.
                 </Typography>
-              </Paper>
+              </Box>
             </Grid>
             
             <Grid item xs={12} md={4}>
-              <Paper
+              <Box
+                component={Paper}
                 elevation={2}
                 sx={{
                   p: 4,
@@ -221,7 +224,7 @@ const HomePage: React.FC = () => {
                 <Typography variant="body1" color="text.secondary">
                   Enhance communication between veterinarians and pet owners to provide the best possible care for pets with cancer.
                 </Typography>
-              </Paper>
+              </Box>
             </Grid>
           </Grid>
         </Container>

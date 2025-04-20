@@ -241,44 +241,48 @@ const SignupPage: React.FC = () => {
               <Stack spacing={3}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      id="firstName"
-                      name="firstName"
-                      label="First Name"
-                      variant="outlined"
-                      required
-                      value={firstName}
-                      onChange={handleChange}
-                      disabled={loading}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Person color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
+                    <Box component="div">
+                      <TextField
+                        fullWidth
+                        id="firstName"
+                        name="firstName"
+                        label="First Name"
+                        variant="outlined"
+                        required
+                        value={firstName}
+                        onChange={handleChange}
+                        disabled={loading}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Person color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Box>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
-                      id="lastName"
-                      name="lastName"
-                      label="Last Name"
-                      variant="outlined"
-                      required
-                      value={lastName}
-                      onChange={handleChange}
-                      disabled={loading}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Person color="action" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
+                    <Box component="div">
+                      <TextField
+                        fullWidth
+                        id="lastName"
+                        name="lastName"
+                        label="Last Name"
+                        variant="outlined"
+                        required
+                        value={lastName}
+                        onChange={handleChange}
+                        disabled={loading}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Person color="action" />
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
 
