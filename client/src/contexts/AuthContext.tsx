@@ -70,41 +70,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: { email: string; password: string }): Promise<User | null> => {
     setIsLoading(true);
     try {
-      const response = await api.post('/api/auth/login', credentials);
-      // Updated check for successful login - matches backend response format
-      if (response.data && response.data.status === 'success') {
-        const userData = response.data.data.user;
-        setUser(userData);
-        setIsAuthenticated(true);
+      console.log('=== LOGIN ATTEMPT ===');
+      console.log('Login credentials (email):', credentials.email);
+      console.log('API URL:', api.defaults.baseURL);
+      
+      // Assume a 200 OK from this endpoint means success
+      console.log('Sending request to:', `${api.defaults.baseURL}/api/auth/login`);
+      
+      try {
+        const response = await api.post<{ data: { user: User }, status: string, message?: string }>('/api/auth/login', credentials);
+        console.log('=== LOGIN RESPONSE ===');
+        console.log('Status code:', response.status);
+        console.log('Response headers:', response.headers);
+        console.log('Response data:', JSON.stringify(response.data, null, 2));
+
+        // Check if the expected user data is present in the response
+        if (response.data && response.data.data && response.data.data.user) {
+          const userData = response.data.data.user;
+          console.log('Login successful, user data:', userData);
+          setUser(userData);
+          setIsAuthenticated(true);
+          return userData; // Return the user data directly
+        } else {
+          console.error('Login response missing expected user data structure:', response.data);
+          throw new Error(response.data?.message || 'Login succeeded but received invalid data structure.');
+        }
+      } catch (apiError: any) {
+        console.error('=== LOGIN API ERROR ===');
+        console.error('Error type:', typeof apiError);
+        console.error('Is axios error?', apiError.isAxiosError || false);
+        console.error('Status:', apiError.response?.status);
+        console.error('Status text:', apiError.response?.statusText);
+        console.error('Data:', apiError.response?.data);
+        console.error('Message:', apiError.message);
         
-        // Immediately check auth status to ensure we have the latest user data
-        try {
-          const userResponse = await api.get('/api/auth/me');
-          if (userResponse.data && userResponse.data.user) {
-            const latestUserData = userResponse.data.user;
-            setUser(latestUserData);
-            return latestUserData;
-          }
-        } catch (error) {
-          console.error('Error fetching user details after login:', error);
+        if (!apiError.response) {
+          console.error('Network error - no response from server. CORS or connectivity issue likely.');
         }
         
-        return userData;
-      } else {
-        // Handle potential API error structure
-        throw new Error(response.data?.message || 'Login failed');
+        throw apiError;
       }
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (error: any) {
+      // Errors should be caught by the Axios interceptor or the catch block here
+      console.error('Login failed in AuthContext (outer catch):', error);
       setUser(null);
       setIsAuthenticated(false);
-      // Re-throw or handle error display
+      // Ensure the error is re-thrown so LoginPage can display it
       throw error;
     } finally {
       setIsLoading(false);
     }
-    
-    return null;
   };
 
   const signup = async (userData: any) => {
