@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<User | null>;
   logout: () => Promise<void>;
   signup: (userData: any) => Promise<void>; // Define more specific type later
 }
@@ -67,13 +67,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   }, [location.pathname]); // Re-run effect if path changes
 
-  const login = async (credentials: { email: string; password: string }) => {
+  const login = async (credentials: { email: string; password: string }): Promise<User | null> => {
     setIsLoading(true);
     try {
       const response = await api.post('/api/auth/login', credentials);
+      // Updated check for successful login - matches backend response format
       if (response.data && response.data.status === 'success') {
-        setUser(response.data.data.user);
+        const userData = response.data.data.user;
+        setUser(userData);
         setIsAuthenticated(true);
+        
+        // Immediately check auth status to ensure we have the latest user data
+        try {
+          const userResponse = await api.get('/api/auth/me');
+          if (userResponse.data && userResponse.data.user) {
+            const latestUserData = userResponse.data.user;
+            setUser(latestUserData);
+            return latestUserData;
+          }
+        } catch (error) {
+          console.error('Error fetching user details after login:', error);
+        }
+        
+        return userData;
       } else {
         // Handle potential API error structure
         throw new Error(response.data?.message || 'Login failed');
@@ -87,6 +103,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
+    
+    return null;
   };
 
   const signup = async (userData: any) => {

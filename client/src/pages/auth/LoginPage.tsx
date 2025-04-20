@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 // import AppError from '../../utils/appError'; // Removed unused import
 import LoadingSpinner from '../../components/common/LoadingSpinner';
@@ -10,6 +10,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,12 +18,15 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await login({ email, password });
-      // Navigate after successful login (AuthContext might handle this implicitly via state change)
-      // If not, navigate based on role after context updates:
-      // The navigation logic here depends on how ProtectedRoute/RoleBasedRoute handle redirects
-      // For now, let the context update trigger redirects via route setup.
-      // navigate(user?.role === 'vet' ? '/vet/dashboard' : '/owner/dashboard');
+      const loggedInUser = await login({ email, password });
+      console.log('Login successful, redirecting...');
+      
+      // Navigate based on role after successful login
+      if (loggedInUser?.role === 'vet') {
+        navigate('/vet/dashboard');
+      } else {
+        navigate('/owner/dashboard');
+      }
     } catch (err: any) {
       console.error('Login Failed:', err);
       // Attempt to get a user-friendly message from the error
