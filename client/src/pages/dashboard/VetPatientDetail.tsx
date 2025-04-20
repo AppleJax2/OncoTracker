@@ -1,7 +1,7 @@
 // Placeholder VetPatientDetail Component
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import apiService from '../../services/apiService';
+import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { Pet, Report, VetNote, ReportEntry } from '../../types';
 import ReportHistoryChart from '../../components/dashboard/ReportHistoryChart'; 
@@ -27,9 +27,9 @@ const VetPatientDetail: React.FC = () => {
 
       try {
           const [petRes, reportRes, notesRes] = await Promise.all([
-              apiService.get(`/pets/${petId}`),
-              apiService.get(`/pets/${petId}/reports`),
-              apiService.get(`/pets/${petId}/vetnotes`)
+              api.get(`/pets/${petId}`),
+              api.get(`/pets/${petId}/reports`),
+              api.get(`/pets/${petId}/vetnotes`)
           ]);
 
           if (petRes.data?.status === 'success') {
@@ -71,8 +71,9 @@ const VetPatientDetail: React.FC = () => {
       const fetchNotes = async () => {
           if (!petId) return;
           setLoadingNotes(true);
+          setError('');
           try {
-              const notesRes = await apiService.get(`/pets/${petId}/vetnotes`);
+              const notesRes = await api.get(`/pets/${petId}/vetnotes`);
               if (notesRes.data?.status === 'success') {
                   setVetNotes(notesRes.data.data.vetNotes);
               } else {

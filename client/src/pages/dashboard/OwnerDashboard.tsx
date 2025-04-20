@@ -1,24 +1,24 @@
 // Placeholder OwnerDashboard Component
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-// import { useAuth } from '../../contexts/AuthContext'; // Removed unused import
-import apiService from '../../services/apiService';
+import { Link, useNavigate } from 'react-router-dom';
+import { Pet } from '../../types';
+import api from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { Pet } from '../../types'; // Assuming Pet type exists in types/index.ts
 import { PlusIcon } from '@heroicons/react/24/solid';
 
 const OwnerDashboard: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const { user } = useAuth(); // Removed unused variable
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPets = async () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await apiService.get('/pets'); // Fetches pets for the logged-in owner
+        const response = await api.get('/pets'); // Use api
         if (response.data && response.data.status === 'success') {
           setPets(response.data.data.pets);
         } else {

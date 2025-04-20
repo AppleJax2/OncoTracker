@@ -1,7 +1,7 @@
 // Placeholder PetDetail Component
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import apiService from '../../services/apiService';
+import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useAuth } from '../../contexts/AuthContext';
 import { Pet, Report, ReportEntry } from '../../types'; // Assuming Report type exists
@@ -27,7 +27,7 @@ const PetDetail: React.FC = () => {
 
       try {
         // Fetch Pet Details
-        const petResponse = await apiService.get(`/pets/${petId}`);
+        const petResponse = await api.get(`/pets/${petId}`);
         if (petResponse.data?.status === 'success') {
           setPet(petResponse.data.data.pet);
         } else {
@@ -36,7 +36,7 @@ const PetDetail: React.FC = () => {
         setLoadingPet(false);
 
         // Fetch Reports
-        const reportResponse = await apiService.get(`/pets/${petId}/reports`);
+        const reportResponse = await api.get(`/pets/${petId}/reports`);
         if (reportResponse.data?.status === 'success') {
           setReports(reportResponse.data.data.reports);
         } else {
@@ -60,7 +60,7 @@ const PetDetail: React.FC = () => {
       if (!petId || !window.confirm('Are you sure you want to archive this pet? This action cannot be undone easily.')) return;
       
       try {
-          await apiService.delete(`/pets/${petId}`);
+          await api.delete(`/pets/${petId}`);
           navigate('/owner/dashboard'); // Redirect after deletion
       } catch (err: any) {           
           const message = err?.response?.data?.message || err.message || 'Failed to archive pet.';

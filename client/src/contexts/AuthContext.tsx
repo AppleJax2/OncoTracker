@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import apiService from '../services/apiService'; // Assuming an apiService wrapper exists
+import api from '../services/api'; // Adjusted import
 import { User } from '../types'; // Assuming a User type exists
 
 interface AuthContextType {
@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       try {
         // Attempt to fetch current user data (relies on cookie being sent)
-        const response = await apiService.get('/auth/me');
+        const response = await api.get('/auth/me');
         if (response.data && response.data.status === 'success') {
           setUser(response.data.data.user);
           setIsAuthenticated(true);
@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: { email: string; password: string }) => {
     setIsLoading(true);
     try {
-      const response = await apiService.post('/auth/login', credentials);
+      const response = await api.post('/auth/login', credentials);
       if (response.data && response.data.status === 'success') {
         setUser(response.data.data.user);
         setIsAuthenticated(true);
@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (userData: any) => {
     setIsLoading(true);
     try {
-      const response = await apiService.post('/auth/signup', userData);
+      const response = await api.post('/auth/signup', userData);
       if (response.data && response.data.status === 'success') {
         setUser(response.data.data.user);
         setIsAuthenticated(true);
@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     setIsLoading(true);
     try {
-      await apiService.get('/auth/logout'); // Call backend logout to clear cookie
+      await api.get('/auth/logout'); // Call backend logout to clear cookie
     } catch (error) {
       console.error('Logout API call failed:', error);
       // Still proceed with local logout even if API fails

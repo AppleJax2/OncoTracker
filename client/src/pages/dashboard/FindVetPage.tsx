@@ -1,7 +1,7 @@
 // Placeholder FindVetPage Component
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import apiService from '../../services/apiService';
+import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { User } from '../../types';
 import { MagnifyingGlassIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
@@ -37,7 +37,7 @@ const FindVetPage: React.FC = () => {
         setRequestStatus({}); // Clear previous request statuses
         setRequestError(null);
         try {
-            const response = await apiService.get(`/link-requests/find-vets?searchTerm=${encodeURIComponent(term)}`);
+            const response = await api.get(`/link-requests/find-vets?searchTerm=${encodeURIComponent(term)}`);
             if (response.data?.status === 'success') {
                 setResults(response.data.data.vets);
                 if (response.data.data.vets.length === 0) {
@@ -62,7 +62,7 @@ const FindVetPage: React.FC = () => {
         setRequestStatus(prev => ({ ...prev, [vetId]: 'sending' }));
         setRequestError(null);
         try {
-            await apiService.post('/link-requests', { vetId, petId });
+            await api.post('/link-requests', { vetId, petId });
             setRequestStatus(prev => ({ ...prev, [vetId]: 'success' }));
         } catch (err: any) {
             setRequestStatus(prev => ({ ...prev, [vetId]: 'error' }));

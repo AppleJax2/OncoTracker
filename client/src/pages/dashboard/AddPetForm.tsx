@@ -1,8 +1,9 @@
 // Placeholder AddPetForm Component
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiService from '../../services/apiService';
+import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useAuth } from '../../contexts/AuthContext';
 
 const AddPetForm: React.FC = () => {
   const navigate = useNavigate();
@@ -50,14 +51,12 @@ const AddPetForm: React.FC = () => {
     if (!isNaN(weight)) payload.weightKg = weight;
     if (formData.diagnosis) payload.diagnosis = formData.diagnosis;
 
+    console.log('Submitting pet data:', payload);
+    setLoading(true);
     try {
-      const response = await apiService.post('/pets', payload);
-      if (response.data && response.data.status === 'success') {
-        // Navigate to the new pet's detail page or back to dashboard
-        navigate(`/owner/pets/${response.data.data.pet._id}`);
-      } else {
-        throw new Error(response.data?.message || 'Failed to add pet');
-      }
+      const response = await api.post('/pets', payload);
+      console.log('Pet added:', response.data);
+      navigate('/dashboard/owner');
     } catch (err: any) {
       console.error('Error adding pet:', err);
       const message = err?.response?.data?.message || err.message || 'Could not add pet. Please try again.';

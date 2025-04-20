@@ -1,7 +1,7 @@
 // Placeholder ReportForm Component
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import apiService from '../../services/apiService';
+import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { Pet, VCOGDefinition } from '../../types';
 import { getSimplifiedVCOG } from '../../utils/vcogUtils'; // Assume utility exists
@@ -32,7 +32,7 @@ const ReportForm: React.FC = () => {
             setLoadingPet(true);
             setError(null);
             try {
-                const response = await apiService.get(`/pets/${petId}`);
+                const response = await api.get(`/pets/${petId}`);
                 if (response.data?.status === 'success') {
                     const fetchedPet: Pet = response.data.data.pet;
                     setPet(fetchedPet);
@@ -84,9 +84,9 @@ const ReportForm: React.FC = () => {
         };
 
         try {
-            const response = await apiService.post(`/pets/${petId}/reports`, reportPayload);
+            const response = await api.post(`/pets/${petId}/reports`, reportPayload);
             if (response.data?.status === 'success') {
-                navigate(`/owner/pets/${petId}`); // Navigate back to pet detail on success
+                navigate(`/dashboard/owner/pets/${petId}`); // Navigate back to pet detail on success
             } else {
                 throw new Error(response.data?.message || 'Failed to submit report');
             }

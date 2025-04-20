@@ -1,7 +1,7 @@
 // Placeholder VetNotesSection component
 import React, { useState } from 'react';
 import { VetNote } from '../../types';
-import apiService from '../../services/apiService';
+import api from '../../services/api';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { TrashIcon } from '@heroicons/react/24/solid';
 
@@ -25,9 +25,9 @@ const VetNotesSection: React.FC<VetNotesSectionProps> = ({ petId, notes, loading
     setSubmitting(true);
     setError(null);
     try {
-      await apiService.post(`/pets/${petId}/vetnotes`, { note: newNote });
-      setNewNote(''); // Clear input
+      await api.post(`/pets/${petId}/vetnotes`, { note: newNote });
       onNoteChange(); // Trigger refresh in parent
+      setNewNote(''); // Clear input
     } catch (err: any) {
       setError(err?.response?.data?.message || err.message || 'Failed to add note.');
     } finally {
@@ -36,14 +36,14 @@ const VetNotesSection: React.FC<VetNotesSectionProps> = ({ petId, notes, loading
   };
 
   const handleDeleteNote = async (noteId: string) => {
-      if (!window.confirm('Are you sure you want to delete this note?')) return;
-      // Note: We might want a less disruptive loading indicator here
-      try {
-          await apiService.delete(`/pets/${petId}/vetnotes/${noteId}`);
-          onNoteChange();
-      } catch (err: any) {           
-          setError(err?.response?.data?.message || err.message || 'Failed to delete note.');
-      }
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
+    // Note: We might want a less disruptive loading indicator here
+    try {
+      await api.delete(`/pets/${petId}/vetnotes/${noteId}`);
+      onNoteChange();
+    } catch (err: any) {           
+      setError(err?.response?.data?.message || err.message || 'Failed to delete note.');
+    }
   };
 
   const formatDate = (dateString?: string) => {

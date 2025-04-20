@@ -1,25 +1,24 @@
 // Placeholder VetDashboard Component
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-// import { useAuth } from '../../contexts/AuthContext'; // Removed unused import
-import apiService from '../../services/apiService';
+import { Pet } from '../../types';
+import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { Pet } from '../../types'; 
 import { UserGroupIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../../contexts/AuthContext';
 
 const VetDashboard: React.FC = () => {
   const [patients, setPatients] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const { user } = useAuth(); // Removed unused variable
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchPatients = async () => {
       setLoading(true);
       setError(null);
       try {
-        // The backend GET /api/pets route automatically filters for the logged-in vet
-        const response = await apiService.get('/pets'); 
+        const response = await api.get('/pets');
         if (response.data && response.data.status === 'success') {
           setPatients(response.data.data.pets);
         } else {
