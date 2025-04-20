@@ -2,10 +2,25 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { 
+  Box, 
+  Container, 
+  TextField, 
+  Button, 
+  Typography, 
+  Paper, 
+  InputAdornment, 
+  IconButton,
+  Alert,
+  Divider,
+  Stack
+} from '@mui/material';
+import { Visibility, VisibilityOff, Email, Lock, Pets } from '@mui/icons-material';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -47,92 +62,163 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-            Sign in to your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 50%, #01579b 100%)',
+        py: 8,
+        px: 2,
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={4}
+          sx={{
+            p: { xs: 4, md: 6 },
+            borderRadius: 2,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          }}
+        >
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Pets 
+              sx={{ 
+                fontSize: 56, 
+                color: '#1a237e',
+                mb: 2
+              }} 
+            />
+            <Typography 
+              variant="h4" 
+              component="h1" 
+              fontWeight={700}
+              color="primary.dark"
+              gutterBottom
+            >
+              Welcome Back
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Sign in to access your OncoTracker account
+            </Typography>
+          </Box>
+
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <strong className="font-bold">Error: </strong>
-              <span className="block sm:inline">{error}</span>
-            </div>
+            <Alert 
+              severity="error" 
+              sx={{ mb: 3, borderRadius: 1 }}
+            >
+              {error}
+            </Alert>
           )}
-          <input type="hidden" name="remember" defaultValue="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
-              <input
+
+          <form onSubmit={handleSubmit}>
+            <Stack spacing={3}>
+              <TextField
+                fullWidth
                 id="email-address"
                 name="email"
                 type="email"
+                label="Email Address"
+                variant="outlined"
                 autoComplete="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-t-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email color="action" />
+                    </InputAdornment>
+                  ),
+                }}
               />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
+
+              <TextField
+                fullWidth
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
+                label="Password"
+                variant="outlined"
                 autoComplete="current-password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-b-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleTogglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
-            </div>
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              {/* Add Forgot Password link later */}
-              {/* <a href="#" className="font-medium text-sky-600 hover:text-sky-500">
-                Forgot your password?
-              </a> */}
-            </div>
-          </div>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                disabled={loading}
+                sx={{ 
+                  py: 1.5,
+                  mt: 1,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  boxShadow: 2
+                }}
+              >
+                {loading ? <LoadingSpinner size="small" color="inherit" /> : 'Sign In'}
+              </Button>
+            </Stack>
+          </form>
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          <Divider sx={{ my: 4 }}>
+            <Typography variant="body2" color="text.secondary">
+              OR
+            </Typography>
+          </Divider>
+          
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              Don't have an account?
+            </Typography>
+            <Button
+              component={Link}
+              to="/signup"
+              variant="outlined"
+              fullWidth
+              sx={{ 
+                py: 1.2,
+                textTransform: 'none',
+                fontSize: '1rem'
+              }}
             >
-              {loading ? (
-                <LoadingSpinner size="small" color="inherit" />
-              ) : (
-                'Sign in'
-              )}
-            </button>
-          </div>
-        </form>
-        <div className="text-sm text-center">
-          <p className="text-slate-600">
-            Don't have an account?
-            <Link to="/signup" className="font-medium text-sky-600 hover:text-sky-500 ml-1">
-              Sign up
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+              Create Account
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

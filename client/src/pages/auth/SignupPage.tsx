@@ -1,27 +1,82 @@
 // Placeholder SignupPage Component
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, ChangeEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { 
+  Box, 
+  Container, 
+  TextField, 
+  Button, 
+  Typography, 
+  Paper, 
+  InputAdornment, 
+  IconButton,
+  Alert,
+  Divider,
+  Stack,
+  Grid,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Stepper,
+  Step,
+  StepLabel
+} from '@mui/material';
+import { 
+  Visibility, 
+  VisibilityOff, 
+  Email, 
+  Lock, 
+  Person, 
+  Business, 
+  Pets 
+} from '@mui/icons-material';
 
 const SignupPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     passwordConfirm: '',
-    role: 'owner', // Default to owner
+    role: 'owner' as 'owner' | 'vet', // Typed role
     clinicName: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
 
   const { firstName, lastName, email, password, passwordConfirm, role, clinicName } = formData;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const steps = ['Account Type', 'Personal Information', 'Create Password'];
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleNext = () => {
+    if (activeStep === 0 && role === 'vet' && !clinicName.trim()) {
+      setError('Clinic name is required for veterinarian accounts.');
+      return;
+    }
+    
+    setError(null);
+    setActiveStep((prevStep) => prevStep + 1);
+  };
+
+  const handleBack = () => {
+    setError(null);
+    setActiveStep((prevStep) => prevStep - 1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,25 +87,27 @@ const SignupPage: React.FC = () => {
       setError('Passwords do not match');
       return;
     }
+    
     if (role === 'vet' && !clinicName.trim()) {
-        setError('Clinic name is required for veterinarian accounts.');
-        return;
+      setError('Clinic name is required for veterinarian accounts.');
+      return;
     }
+    
     // Add more validation as needed (e.g., password strength)
-
     setLoading(true);
     try {
       const userData = {
-          firstName,
-          lastName,
-          email,
-          password,
-          passwordConfirm,
-          role,
-          ...(role === 'vet' && { clinicName })
+        firstName,
+        lastName,
+        email,
+        password,
+        passwordConfirm,
+        role,
+        ...(role === 'vet' && { clinicName })
       };
       await signup(userData);
-      // Navigate after successful signup (context update should trigger route redirects)
+      // Navigate to login after successful signup
+      navigate('/login');
     } catch (err: any) {
       console.error('Signup Failed:', err);
       const message = err?.response?.data?.message || err.message || 'Signup failed. Please try again.';
@@ -60,111 +117,327 @@ const SignupPage: React.FC = () => {
     }
   };
 
+  const validateStep = () => {
+    if (activeStep === 0) {
+      return role && (role !== 'vet' || clinicName.trim() !== '');
+    } else if (activeStep === 1) {
+      return firstName.trim() !== '' && lastName.trim() !== '' && email.trim() !== '';
+    } else {
+      return password !== '' && passwordConfirm !== '' && password === passwordConfirm;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-lg">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
-            Create your account
-          </h2>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 50%, #01579b 100%)',
+        py: 8,
+        px: 2,
+      }}
+    >
+      <Container maxWidth="md">
+        <Paper
+          elevation={4}
+          sx={{
+            p: { xs: 4, md: 6 },
+            borderRadius: 2,
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          }}
+        >
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Pets 
+              sx={{ 
+                fontSize: 56, 
+                color: '#1a237e',
+                mb: 2
+              }} 
+            />
+            <Typography 
+              variant="h4" 
+              component="h1" 
+              fontWeight={700}
+              color="primary.dark"
+              gutterBottom
+            >
+              Create Your Account
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Join OncoTracker to manage pet cancer care effectively
+            </Typography>
+          </Box>
+
+          <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <strong className="font-bold">Error: </strong>
-              <span className="block sm:inline">{error}</span>
-            </div>
-          )}
-          
-          {/* Role Selection */}
-          <div className="rounded-md shadow-sm">
-            <label htmlFor="role" className="block text-sm font-medium text-slate-700 mb-1">I am a:</label>
-            <select
-              id="role"
-              name="role"
-              value={role}
-              onChange={handleChange}
-              required
-              disabled={loading}
-              className="appearance-none relative block w-full px-3 py-2 border border-slate-300 bg-white placeholder-slate-500 text-slate-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm"
+            <Alert 
+              severity="error" 
+              sx={{ mb: 3, borderRadius: 1 }}
             >
-              <option value="owner">Pet Owner</option>
-              <option value="vet">Veterinarian</option>
-            </select>
-          </div>
-
-          {/* Common Fields */}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="firstName" className="sr-only">First Name</label>
-              <input id="firstName" name="firstName" type="text" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-t-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="First Name" value={firstName} onChange={handleChange} disabled={loading} />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="sr-only">Last Name</label>
-              <input id="lastName" name="lastName" type="text" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Last Name" value={lastName} onChange={handleChange} disabled={loading} />
-            </div>
-            <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
-              <input id="email-address" name="email" type="email" autoComplete="email" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Email address" value={email} onChange={handleChange} disabled={loading} />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input id="password" name="password" type="password" autoComplete="new-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Password (min 8 characters)" value={password} onChange={handleChange} disabled={loading} />
-            </div>
-            <div>
-              <label htmlFor="passwordConfirm" className="sr-only">Confirm Password</label>
-              <input id="passwordConfirm" name="passwordConfirm" type="password" autoComplete="new-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-b-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" placeholder="Confirm Password" value={passwordConfirm} onChange={handleChange} disabled={loading} />
-            </div>
-          </div>
-
-          {/* Vet Specific Field */}
-          {role === 'vet' && (
-            <div className="rounded-md shadow-sm">
-               <label htmlFor="clinicName" className="sr-only">Clinic Name</label>
-               <input 
-                 id="clinicName" 
-                 name="clinicName" 
-                 type="text" 
-                 required={role === 'vet'} 
-                 className="appearance-none relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 rounded-md focus:outline-none focus:ring-sky-500 focus:border-sky-500 focus:z-10 sm:text-sm" 
-                 placeholder="Clinic Name" 
-                 value={clinicName} 
-                 onChange={handleChange} 
-                 disabled={loading} 
-               />
-            </div>
+              {error}
+            </Alert>
           )}
-          
+
+          <form onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
+            {activeStep === 0 && (
+              <Stack spacing={3}>
+                <FormControl component="fieldset">
+                  <FormLabel component="legend" sx={{ mb: 2, fontWeight: 500 }}>
+                    I am registering as:
+                  </FormLabel>
+                  <RadioGroup
+                    name="role"
+                    value={role}
+                    onChange={handleChange}
+                    row
+                  >
+                    <FormControlLabel 
+                      value="owner" 
+                      control={<Radio />} 
+                      label="Pet Owner" 
+                      sx={{ mr: 4 }}
+                    />
+                    <FormControlLabel 
+                      value="vet" 
+                      control={<Radio />} 
+                      label="Veterinarian" 
+                    />
+                  </RadioGroup>
+                </FormControl>
+
+                {role === 'vet' && (
+                  <TextField
+                    fullWidth
+                    id="clinicName"
+                    name="clinicName"
+                    label="Clinic Name"
+                    variant="outlined"
+                    required={role === 'vet'}
+                    value={clinicName}
+                    onChange={handleChange}
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Business color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                )}
+              </Stack>
+            )}
+
+            {activeStep === 1 && (
+              <Stack spacing={3}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      id="firstName"
+                      name="firstName"
+                      label="First Name"
+                      variant="outlined"
+                      required
+                      value={firstName}
+                      onChange={handleChange}
+                      disabled={loading}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Person color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      id="lastName"
+                      name="lastName"
+                      label="Last Name"
+                      variant="outlined"
+                      required
+                      value={lastName}
+                      onChange={handleChange}
+                      disabled={loading}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Person color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+
+                <TextField
+                  fullWidth
+                  id="email-address"
+                  name="email"
+                  type="email"
+                  label="Email Address"
+                  variant="outlined"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={handleChange}
+                  disabled={loading}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Email color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+            )}
+
+            {activeStep === 2 && (
+              <Stack spacing={3}>
+                <TextField
+                  fullWidth
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  label="Password"
+                  variant="outlined"
+                  autoComplete="new-password"
+                  required
+                  value={password}
+                  onChange={handleChange}
+                  disabled={loading}
+                  helperText="Password must be at least 8 characters"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock color="action" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleTogglePasswordVisibility}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
+                <TextField
+                  fullWidth
+                  id="passwordConfirm"
+                  name="passwordConfirm"
+                  type={showPassword ? 'text' : 'password'}
+                  label="Confirm Password"
+                  variant="outlined"
+                  autoComplete="new-password"
+                  required
+                  value={passwordConfirm}
+                  onChange={handleChange}
+                  disabled={loading}
+                  error={password !== passwordConfirm && passwordConfirm !== ''}
+                  helperText={
+                    password !== passwordConfirm && passwordConfirm !== ''
+                      ? 'Passwords do not match'
+                      : ''
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Lock color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+            )}
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+              <Button
+                onClick={handleBack}
+                disabled={activeStep === 0 || loading}
+                variant="outlined"
+                sx={{ textTransform: 'none', px: 3 }}
+              >
+                Back
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={loading || !validateStep()}
+                sx={{ 
+                  py: 1.2,
+                  px: 4,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 600
+                }}
+              >
+                {loading ? (
+                  <LoadingSpinner size="small" color="inherit" />
+                ) : activeStep === steps.length - 1 ? (
+                  'Create Account'
+                ) : (
+                  'Next'
+                )}
+              </Button>
+            </Box>
+          </form>
+
           {role === 'vet' && (
-            <p className="text-xs text-slate-500 text-center">
+            <Typography 
+              variant="body2" 
+              color="text.secondary" 
+              sx={{ mt: 3, textAlign: 'center' }}
+            >
               Veterinarian accounts require manual verification before full access is granted.
-            </p>
+            </Typography>
           )}
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          <Divider sx={{ my: 4 }}>
+            <Typography variant="body2" color="text.secondary">
+              OR
+            </Typography>
+          </Divider>
+          
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              Already have an account?
+            </Typography>
+            <Button
+              component={Link}
+              to="/login"
+              variant="outlined"
+              fullWidth
+              sx={{ 
+                py: 1.2,
+                textTransform: 'none',
+                fontSize: '1rem'
+              }}
             >
-              {loading ? (
-                <LoadingSpinner size="small" color="inherit" />
-              ) : (
-                'Sign up'
-              )}
-            </button>
-          </div>
-        </form>
-        <div className="text-sm text-center">
-          <p className="text-slate-600">
-            Already have an account?
-            <Link to="/login" className="font-medium text-sky-600 hover:text-sky-500 ml-1">
-              Sign in
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
+              Sign In
+            </Button>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 };
 

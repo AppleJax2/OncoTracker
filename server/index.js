@@ -54,13 +54,26 @@ app.use(cors({
     
     // For requests without origin (like mobile apps, curl, etc)
     if (!origin) {
-      console.log('Request without origin accepted');
+      // Log only once per server start
+      if (!global.originlessRequestLogged) {
+        console.log('Request without origin accepted');
+        global.originlessRequestLogged = true;
+      }
       return callback(null, true);
     }
     
     // Check if the origin is allowed
     if (allowedOrigins.includes(origin)) {
-      console.log(`CORS: Allowing origin: ${origin}`);
+      // Only log new origins to reduce spam
+      if (!global.loggedOrigins) {
+        global.loggedOrigins = new Set();
+      }
+      
+      if (!global.loggedOrigins.has(origin)) {
+        console.log(`CORS: Allowing origin: ${origin}`);
+        global.loggedOrigins.add(origin);
+      }
+      
       return callback(null, true);
     } else {
       console.warn(`CORS: Rejected request from disallowed origin: ${origin}`);
