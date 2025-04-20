@@ -40,8 +40,36 @@ mongoose.connect(DB, {
 
 // Basic middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:5173',
-  credentials: true
+  origin: function(origin, callback) {
+    // Define allowed origins
+    const allowedOrigins = [
+      'https://oncotracker.netlify.app', // Netlify production
+      'http://localhost:5173',           // Local development
+    ];
+    
+    // Add dynamic origins based on environment variables if provided
+    if (process.env.CLIENT_URL) {
+      allowedOrigins.push(process.env.CLIENT_URL);
+    }
+    
+    // For requests without origin (like mobile apps, curl, etc)
+    if (!origin) {
+      console.log('Request without origin accepted');
+      return callback(null, true);
+    }
+    
+    // Check if the origin is allowed
+    if (allowedOrigins.includes(origin)) {
+      console.log(`CORS: Allowing origin: ${origin}`);
+      return callback(null, true);
+    } else {
+      console.warn(`CORS: Rejected request from disallowed origin: ${origin}`);
+      return callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
 }));
 
 app.use(express.json({ limit: '10kb' }));
@@ -68,45 +96,71 @@ app.get('/api', (req, res) => {
 });
 
 if (process.env.NODE_ENV === 'production') {
-  console.log('Setting up static assets for production...');
-  
-  // Use environment variable or fallback to relative path
-  const clientDistPath = process.env.CLIENT_DIST_PATH || path.join(__dirname, '../client/dist');
-  
-  // Log the path for debugging purposes
-  console.log('Client dist path:', clientDistPath);
-  
-  // Check if directory exists
-  if (!fs.existsSync(clientDistPath)) {
-    console.warn(`WARNING: Client dist directory not found at ${clientDistPath}`);
-  }
-  
-  app.use(express.static(clientDistPath));
-  
-  app.get('*', (req, res, next) => {
-    if (req.originalUrl.startsWith('/api/')) {
-       return next();
-    }
-    console.log('Serving SPA index.html for path:', req.originalUrl);
-    const indexPath = path.join(clientDistPath, 'index.html');
+  // Only attempt to serve SPA if explicitly configured to do so
+  // This allows for split deployment where frontend is on Netlify and backend on Render
+  if (process.env.SERVE_SPA === 'true') {
+    console.log('Setting up static assets for production SPA...');
     
-    // Check if file exists first
-    if (!fs.existsSync(indexPath)) {
-      console.error(`ERROR: index.html not found at ${indexPath}`);
-      return next(new AppError('Client application not found', 404));
-    }
+    // Use environment variable or fallback to relative path
+    const clientDistPath = process.env.CLIENT_DIST_PATH || path.join(__dirname, '../client/dist');
     
-    res.sendFile(indexPath, (err) => {
-        if (err) {
-            console.error('ERROR 💥 Serving index.html:', err);
-            if (err.code === 'ENOENT') {
-                 next(new AppError('Client application not found', 404));
-            } else {
-                 next(err);
-            }
+    // Log the path for debugging purposes
+    console.log('Client dist path:', clientDistPath);
+    
+    // Check if directory exists
+    if (!fs.existsSync(clientDistPath)) {
+      console.warn(`WARNING: Client dist directory not found at ${clientDistPath}`);
+      console.warn('If you are using a split deployment (frontend on Netlify, backend on Render),');
+      console.warn('you should set SERVE_SPA=false or simply not set it.');
+    } else {
+      app.use(express.static(clientDistPath));
+      
+      app.get('*', (req, res, next) => {
+        if (req.originalUrl.startsWith('/api/')) {
+           return next();
         }
+        console.log('Serving SPA index.html for path:', req.originalUrl);
+        const indexPath = path.join(clientDistPath, 'index.html');
+        
+        // Check if file exists first
+        if (!fs.existsSync(indexPath)) {
+          console.error(`ERROR: index.html not found at ${indexPath}`);
+          return next(new AppError('Client application not found', 404));
+        }
+        
+        res.sendFile(indexPath, (err) => {
+            if (err) {
+                console.error('ERROR 💥 Serving index.html:', err);
+                if (err.code === 'ENOENT') {
+                     next(new AppError('Client application not found', 404));
+                } else {
+                     next(err);
+                }
+            }
+        });
+      });
+    }
+  } else {
+    console.log('Running in API-only mode - not serving static assets');
+    console.log('For frontend requests, make sure CORS is configured correctly');
+    
+    // Add a route to handle SPA requests that mistakenly come to the API server
+    app.get('*', (req, res, next) => {
+      // Skip API routes
+      if (req.originalUrl.startsWith('/api/')) {
+        return next();
+      }
+      
+      // Return a more helpful error for frontend routes
+      return next(
+        new AppError(
+          'This server is configured to only handle API requests. ' +
+          'Frontend requests should go to the static hosting service (e.g., Netlify).',
+          404
+        )
+      );
     });
-  });
+  }
 }
 
 app.all('*', (req, res, next) => {
