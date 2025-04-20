@@ -140,14 +140,20 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  // Clear the JWT cookie
+  // Clear the JWT cookie (keeping for backward compatibility)
   res.cookie('jwt', 'loggedout', {
     expires: new Date(Date.now() + 10 * 1000), // Expire in 10 seconds
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   });
-  res.status(200).json({ status: 'success' });
+  
+  // With token-based auth, most of the logout logic happens client-side
+  // by removing the token from localStorage
+  res.status(200).json({ 
+    status: 'success',
+    message: 'Logged out successfully' 
+  });
 };
 
 // Add other auth-related functions like password reset later if needed 

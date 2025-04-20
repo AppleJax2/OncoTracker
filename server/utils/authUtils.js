@@ -12,19 +12,16 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
+  // We'll still set the cookie for backward compatibility
+  // but also return the token in the response body
   const cookieOptions = {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true, // Prevent XSS attacks
     secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-    sameSite: 'none', // Changed from 'lax' to 'none' to allow cross-domain cookies in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Keep this for backward compatibility
   };
-
-  // In development, don't set sameSite to 'none' as it requires secure: true
-  if (process.env.NODE_ENV !== 'production') {
-    cookieOptions.sameSite = 'lax';
-  }
 
   res.cookie('jwt', token, cookieOptions);
 
@@ -33,7 +30,7 @@ const createSendToken = (user, statusCode, res) => {
 
   res.status(statusCode).json({
     status: 'success',
-    token,
+    token, // Explicitly include the token in the response body
     data: {
       user,
     },

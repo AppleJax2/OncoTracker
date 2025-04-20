@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import { useLocation } from 'react-router-dom'; // Import useLocation
 import api from '../services/api'; // Adjusted import
 import { User } from '../types'; // Assuming a User type exists
+import { removeAuthToken, setAuthToken } from '../services/auth'; // Update import to include setAuthToken
 
 interface AuthContextType {
   user: User | null;
@@ -60,11 +61,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: { email: string; password: string }): Promise<User | null> => {
     setIsLoading(true);
     try {
-      const response = await api.post<{ data: { user: User }, status: string, message?: string }>('/api/auth/login', credentials);
+      const response = await api.post<{ data: { user: User }, token: string, status: string, message?: string }>('/api/auth/login', credentials);
 
       // Check if the expected user data is present in the response
       if (response.data && response.data.data && response.data.data.user) {
         const userData = response.data.data.user;
+        
+        // Store the token in localStorage if it exists in the response
+        if (response.data.token) {
+          setAuthToken(response.data.token);
+        }
+        
         setUser(userData);
         setIsAuthenticated(true);
         return userData;
@@ -85,6 +92,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await api.post('/api/auth/signup', userData);
       if (response.data && response.data.status === 'success') {
+        // Store the token in localStorage if it exists in the response
+        if (response.data.token) {
+          setAuthToken(response.data.token);
+        }
+        
         setUser(response.data.data.user);
         setIsAuthenticated(true);
       } else {
@@ -106,6 +118,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       // Still proceed with local logout even if API fails
     } finally {
+      // Clear token from localStorage
+      removeAuthToken();
       setUser(null);
       setIsAuthenticated(false);
       setIsLoading(false);

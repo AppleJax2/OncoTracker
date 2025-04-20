@@ -5,7 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://oncotracker.onrender.co
 const baseURL = API_URL;
 
 console.log('=== API CONFIGURATION ===');
-console.log('API_URL from env:', import.meta.env.VITE_API_URL || 'Not set');
+console.log('API_URL from env:', API_URL);
 console.log('Using API baseURL:', baseURL);
 
 // Create an axios instance
@@ -14,14 +14,27 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
-  withCredentials: true, // Enable sending cookies with requests
+  withCredentials: true, // Keep this for backward compatibility
   // Set a timeout to avoid hanging requests
   timeout: 15000,
 });
 
+// Function to get the token from localStorage
+const getAuthToken = (): string | null => {
+  return localStorage.getItem('authToken');
+};
+
 // Add a request interceptor
 api.interceptors.request.use(
   (config) => {
+    // Get the token from localStorage
+    const token = getAuthToken();
+    
+    // If token exists, add to headers
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    
     return config;
   },
   (error) => {
@@ -44,7 +57,8 @@ api.interceptors.response.use(
 
     // Handle authentication errors
     if (error.response.status === 401) {
-      // No need to remove localStorage token - using cookies
+      // Clear token from localStorage
+      localStorage.removeItem('authToken');
       window.location.href = '/login';
     }
 
