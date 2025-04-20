@@ -18,7 +18,7 @@ const createSendToken = (user, statusCode, res) => {
     ),
     httpOnly: true, // Prevent XSS attacks
     secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-    sameSite: 'strict', // Prevent CSRF attacks
+    sameSite: 'lax', // Changed from 'strict' to 'lax' to allow cross-origin cookies
   };
 
   res.cookie('jwt', token, cookieOptions);

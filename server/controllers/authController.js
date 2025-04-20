@@ -144,7 +144,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000), // Expire in 10 seconds
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    sameSite: 'lax'
   });
   res.status(200).json({ status: 'success' });
 };

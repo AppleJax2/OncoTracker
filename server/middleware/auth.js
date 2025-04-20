@@ -4,8 +4,21 @@ const User = require('../models/User');
 // Middleware to authenticate token
 const auth = async (req, res, next) => {
   try {
-    // Get token from header
-    const token = req.header('x-auth-token');
+    // Get token from cookie or header
+    let token = null;
+    
+    // First check cookie (preferred method)
+    if (req.cookies && req.cookies.jwt) {
+      token = req.cookies.jwt;
+    } 
+    // Fallback to header for backward compatibility
+    else if (req.header('x-auth-token')) {
+      token = req.header('x-auth-token');
+    }
+    // Also check Authorization header for Bearer token
+    else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
     
     // Check if no token
     if (!token) {
