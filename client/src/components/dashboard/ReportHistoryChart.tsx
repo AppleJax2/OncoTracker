@@ -1,6 +1,6 @@
 // Placeholder ReportHistoryChart component
 import React, { useEffect, useRef } from 'react';
-import { Report, ReportEntry } from '../../types';
+import { Report } from '../../types';
 import { Chart, registerables } from 'chart.js';
 
 // Register Chart.js components
@@ -81,6 +81,7 @@ const ReportHistoryChart: React.FC<ReportHistoryChartProps> = ({ reports }) => {
       tension: 0.4,
       pointRadius: 5,
       pointHoverRadius: 7,
+      // @ts-ignore - chart.js type definitions might be incomplete/outdated for borderDash
       borderDash: [5, 5], // Dashed line for overall wellbeing
     });
   }

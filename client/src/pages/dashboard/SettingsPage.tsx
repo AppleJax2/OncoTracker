@@ -15,9 +15,7 @@ const SettingsPage: React.FC = () => {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     email: user?.email || '',
-    phone: user?.phone || '',
     clinicName: user?.clinicName || '',
-    bio: user?.bio || '',
   });
 
   // Notification preferences state
@@ -257,22 +255,6 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="sm:col-span-3">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                      Phone number
-                    </label>
-                    <div className="mt-1">
-                      <input
-                        type="text"
-                        name="phone"
-                        id="phone"
-                        value={profile.phone}
-                        onChange={handleProfileChange}
-                        className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                  </div>
-
                   {user?.role === 'vet' && (
                     <div className="sm:col-span-6">
                       <label htmlFor="clinicName" className="block text-sm font-medium text-gray-700">
@@ -290,25 +272,6 @@ const SettingsPage: React.FC = () => {
                       </div>
                     </div>
                   )}
-
-                  <div className="sm:col-span-6">
-                    <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
-                      Bio
-                    </label>
-                    <div className="mt-1">
-                      <textarea
-                        id="bio"
-                        name="bio"
-                        rows={3}
-                        value={profile.bio}
-                        onChange={handleProfileChange}
-                        className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-                    <p className="mt-2 text-sm text-gray-500">
-                      Brief description for your profile.
-                    </p>
-                  </div>
                 </div>
               </div>
 
