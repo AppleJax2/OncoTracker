@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: { email: string; password: string }) => {
     setIsLoading(true);
     try {
-      const response = await api.post('/auth/login', credentials);
+      const response = await api.post('/api/auth/login', credentials);
       if (response.data && response.data.status === 'success') {
         setUser(response.data.data.user);
         setIsAuthenticated(true);
@@ -92,7 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signup = async (userData: any) => {
     setIsLoading(true);
     try {
-      const response = await api.post('/auth/signup', userData);
+      const response = await api.post('/api/auth/signup', userData);
       if (response.data && response.data.status === 'success') {
         setUser(response.data.data.user);
         setIsAuthenticated(true);
@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     setIsLoading(true);
     try {
-      await api.get('/auth/logout'); // Call backend logout to clear cookie
+      await api.get('/api/auth/logout');
     } catch (error) {
       console.error('Logout API call failed:', error);
       // Still proceed with local logout even if API fails
