@@ -62,22 +62,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: { email: string; password: string }): Promise<User | null> => {
     setIsLoading(true);
     try {
-      const response = await api.post<{ data: { user: User }, token: string, status: string, message?: string }>('/api/auth/login', credentials);
+      // Accept any response structure and then determine format
+      const response = await api.post('/api/auth/login', credentials);
+      console.log('Login response:', response.data); // Add debug logging
 
-      // Correct check based on backend structure in createSendToken
-      if (response.data?.data?.user && response.data?.token) {
-        const userData = response.data.data.user; 
+      let userData = null;
+      let token = null;
 
+      // Handle different possible response structures
+      if (response.data?.data?.user) {
+        // Format: { data: { user: {...} }, token: "..." }
+        userData = response.data.data.user;
+        token = response.data.token;
+      } else if (response.data?.user) {
+        // Format: { user: {...}, token: "..." }
+        userData = response.data.user;
+        token = response.data.token;
+      } else if (response.data?.data) {
+        // Try to find user object in data
+        userData = response.data.data;
+        token = response.data.token;
+      }
+
+      if (userData && token) {
         // Store the token in localStorage
-        setAuthToken(response.data.token);
+        setAuthToken(token);
         
         setUser(userData);
         setIsAuthenticated(true);
         return userData;
       } else {
-        throw new Error(response.data?.message || 'Login succeeded but received unexpected data structure.');
+        throw new Error(response.data?.message || 'Login succeeded but could not extract user data or token from response.');
       }
     } catch (error: any) {
+      console.error('Login error:', error); // Add debug logging
       setUser(null);
       setIsAuthenticated(false);
       throw error;
