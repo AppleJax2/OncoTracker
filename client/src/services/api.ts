@@ -22,21 +22,9 @@ const api = axios.create({
 // Add a request interceptor
 api.interceptors.request.use(
   (config) => {
-    console.log(`=== API REQUEST [${config.method?.toUpperCase()}] ${config.url} ===`);
-    
-    if (config.data) {
-      const safeData = {...config.data};
-      // Don't log passwords
-      if (safeData.password) safeData.password = '********';
-      console.log('Request data:', safeData);
-    }
-    
-    console.log('Request headers:', config.headers);
     return config;
   },
   (error) => {
-    console.error('=== REQUEST ERROR ===');
-    console.error('Error making request:', error.message);
     return Promise.reject(error);
   }
 );
@@ -44,43 +32,18 @@ api.interceptors.request.use(
 // Add a response interceptor to handle errors
 api.interceptors.response.use(
   (response) => {
-    console.log(`=== API RESPONSE [${response.status}] ${response.config.url} ===`);
-    console.log('Response data:', response.data);
     return response;
   },
   (error) => {
-    console.error('=== API ERROR ===');
-    
     // Handle network errors (no response received)
     if (!error.response) {
-      console.error('Network Error - No response received:', error.message);
-      console.error('Request was to:', error.config?.url);
-      console.error('Browser online status:', navigator.onLine);
-      
-      // Try to ping the API using fetch to check CORS
-      console.log('Attempting basic fetch to API root to check connectivity...');
-      fetch(baseURL + '/api')
-        .then(res => console.log('Fetch test succeeded:', res.status))
-        .catch(err => console.error('Fetch test failed:', err));
-      
       return Promise.reject({
         message: 'Network error. Please check your connection and CORS configuration.'
       });
     }
 
-    // Log detailed error information for debugging
-    console.error('API Error Details:', {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      headers: error.response?.headers,
-      data: error.response?.data
-    });
-
     // Handle authentication errors
     if (error.response.status === 401) {
-      console.warn('Authentication error (401) - redirecting to login');
       // No need to remove localStorage token - using cookies
       window.location.href = '/login';
     }
@@ -93,10 +56,8 @@ api.interceptors.response.use(
 export const testApiConnection = async () => {
   try {
     const response = await api.get('/api');
-    console.log('API connection test successful:', response.data);
     return { success: true, data: response.data };
   } catch (error) {
-    console.error('API connection test failed:', error);
     return { success: false, error };
   }
 };

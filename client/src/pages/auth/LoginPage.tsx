@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-// import AppError from '../../utils/appError'; // Removed unused import
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 
 const LoginPage: React.FC = () => {
@@ -16,45 +15,21 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    
-    console.log('=== LOGIN FORM SUBMIT ===');
-    console.log('Email:', email);
-    console.log('Password length:', password.length);
 
     try {
-      console.log('Calling login function from AuthContext...');
-      // The login function in AuthContext returns the user object on success
       const loggedInUser = await login({ email, password });
       
-      console.log('=== LOGIN COMPLETED ===');
-      console.log('Returned user data:', loggedInUser);
-
-      // Ensure loggedInUser is not null before navigating
       if (loggedInUser) {
-        console.log(`Will navigate to dashboard based on role: ${loggedInUser.role}`);
-        
-        // Introduce a small delay before navigation to ensure state updates
-        setTimeout(() => {
-          console.log('Navigating now...');
-          // Navigate based on role returned directly from the successful login call
-          if (loggedInUser.role === 'vet') {
-            navigate('/vet/dashboard');
-          } else {
-            navigate('/owner/dashboard');
-          }
-        }, 500);
+        // Navigate based on role
+        if (loggedInUser.role === 'vet') {
+          navigate('/vet/dashboard');
+        } else {
+          navigate('/owner/dashboard');
+        }
       } else {
-        // This case should ideally not happen if login() succeeded without error,
-        // but handle it defensively.
-        console.error('Login function returned null user data despite no errors!');
         setError('Login succeeded but failed to retrieve user data. Please try again.');
       }
     } catch (err: any) {
-      console.error('=== LOGIN ERROR IN PAGE ===');
-      console.error('Error type:', typeof err);
-      console.error('Error:', err);
-      console.error('Response data:', err?.response?.data);
-      
       // Attempt to get a user-friendly message from the error
       let message = 'Login failed. Please check your credentials.';
       
@@ -66,7 +41,6 @@ const LoginPage: React.FC = () => {
         message = 'You appear to be offline. Please check your internet connection.';
       }
       
-      console.error('Setting error message:', message);
       setError(message);
     } finally {
       setLoading(false);
