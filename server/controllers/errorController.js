@@ -10,8 +10,19 @@ const handleCastErrorDB = (err) => {
 
 // Handle Mongoose Duplicate Fields Error (e.g., unique email violation)
 const handleDuplicateFieldsDB = (err) => {
-  // Extract the duplicate field value using a regex
-  const value = err.errmsg.match(/(?<=")(?:\\"|[^"\\])*(?=")/)?.[0] || 'value';
+  // Different MongoDB driver versions might present the error differently
+  // Extract the duplicate field value using regex, with fallbacks for different error formats
+  let value;
+  if (err.errmsg) {
+    value = err.errmsg.match(/(?<=")(?:\\"|[^"\\])*(?=")/)?.[0];
+  } else if (err.keyValue) {
+    // Modern MongoDB driver puts duplicate key values in keyValue object
+    value = Object.values(err.keyValue)[0];
+  }
+  
+  // Fallback to a generic message if unable to extract the value
+  value = value || 'duplicate value';
+  
   const message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
 };

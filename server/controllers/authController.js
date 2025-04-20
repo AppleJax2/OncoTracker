@@ -2,6 +2,7 @@ const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync'); // Assuming a utility to wrap async functions
 const AppError = require('../utils/appError');
 const { createSendToken } = require('../utils/authUtils');
+const jwt = require('jsonwebtoken'); // Adding the missing import
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
