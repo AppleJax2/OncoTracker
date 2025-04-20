@@ -1,55 +1,134 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import { NetworkProvider } from './contexts/NetworkContext';
-import ProtectedRoute from './components/auth/ProtectedRoute';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
+// import { NetworkProvider } from './contexts/NetworkContext'; // Keep if needed, remove if not
 
-// Auth Pages
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
+// Layout Components
+import AppLayout from './components/layout/AppLayout'; // Assume a main layout component exists
 
-// Dashboard Pages
-import DashboardPage from './pages/dashboard/DashboardPage';
+// Common Components
+import LoadingSpinner from './components/common/LoadingSpinner'; // Assume a loading spinner exists
+
+// --- Page Imports (Create these files later) ---
 
 // Public Pages
-import StudyPage from './pages/public/StudyPage';
+import HomePage from './pages/public/HomePage'; // Create this
+import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage'; // Rename/create from RegisterPage
+
+// Owner Pages
+import OwnerDashboard from './pages/dashboard/OwnerDashboard'; // Create this
+import PetDetail from './pages/dashboard/PetDetail'; // Create this
+import ReportForm from './pages/dashboard/ReportForm'; // Create this
+import AddPetForm from './pages/dashboard/AddPetForm'; // Create this
+import FindVetPage from './pages/dashboard/FindVetPage'; // Create this
+
+// Vet Pages
+import VetDashboard from './pages/dashboard/VetDashboard'; // Create this
+import VetPatientDetail from './pages/dashboard/VetPatientDetail'; // Create this (can reuse PetDetail?)
+import LinkRequestsPage from './pages/dashboard/LinkRequestsPage'; // Create this
+
+// Common Protected Pages
+import SettingsPage from './pages/dashboard/SettingsPage'; // Create this
+import NotFoundPage from './pages/public/NotFoundPage'; // Create this
+
+// --- Protected Route Components ---
+
+// Component to handle redirects based on auth status
+const ProtectedRoute = () => {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>; // Full screen loader
+  }
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+};
+
+// Component to restrict access based on role
+const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
+  const { user, isLoading, isAuthenticated } = useAuth();
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>;
+  }
+
+  if (!isAuthenticated) {
+      return <Navigate to="/login" replace />;
+  }
+
+  // Check if user role is allowed
+  // Add vet verification check here too
+  const isAllowed = user && allowedRoles.includes(user.role);
+  const isVerifiedVet = user?.role !== 'vet' || user?.isVerified === true;
+
+  if (user && isAllowed && isVerifiedVet) {
+      return <Outlet />;
+  } else if (user && user.role === 'vet' && !user.isVerified) {
+      // Optional: Redirect unverified vets to a specific page
+      return <Navigate to="/vet-verification-pending" replace />;
+  } else {
+      // Redirect to a relevant dashboard or not found page if role doesn't match
+      const fallbackPath = user?.role === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
+      return <Navigate to={fallbackPath} replace />;
+  }
+};
 
 const App = () => {
+  const { isLoading } = useAuth();
+
+  // Optional: Show a global loading state while checking auth initially
+  // if (isLoading) {
+  //   return <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>;
+  // }
+
   return (
-    <Router>
-      <AuthProvider>
-        <NetworkProvider>
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/study/:accessToken" element={<StudyPage />} />
-            
-            {/* Protected Routes (use ProtectedRoute component as wrapper) */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              
-              {/* These routes will be implemented later */}
-              <Route path="/patients" element={<h1>Patients Page</h1>} />
-              <Route path="/patients/new" element={<h1>New Patient Page</h1>} />
-              <Route path="/patients/:id" element={<h1>Patient Details Page</h1>} />
-              
-              <Route path="/studies" element={<h1>All Studies Page</h1>} />
-              <Route path="/studies/active" element={<h1>Active Studies Page</h1>} />
-              <Route path="/studies/new" element={<h1>New Study Page</h1>} />
-              <Route path="/studies/:id" element={<h1>Study Details Page</h1>} />
-              
-              <Route path="/reports" element={<h1>Reports Page</h1>} />
-              <Route path="/archive" element={<h1>Archive Page</h1>} />
-              <Route path="/settings" element={<h1>Settings Page</h1>} />
+    // <NetworkProvider> // Keep if needed
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+
+        {/* Verification Pending Route (Example) */}
+        <Route path="/vet-verification-pending" element={<div><h1>Verification Pending</h1><p>Your veterinarian account is awaiting verification.</p></div>} />
+
+        {/* --- Protected Routes --- */}
+        <Route element={<ProtectedRoute />}> { /* Checks if logged in */}
+          <Route element={<AppLayout />}> { /* Wraps protected pages with common layout */}
+
+            {/* Owner Routes */}
+            <Route element={<RoleBasedRoute allowedRoles={['owner']} />}>
+              <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+              <Route path="/owner/pets/new" element={<AddPetForm />} />
+              <Route path="/owner/pets/:petId" element={<PetDetail />} />
+              <Route path="/owner/pets/:petId/report/new" element={<ReportForm />} />
+              <Route path="/owner/find-vets" element={<FindVetPage />} />
             </Route>
-            
-            {/* Redirect to login or dashboard */}
-            <Route path="/" element={<Navigate to="/dashboard" />} />
-            <Route path="*" element={<Navigate to="/dashboard" />} />
-          </Routes>
-        </NetworkProvider>
-      </AuthProvider>
-    </Router>
+
+            {/* Vet Routes */}
+            <Route element={<RoleBasedRoute allowedRoles={['vet']} />}>
+              <Route path="/vet/dashboard" element={<VetDashboard />} />
+              <Route path="/vet/patients/:petId" element={<VetPatientDetail />} />
+              <Route path="/vet/link-requests" element={<LinkRequestsPage />} />
+            </Route>
+
+            {/* Routes accessible by both authenticated owners and verified vets */}
+            <Route element={<RoleBasedRoute allowedRoles={['owner', 'vet']} />}>
+               <Route path="/settings" element={<SettingsPage />} />
+               {/* Add other shared authenticated routes here */}
+            </Route>
+
+            {/* Fallback redirect inside protected routes (if needed) */}
+            {/* <Route path="/dashboard" element={<Navigate based on role? />} /> */}
+
+          </Route> { /* End AppLayout */}
+        </Route> { /* End ProtectedRoute */}
+
+        {/* Not Found Route */}
+        <Route path="*" element={<NotFoundPage />} />
+
+      </Routes>
+    // </NetworkProvider>
   );
 };
 

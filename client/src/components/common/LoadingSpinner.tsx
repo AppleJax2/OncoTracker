@@ -1,57 +1,32 @@
+import React from 'react';
+
 interface LoadingSpinnerProps {
-  size?: 'sm' | 'md' | 'lg';
-  color?: string;
-  fullScreen?: boolean;
-  text?: string;
+  size?: 'small' | 'medium' | 'large';
+  color?: string; // e.g., 'text-sky-600'
+  className?: string; // Allow additional classes
 }
 
-const LoadingSpinner = ({ 
-  size = 'md', 
-  color = 'primary-600', 
-  fullScreen = false,
-  text = 'Loading...'
-}: LoadingSpinnerProps) => {
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
+  size = 'medium', 
+  color = 'text-sky-600', 
+  className = '' 
+}) => {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12'
+    small: 'h-5 w-5',
+    medium: 'h-8 w-8',
+    large: 'h-12 w-12',
   };
 
-  const spinner = (
-    <div className="flex flex-col items-center justify-center">
-      <svg 
-        className={`animate-spin ${sizeClasses[size]} text-${color}`} 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24"
-      >
-        <circle 
-          className="opacity-25" 
-          cx="12" 
-          cy="12" 
-          r="10" 
-          stroke="currentColor" 
-          strokeWidth="4"
-        ></circle>
-        <path 
-          className="opacity-75" 
-          fill="currentColor" 
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
-      </svg>
-      {text && <p className="mt-2 text-sm text-gray-600">{text}</p>}
+  return (
+    <div
+      className={`animate-spin rounded-full border-t-2 border-b-2 border-transparent ${sizeClasses[size]} ${color} ${className}`}
+      style={{ borderTopColor: 'currentColor', borderBottomColor: 'currentColor' }} // Use currentColor for spinner segments
+      role="status"
+      aria-live="polite"
+    >
+      <span className="sr-only">Loading...</span>
     </div>
   );
-
-  if (fullScreen) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
-        {spinner}
-      </div>
-    );
-  }
-
-  return spinner;
 };
 
 export default LoadingSpinner; 

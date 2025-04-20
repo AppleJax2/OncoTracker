@@ -1,86 +1,111 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const path = require('path');
-
-// Import routes
-const authRoutes = require('./routes/auth');
-const patientRoutes = require('./routes/patients');
-const studyRoutes = require('./routes/studies');
-const submissionRoutes = require('./routes/submissions');
+const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
+const mongoose = require('mongoose');
 
 // Load environment variables
 dotenv.config();
 
-// Create Express app
+// Route Imports
+const authRouter = require('./routes/authRoutes');
+const petRouter = require('./routes/petRoutes');
+const linkRequestRouter = require('./routes/linkRequestRoutes');
+
 const app = express();
+const port = process.env.PORT || 5000;
 
-// Middleware
-// Define allowed origins
-const allowedOrigins = [
-  'https://oncotracker.netlify.app', // Your primary Netlify domain
-  'http://localhost:5173'        // For local development (if you use port 5173)
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true // If you need to handle cookies or authorization headers
-}));
-// app.use(cors()); // Remove or comment out the original generic cors middleware
-app.use(express.json());
-
-// MongoDB Connection URI - use environment variables only
-const MONGODB_URI = process.env.MONGODB_URI;
-const JWT_SECRET = process.env.JWT_SECRET;
-
-if (!MONGODB_URI) {
-  console.error('MONGODB_URI environment variable is not set. Database connections will fail.');
+// --- Database Connection ---
+const DB = process.env.MONGODB_URI;
+if (!DB) {
+  console.error('FATAL ERROR: MONGODB_URI environment variable is not set.');
+  process.exit(1); // Exit if DB connection string is missing
 }
 
-if (!JWT_SECRET) {
-  console.error('JWT_SECRET environment variable is not set. Authentication will fail.');
-}
-
-// Connect to MongoDB
-mongoose.connect(MONGODB_URI, {
-  // Add robust connection options
+mongoose.connect(DB, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000 // 5 second timeout
-})
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Could not connect to MongoDB:', err));
+  // useCreateIndex: true, // Not needed in Mongoose 6+
+  // useFindAndModify: false // Not needed in Mongoose 6+
+}).then(() => console.log('MongoDB connection successful!'))
+  .catch(err => {
+      console.error('MongoDB connection error:', err);
+      // We might catch this in unhandledRejection, but logging here is good too.
+      // process.exit(1); // Optionally exit immediately on initial connection failure
+  });
 
-// Routes
+// Basic middleware
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? process.env.CLIENT_URL : 'http://localhost:5173',
+  credentials: true
+}));
+
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
+app.use(cookieParser());
+
 console.log('Setting up API routes...');
-app.use('/api/auth', authRoutes);
-app.use('/api/patients', patientRoutes);
-app.use('/api/studies', studyRoutes);
-app.use('/api/submissions', submissionRoutes);
 
-// Handle production - REMOVED STATIC FILE SERVING
-// The frontend is served by Netlify, the backend only serves the API
-// if (process.env.NODE_ENV === 'production') {
-//   console.log('Setting up static assets for production...');
-//   // Static folder
-//   app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use('/api/auth', authRouter);
+app.use('/api/pets', petRouter);
+app.use('/api/link-requests', linkRequestRouter);
 
-//   // Handle SPA
-//   app.get('/:path(*)', (req, res) => {
-//     console.log('Serving SPA for path:', req.path);
-//     res.sendFile(path.resolve(__dirname, '../client/dist/index.html'));
-//   });
-// }
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Server is working correctly - Test Route' });
+});
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 
+app.get('/api', (req, res) => {
+  res.json({ 
+    message: 'OncoTracker API is running',
+    version: '2.0.0',
+    endpoints: ['/api/auth', '/api/test']
+  });
+});
+
+if (process.env.NODE_ENV === 'production') {
+  console.log('Setting up static assets for production...');
+  app.use(express.static(path.join(__dirname, '../client/dist')));
+  
+  app.get('*', (req, res) => {
+    if (req.originalUrl.startsWith('/api/')) {
+       return res.status(404).json({ status: 'fail', message: 'API route not found.' });
+    }
+    console.log('Serving SPA index.html for path:', req.originalUrl);
+    res.sendFile(path.resolve(__dirname, '../client/dist', 'index.html'));
+  });
+}
+
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
+
+// Store the server instance for graceful shutdown
+const server = app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
+
+process.on('unhandledRejection', err => {
+  console.error('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.error(`${err.name}: ${err.message}`);
+  // Close server gracefully before exiting
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    console.log('💥 Process terminated!');
+    process.exit(0); // Use 0 for graceful shutdown signal
+  });
+});
+
+module.exports = app; 

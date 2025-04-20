@@ -1,15 +1,16 @@
 // User (Veterinarian) types
 export interface User {
-  id: string;
-  name: string;
+  _id: string;
   email: string;
-  practice?: {
-    name?: string;
-    address?: string;
-    phone?: string;
-  };
-  role: 'admin' | 'vet';
-  createdAt: string;
+  role: 'owner' | 'vet';
+  firstName: string;
+  lastName: string;
+  fullName?: string; // Virtual property
+  clinicName?: string; // Vet only
+  isVerified?: boolean; // Vet only
+  createdAt: string; // Dates will likely be strings after JSON transfer
+  updatedAt: string;
+  // Add other fields as needed (e.g., passwordChangedAt for specific checks)
 }
 
 export interface AuthState {
@@ -163,4 +164,76 @@ export interface SubmissionCount {
 export interface AggregateData {
   submissionCounts: SubmissionCount[];
   symptomRatings: SymptomTimeSeries[];
-} 
+}
+
+// Based on the Pet model in the backend
+export interface Pet {
+  _id: string;
+  owner: string | User; // Can be populated with User object or just ID string
+  vet?: string | User; // Optional, can be populated
+  name: string;
+  species: 'dog' | 'cat';
+  breed?: string;
+  dateOfBirth?: string; // Date as string
+  weightKg?: number;
+  diagnosis?: string;
+  treatmentType: 'chemo' | 'radiation';
+  reportingSchedule: 'daily' | 'every_3_days' | 'weekly' | 'manual';
+  nextReportDueDate?: string; // Date as string
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  age?: string; // Virtual property from backend
+}
+
+// Based on the Report model and sub-schema
+export interface ReportEntry {
+  symptom: string;
+  grade: number;
+  notes?: string;
+}
+
+export interface Report {
+  _id: string;
+  pet: string | Pet; // Can be populated
+  reportDate: string; // Date as string
+  reportedBy: string | User; // Can be populated
+  scaleType: 'chemo' | 'radiation';
+  entries?: ReportEntry[];
+  overallWellbeing?: number;
+  ownerNotes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Structure for simplified VCOG definitions used in forms
+export interface VCOGDefinition {
+    symptom: string;
+    description: string;
+    grades: { [key: number]: string };
+}
+
+// Based on the VetNote model
+export interface VetNote {
+    _id: string;
+    pet: string | Pet; // Can be populated
+    vet: string | User; // Can be populated (should always be the vet viewing)
+    note: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+// Based on the LinkRequest model
+export interface LinkRequest {
+    _id: string;
+    owner: string | User; // Can be populated
+    vet: string | User; // Can be populated
+    pet: string | Pet; // Can be populated
+    status: 'pending' | 'approved' | 'rejected';
+    requestDate: string;
+    responseDate?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+// Add other shared types like LinkRequest etc., as needed 
