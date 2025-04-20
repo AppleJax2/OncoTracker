@@ -67,53 +67,65 @@ export const registerBackgroundSync = async (): Promise<boolean> => {
   return false;
 };
 
+// Safe string check
+const safeString = (value: any): boolean => {
+  return typeof value === 'string' && value !== null && value !== undefined;
+};
+
 // Get device info for submissions
 export const getDeviceInfo = (): {
   browser: string;
   os: string;
   device: string;
 } => {
-  const userAgent = navigator.userAgent;
-  let browser = 'Unknown';
-  let os = 'Unknown';
-  let device = 'Unknown';
+  try {
+    const userAgent = navigator.userAgent || '';
+    let browser = 'Unknown';
+    let os = 'Unknown';
+    let device = 'Unknown';
 
-  // Extract browser information
-  if (userAgent.indexOf('Firefox') > -1) {
-    browser = 'Firefox';
-  } else if (userAgent.indexOf('Chrome') > -1) {
-    browser = 'Chrome';
-  } else if (userAgent.indexOf('Safari') > -1) {
-    browser = 'Safari';
-  } else if (userAgent.indexOf('Edge') > -1) {
-    browser = 'Edge';
-  } else if (userAgent.indexOf('MSIE') > -1 || userAgent.indexOf('Trident/') > -1) {
-    browser = 'Internet Explorer';
+    // Extract browser information
+    if (safeString(userAgent)) {
+      if (userAgent.indexOf('Firefox') > -1) {
+        browser = 'Firefox';
+      } else if (userAgent.indexOf('Chrome') > -1) {
+        browser = 'Chrome';
+      } else if (userAgent.indexOf('Safari') > -1) {
+        browser = 'Safari';
+      } else if (userAgent.indexOf('Edge') > -1) {
+        browser = 'Edge';
+      } else if (userAgent.indexOf('MSIE') > -1 || userAgent.indexOf('Trident/') > -1) {
+        browser = 'Internet Explorer';
+      }
+
+      // Extract OS information
+      if (userAgent.indexOf('Windows') > -1) {
+        os = 'Windows';
+      } else if (userAgent.indexOf('Mac') > -1) {
+        os = 'MacOS';
+      } else if (userAgent.indexOf('Linux') > -1) {
+        os = 'Linux';
+      } else if (userAgent.indexOf('Android') > -1) {
+        os = 'Android';
+      } else if (userAgent.indexOf('iOS') > -1 || userAgent.indexOf('iPhone') > -1 || userAgent.indexOf('iPad') > -1) {
+        os = 'iOS';
+      }
+
+      // Extract device information
+      if (userAgent.indexOf('Mobile') > -1) {
+        device = 'Mobile';
+      } else if (userAgent.indexOf('Tablet') > -1 || userAgent.indexOf('iPad') > -1) {
+        device = 'Tablet';
+      } else {
+        device = 'Desktop';
+      }
+    }
+
+    return { browser, os, device };
+  } catch (error) {
+    console.error('Error getting device info:', error);
+    return { browser: 'Unknown', os: 'Unknown', device: 'Unknown' };
   }
-
-  // Extract OS information
-  if (userAgent.indexOf('Windows') > -1) {
-    os = 'Windows';
-  } else if (userAgent.indexOf('Mac') > -1) {
-    os = 'MacOS';
-  } else if (userAgent.indexOf('Linux') > -1) {
-    os = 'Linux';
-  } else if (userAgent.indexOf('Android') > -1) {
-    os = 'Android';
-  } else if (userAgent.indexOf('iOS') > -1 || userAgent.indexOf('iPhone') > -1 || userAgent.indexOf('iPad') > -1) {
-    os = 'iOS';
-  }
-
-  // Extract device information
-  if (userAgent.indexOf('Mobile') > -1) {
-    device = 'Mobile';
-  } else if (userAgent.indexOf('Tablet') > -1 || userAgent.indexOf('iPad') > -1) {
-    device = 'Tablet';
-  } else {
-    device = 'Desktop';
-  }
-
-  return { browser, os, device };
 };
 
 // Get user's geolocation if available

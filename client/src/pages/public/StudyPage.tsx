@@ -133,6 +133,12 @@ const StudyPage = () => {
     }));
   };
 
+  // Safe truncate function that handles undefined values
+  const safeTruncate = (text: string | undefined | null, maxLength: number) => {
+    if (!text) return '';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
+
   // Handle form submission
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -148,14 +154,14 @@ const StudyPage = () => {
         symptomId: name,
         name,
         rating: symptomRatings[name],
-        notes: symptomNotes[name]
+        notes: symptomNotes[name] || ''
       }));
       
       // Format custom responses
       const formattedCustomResponses = Object.keys(customResponses).map(question => ({
         questionId: question,
         question,
-        response: customResponses[question]
+        response: customResponses[question] ?? ''  // Use nullish coalescing to ensure no undefined
       }));
       
       // Create submission data
@@ -177,9 +183,9 @@ const StudyPage = () => {
         accessToken,
         symptoms,
         customResponses: formattedCustomResponses,
-        additionalNotes,
+        additionalNotes: additionalNotes || '',
         submittedBy: {
-          name: ownerName,
+          name: ownerName || 'Pet Owner',
           role: 'owner'
         },
         timestamp: new Date().toISOString(),
@@ -223,9 +229,9 @@ const StudyPage = () => {
           (q: any) => q.question === question
         );
         
-        if (questionData.responseType === 'boolean') {
+        if (questionData?.responseType === 'boolean') {
           customResponses[question] = false;
-        } else if (questionData.responseType === 'number' || questionData.responseType === 'scale') {
+        } else if (questionData?.responseType === 'number' || questionData?.responseType === 'scale') {
           customResponses[question] = 0;
         } else {
           customResponses[question] = '';
@@ -252,6 +258,12 @@ const StudyPage = () => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // Modify the scales code in the render section
+  const renderScaleDescription = (scale: any) => {
+    if (!scale || !scale.ownerDescription) return '';
+    return safeTruncate(scale.ownerDescription, 30);
   };
 
   // Render loading state
@@ -384,7 +396,7 @@ const StudyPage = () => {
                                 </button>
                                 {scale && (
                                   <span className="text-xs text-gray-500 mt-1 max-w-[80px] text-center">
-                                    {scale.ownerDescription ? scale.ownerDescription.substring(0, 30) + (scale.ownerDescription.length > 30 ? '...' : '') : ''}
+                                    {renderScaleDescription(scale)}
                                   </span>
                                 )}
                               </div>
