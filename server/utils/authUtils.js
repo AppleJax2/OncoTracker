@@ -18,8 +18,13 @@ const createSendToken = (user, statusCode, res) => {
     ),
     httpOnly: true, // Prevent XSS attacks
     secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-    sameSite: 'lax', // Changed from 'strict' to 'lax' to allow cross-origin cookies
+    sameSite: 'none', // Changed from 'lax' to 'none' to allow cross-domain cookies in production
   };
+
+  // In development, don't set sameSite to 'none' as it requires secure: true
+  if (process.env.NODE_ENV !== 'production') {
+    cookieOptions.sameSite = 'lax';
+  }
 
   res.cookie('jwt', token, cookieOptions);
 
@@ -70,7 +75,7 @@ const protect = async (req, res, next) => {
     }
 
     // 4) Check if user changed password after the token was issued
-    if (currentUser.changedPasswordAfter(decoded.iat)) {
+    if (currentUser.changedPasswordAfter && currentUser.changedPasswordAfter(decoded.iat)) {
       return next(
         new AppError(
           'User recently changed password! Please log in again.',

@@ -6,11 +6,11 @@ const router = express.Router();
 
 // Public routes
 router.post('/signup', authController.signup);
+router.post('/register', authController.register);  // Added for backward compatibility
 router.post('/login', authController.login);
 router.get('/logout', authController.logout);
 
-// Example of a protected route to get current user info
-// This could be moved to a userRoutes file later if more user-specific routes are added
+// Protected route to get current user info
 router.get('/me', protect, (req, res) => {
   // The 'protect' middleware adds the user object to the request
   res.status(200).json({
