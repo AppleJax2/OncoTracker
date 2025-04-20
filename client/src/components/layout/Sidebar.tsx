@@ -62,14 +62,14 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
       {user && (
         <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', px: 2, mb: 3 }}>
           <Avatar sx={{ bgcolor: 'secondary.light', color: 'secondary.dark', width: 40, height: 40 }}>
-            {user.firstName.charAt(0)}
+            {user.firstName ? user.firstName.charAt(0) : 'U'}
           </Avatar>
           <Box sx={{ ml: 1.5 }}>
             <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              {user.firstName} {user.lastName}
+              {user.firstName || 'User'} {user.lastName || ''}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-              {user.role}
+              {user.role || 'Unknown'}
             </Typography>
           </Box>
         </Box>
@@ -183,10 +183,10 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
             </Avatar>
             <Box sx={{ ml: 1.5 }}>
               <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                {user.firstName} {user.lastName}
+                {user.firstName || 'User'} {user.lastName || ''}
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-                {user.role}
+                {user.role || 'Unknown'}
               </Typography>
             </Box>
           </Box>
