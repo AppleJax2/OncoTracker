@@ -15,6 +15,7 @@ dotenv.config();
 const authRouter = require('./routes/authRoutes');
 const petRouter = require('./routes/petRoutes');
 const linkRequestRouter = require('./routes/linkRequestRoutes');
+const userRouter = require('./routes/userRoutes');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -95,6 +96,7 @@ console.log('Setting up API routes...');
 app.use('/api/auth', authRouter);
 app.use('/api/pets', petRouter);
 app.use('/api/link-requests', linkRequestRouter);
+app.use('/api/users', userRouter);
 
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Server is working correctly - Test Route' });
@@ -104,7 +106,7 @@ app.get('/api', (req, res) => {
   res.json({ 
     message: 'OncoTracker API is running',
     version: '2.0.0',
-    endpoints: ['/api/auth', '/api/test']
+    endpoints: ['/api/auth', '/api/users', '/api/pets', '/api/link-requests', '/api/test']
   });
 });
 
