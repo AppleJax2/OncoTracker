@@ -1,138 +1,208 @@
 import { createTheme } from '@mui/material/styles';
 
+// Define a softer, warmer color palette
+const softTeal = '#65a8a6';
+const lightTeal = '#84bdbb'; // Lighter shade for hover/light variants
+const darkTeal = '#4a8a88';  // Darker shade for active/dark variants
+
+const warmBeige = '#f5f0e8'; // Warm background
+const softGold = '#b08d57';  // Secondary/Accent
+const lightGold = '#c8a97a';
+const darkGold = '#98713a';
+
+const softGray = '#f8f8f8'; // Alternative background/paper if needed, slightly cooler than beige
+const darkText = '#3a3a3a';  // Primary text, softer than black
+const mediumText = '#6b6b6b'; // Secondary text
+
 // Create a theme instance suitable for medical/veterinary applications
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#059669', // Rich emerald green - professional and fresh
-      light: '#10b981',
-      dark: '#047857',
+      main: softTeal,
+      light: lightTeal,
+      dark: darkTeal,
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#0d9488', // Teal - common in medical interfaces
-      light: '#14b8a6',
-      dark: '#0f766e',
+      main: softGold,
+      light: lightGold,
+      dark: darkGold,
       contrastText: '#ffffff',
     },
-    error: {
-      main: '#dc2626', // Red for critical alerts/errors
+    error: { // Keep standard error/warning colors for clarity
+      main: '#dc2626',
       light: '#ef4444',
       dark: '#b91c1c',
     },
     warning: {
-      main: '#ea580c', // Orange for warnings
+      main: '#ea580c',
       light: '#f97316',
       dark: '#c2410c',
     },
     info: {
-      main: '#0ea5e9', // Light blue for informational elements
+      main: '#0ea5e9', // Keep standard info blue
       light: '#38bdf8',
       dark: '#0284c7',
     },
-    success: {
-      main: '#16a34a', // Green for success states
+    success: { // Keep standard success green
+      main: '#16a34a',
       light: '#22c55e',
       dark: '#15803d',
     },
     background: {
-      default: '#f9fafb', // Light gray background - easy on the eyes for long sessions
-      paper: '#ffffff',
+      default: warmBeige, // Use warm beige for the main background
+      paper: '#ffffff',   // Keep paper white for contrast on cards/dialogs
     },
     text: {
-      primary: '#111827',
-      secondary: '#4b5563',
-      disabled: '#9ca3af',
+      primary: darkText,
+      secondary: mediumText,
+      disabled: '#b0b0b0', // Slightly lighter disabled text
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Nunito Sans", "Inter", "Roboto", "Helvetica", "Arial", sans-serif', // Prioritize Nunito Sans
     h1: {
-      fontSize: '1.5rem',
+      fontSize: '2.2rem', // Slightly larger H1 for impact
       fontWeight: 700,
       lineHeight: 1.2,
+      color: darkText, // Ensure headings use primary text color
     },
     h2: {
-      fontSize: '1.25rem',
+      fontSize: '1.8rem', // Adjust heading sizes for hierarchy
       fontWeight: 700,
       lineHeight: 1.3,
+      color: darkText,
     },
     h3: {
-      fontSize: '1.125rem',
+      fontSize: '1.4rem',
       fontWeight: 600,
       lineHeight: 1.4,
+      color: darkText,
     },
     h4: {
-      fontSize: '1rem',
+      fontSize: '1.1rem',
       fontWeight: 600,
       lineHeight: 1.5,
+      color: darkText,
     },
     h5: {
-      fontSize: '0.875rem',
+      fontSize: '1rem', // Adjust smaller headings too
       fontWeight: 600,
       lineHeight: 1.5,
+      color: darkText,
     },
     h6: {
-      fontSize: '0.75rem',
+      fontSize: '0.875rem',
       fontWeight: 600,
       lineHeight: 1.6,
+      color: darkText,
     },
     body1: {
       fontSize: '1rem',
-      lineHeight: 1.5,
+      lineHeight: 1.6, // Slightly more line height for readability
+      color: mediumText, // Default body text uses secondary color for softness
     },
     body2: {
       fontSize: '0.875rem',
-      lineHeight: 1.57,
+      lineHeight: 1.6,
+      color: mediumText,
     },
     button: {
-      textTransform: 'none', // Buttons with normal case text (not all uppercase)
-      fontWeight: 500,
+      textTransform: 'none',
+      fontWeight: 600, // Slightly bolder buttons
+      letterSpacing: '0.5px', // Add subtle letter spacing
     },
   },
   shape: {
-    borderRadius: 8,
+    borderRadius: 12, // Increase border radius for softer corners
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          boxShadow: 'none',
+          boxShadow: 'none', // Start with no shadow
+          padding: '10px 24px', // Increase padding slightly
+          transition: 'background-color 0.3s ease, box-shadow 0.3s ease', // Smooth transitions
           '&:hover': {
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.1)', // Softer hover shadow
           },
         },
         containedPrimary: {
           '&:hover': {
-            backgroundColor: '#047857',
+            backgroundColor: darkTeal, // Use the dark shade for hover
+            boxShadow: '0 3px 7px 0 rgba(0, 0, 0, 0.15)', // Slightly deeper shadow on hover
           },
         },
         containedSecondary: {
           '&:hover': {
-            backgroundColor: '#0f766e',
+            backgroundColor: darkGold,
+             boxShadow: '0 3px 7px 0 rgba(0, 0, 0, 0.15)',
           },
+        },
+        outlinedPrimary: {
+          borderColor: softTeal, // Ensure outline matches primary
+           '&:hover': {
+             backgroundColor: 'rgba(101, 168, 166, 0.08)', // Very subtle background tint on hover
+             borderColor: darkTeal,
+           },
+        },
+         outlinedSecondary: {
+          borderColor: softGold,
+           '&:hover': {
+             backgroundColor: 'rgba(176, 141, 87, 0.08)',
+             borderColor: darkGold,
+           },
         },
       },
     },
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-          borderRadius: '0.5rem',
+          boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)', // Default softer shadow for cards
+          borderRadius: '12px', // Match global radius
+          transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+          // '&:hover': { // Optional: subtle lift on hover
+          //   transform: 'translateY(-3px)',
+          //   boxShadow: '0 5px 15px 0 rgba(0, 0, 0, 0.12)',
+          // },
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         rounded: {
-          borderRadius: '0.5rem',
+          borderRadius: '12px', // Match global radius
         },
+        elevation1: { boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.06)'}, // Define specific elevation shadows if needed
+        elevation2: { boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)'},
+        elevation3: { boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.1)'},
+
       },
     },
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.07)', // Lighter table cell border
+        },
+      },
+    },
+    MuiAppBar: { // Style the AppBar if used for navigation
+      styleOverrides: {
+        root: {
+           backgroundColor: warmBeige, // Match background
+           boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)', // Very subtle shadow
+           color: darkText, // Ensure text is readable
+        },
+      },
+    },
+     MuiLink: { // Style links to match the theme
+      styleOverrides: {
+        root: {
+          color: softTeal,
+          textDecorationColor: 'rgba(101, 168, 166, 0.4)', // Lighter underline
+           '&:hover': {
+            textDecorationColor: softTeal, // Stronger underline on hover
+           },
         },
       },
     },
