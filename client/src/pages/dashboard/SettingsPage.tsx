@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { UserIcon, BellIcon, ShieldCheckIcon, CameraIcon } from '@heroicons/react/24/outline';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import api from '../../services/api';
 
 const SettingsPage: React.FC = () => {
   const { user } = useAuth();
@@ -35,6 +36,42 @@ const SettingsPage: React.FC = () => {
     deleteAccount: false
   });
 
+  // Initialize states from useEffect
+  useEffect(() => {
+    // Fetch user settings when component mounts
+    const fetchUserSettings = async () => {
+      try {
+        const response = await api.get('/api/users/settings');
+        if (response.data && response.data.status === 'success') {
+          const userData = response.data.data.user;
+          
+          // Update profile data
+          setProfile({
+            firstName: userData.firstName || '',
+            lastName: userData.lastName || '',
+            email: userData.email || '',
+            clinicName: userData.clinicName || '',
+          });
+          
+          // Update notifications if available
+          if (userData.notifications) {
+            setNotifications(userData.notifications);
+          }
+          
+          // Update account settings if available
+          if (userData.accountSettings) {
+            setAccountSettings(userData.accountSettings);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching user settings:', err);
+        // Don't set an error state here as it's not critical for initial render
+      }
+    };
+    
+    fetchUserSettings();
+  }, []);
+
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setProfile(prev => ({ ...prev, [name]: value }));
@@ -57,14 +94,19 @@ const SettingsPage: React.FC = () => {
     setSuccess(false);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setSuccess(true);
+      // Make actual API call to update profile
+      const response = await api.put('/api/users/profile', profile);
       
-      // Reset success message after 3 seconds
-      setTimeout(() => setSuccess(false), 3000);
+      if (response.data && response.data.status === 'success') {
+        setSuccess(true);
+        
+        // Reset success message after 3 seconds
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        throw new Error(response.data?.message || 'Failed to update profile');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to update profile. Please try again.');
+      setError(err?.response?.data?.message || err.message || 'Failed to update profile. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -77,14 +119,19 @@ const SettingsPage: React.FC = () => {
     setSuccess(false);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setSuccess(true);
+      // Make actual API call to update notifications
+      const response = await api.put('/api/users/notifications', notifications);
       
-      // Reset success message after 3 seconds
-      setTimeout(() => setSuccess(false), 3000);
+      if (response.data && response.data.status === 'success') {
+        setSuccess(true);
+        
+        // Reset success message after 3 seconds
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        throw new Error(response.data?.message || 'Failed to update notifications');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to update notification settings. Please try again.');
+      setError(err?.response?.data?.message || err.message || 'Failed to update notification settings. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -97,14 +144,19 @@ const SettingsPage: React.FC = () => {
     setSuccess(false);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      setSuccess(true);
+      // Make actual API call to update account settings
+      const response = await api.put('/api/users/account-settings', accountSettings);
       
-      // Reset success message after 3 seconds
-      setTimeout(() => setSuccess(false), 3000);
+      if (response.data && response.data.status === 'success') {
+        setSuccess(true);
+        
+        // Reset success message after 3 seconds
+        setTimeout(() => setSuccess(false), 3000);
+      } else {
+        throw new Error(response.data?.message || 'Failed to update account settings');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to update account settings. Please try again.');
+      setError(err?.response?.data?.message || err.message || 'Failed to update account settings. Please try again.');
     } finally {
       setSaving(false);
     }

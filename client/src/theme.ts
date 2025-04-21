@@ -4,9 +4,9 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#0284c7', // Medical blue - professional and calming
-      light: '#38bdf8',
-      dark: '#0369a1',
+      main: '#059669', // Rich emerald green - professional and fresh
+      light: '#10b981',
+      dark: '#047857',
       contrastText: '#ffffff',
     },
     secondary: {
@@ -104,7 +104,7 @@ const theme = createTheme({
         },
         containedPrimary: {
           '&:hover': {
-            backgroundColor: '#0369a1',
+            backgroundColor: '#047857',
           },
         },
         containedSecondary: {

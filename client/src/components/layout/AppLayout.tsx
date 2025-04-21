@@ -9,13 +9,15 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
-  styled
+  styled,
+  Container
 } from '@mui/material';
 import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 import Header from './Header';
 import Footer from './Footer';
 import Sidebar from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
+import NotificationBanner from '../common/NotificationBanner';
 
 const drawerWidth = 240;
 
@@ -110,6 +112,16 @@ const AppLayout: React.FC = () => {
             flexGrow: 1,
             p: 3
           }}>
+            {/* Welcome Banner */}
+            <NotificationBanner 
+              message="Welcome to the newly redesigned OncoTracker with a refreshed green theme!"
+              variant="success"
+              action={{
+                label: "Learn More",
+                onClick: () => console.log("Learn more clicked")
+              }}
+            />
+            
             <Outlet />
           </Main>
         </>
@@ -128,6 +140,18 @@ const AppLayout: React.FC = () => {
               py: 4 
             }}
           >
+            {/* Welcome Banner for non-authenticated layout */}
+            <Container maxWidth="lg" sx={{ mb: 3 }}>
+              <NotificationBanner 
+                message="Welcome to the newly redesigned OncoTracker with a refreshed green theme!"
+                variant="success"
+                action={{
+                  label: "Learn More",
+                  onClick: () => console.log("Learn more clicked")
+                }}
+              />
+            </Container>
+            
             <Outlet />
           </Box>
           <Footer />

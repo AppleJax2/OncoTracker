@@ -50,18 +50,18 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', pt: 2, pb: 2, overflow: 'auto' }}>
       {/* Logo */}
       <Box sx={{ display: 'flex', alignItems: 'center', px: 2, mb: 3 }}>
-        <Box sx={{ bgcolor: 'primary.50', p: 1, borderRadius: 1 }}>
+        <Box sx={{ bgcolor: 'rgba(5, 150, 105, 0.1)', p: 1, borderRadius: 1 }}>
           <HeartIcon sx={{ color: 'primary.main', fontSize: 32 }} />
         </Box>
-        <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 700, color: 'primary.main' }}>
-          OncoTracker
+        <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 700 }}>
+          <span style={{ color: '#059669' }}>Onco</span>Tracker
         </Typography>
       </Box>
       
       {/* User info at top for mobile view */}
       {user && (
         <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', px: 2, mb: 3 }}>
-          <Avatar sx={{ bgcolor: 'secondary.light', color: 'secondary.dark', width: 40, height: 40 }}>
+          <Avatar sx={{ bgcolor: 'rgba(5, 150, 105, 0.1)', color: 'primary.dark', width: 40, height: 40 }}>
             {user.firstName ? user.firstName.charAt(0) : 'U'}
           </Avatar>
           <Box sx={{ ml: 1.5 }}>
@@ -95,10 +95,10 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
                   sx={{
                     borderRadius: 1.5,
                     py: 1,
-                    bgcolor: isActive ? 'primary.50' : 'transparent',
+                    bgcolor: isActive ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
                     color: isActive ? 'primary.main' : 'text.primary',
                     '&:hover': {
-                      bgcolor: 'primary.50',
+                      bgcolor: 'rgba(5, 150, 105, 0.05)',
                       color: 'primary.main',
                     },
                   }}
@@ -139,16 +139,16 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
                   sx={{
                     borderRadius: 1.5,
                     py: 1,
-                    bgcolor: location.pathname === '/resources' ? 'secondary.50' : 'transparent',
-                    color: location.pathname === '/resources' ? 'secondary.main' : 'text.primary',
+                    bgcolor: location.pathname === '/resources' ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
+                    color: location.pathname === '/resources' ? 'primary.main' : 'text.primary',
                     '&:hover': {
-                      bgcolor: 'secondary.50',
-                      color: 'secondary.main',
+                      bgcolor: 'rgba(5, 150, 105, 0.05)',
+                      color: 'primary.main',
                     },
                   }}
                 >
                   <ListItemIcon sx={{ 
-                    color: location.pathname === '/resources' ? 'secondary.main' : 'text.secondary',
+                    color: location.pathname === '/resources' ? 'primary.main' : 'text.secondary',
                     minWidth: 36
                   }}>
                     <ClipboardIcon fontSize="small" />
@@ -178,7 +178,7 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
           px: 2
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar sx={{ bgcolor: 'secondary.light', color: 'secondary.dark', width: 36, height: 36 }}>
+            <Avatar sx={{ bgcolor: 'rgba(5, 150, 105, 0.1)', color: 'primary.dark', width: 36, height: 36 }}>
               <UserIcon fontSize="small" />
             </Avatar>
             <Box sx={{ ml: 1.5 }}>

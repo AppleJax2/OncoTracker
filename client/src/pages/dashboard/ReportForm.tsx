@@ -32,7 +32,7 @@ const ReportForm: React.FC = () => {
             setLoadingPet(true);
             setError(null);
             try {
-                const response = await api.get(`/pets/${petId}`);
+                const response = await api.get(`/api/pets/${petId}`);
                 if (response.data?.status === 'success') {
                     const fetchedPet: Pet = response.data.data.pet;
                     setPet(fetchedPet);
@@ -84,7 +84,7 @@ const ReportForm: React.FC = () => {
         };
 
         try {
-            const response = await api.post(`/pets/${petId}/reports`, reportPayload);
+            const response = await api.post(`/api/pets/${petId}/reports`, reportPayload);
             if (response.data?.status === 'success') {
                 navigate(`/dashboard/owner/pets/${petId}`); // Navigate back to pet detail on success
             } else {

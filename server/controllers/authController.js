@@ -101,10 +101,20 @@ exports.getCurrentUser = async (req, res) => {
   try {
     // req.user is set from the auth middleware
     const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
+    
+    // Return data in the same format as login for consistency
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user
+      }
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({
+      status: 'error',
+      message: 'Server error'
+    });
   }
 };
 

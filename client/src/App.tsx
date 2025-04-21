@@ -7,6 +7,7 @@ import AppLayout from './components/layout/AppLayout'; // Assume a main layout c
 
 // Common Components
 import LoadingSpinner from './components/common/LoadingSpinner'; // Assume a loading spinner exists
+import NotificationBanner from './components/common/NotificationBanner';
 
 // --- Page Imports (Create these files later) ---
 
@@ -33,6 +34,20 @@ import NotFoundPage from './pages/public/NotFoundPage'; // Create this
 
 // --- Protected Route Components ---
 
+// Component to show welcome banner
+const WelcomeBanner = () => {
+  return (
+    <NotificationBanner 
+      message="Welcome to the newly redesigned OncoTracker with a refreshed green theme!"
+      variant="success"
+      action={{
+        label: "Learn More",
+        onClick: () => console.log("Learn more clicked")
+      }}
+    />
+  );
+};
+
 // Component to handle redirects based on auth status
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -53,23 +68,33 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   }
 
   if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
-  // Check if user role is allowed
-  // Add vet verification check here too
-  const isAllowed = user && allowedRoles.includes(user.role);
-  const isVerifiedVet = user?.role !== 'vet' || user?.isVerified === true;
+  // Ensure user exists and has a role property
+  if (!user) {
+    console.error('User object is null or undefined despite authentication');
+    return <Navigate to="/login" replace />;
+  }
 
-  if (user && isAllowed && isVerifiedVet) {
-      return <Outlet />;
-  } else if (user && user.role === 'vet' && !user.isVerified) {
-      // Optional: Redirect unverified vets to a specific page
-      return <Navigate to="/vet-verification-pending" replace />;
+  // Default to 'owner' role if none is specified
+  const userRole = user.role || 'owner';
+  console.log('Current user role for route check:', userRole);
+
+  // Check if user role is allowed
+  const isAllowed = allowedRoles.includes(userRole);
+  const isVerifiedVet = userRole !== 'vet' || user.isVerified === true;
+
+  if (isAllowed && isVerifiedVet) {
+    return <Outlet />;
+  } else if (userRole === 'vet' && !user.isVerified) {
+    // Redirect unverified vets to a specific page
+    return <Navigate to="/vet-verification-pending" replace />;
   } else {
-      // Redirect to a relevant dashboard or not found page if role doesn't match
-      const fallbackPath = user?.role === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
-      return <Navigate to={fallbackPath} replace />;
+    // Redirect to the appropriate dashboard based on role
+    const fallbackPath = userRole === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
+    console.log('Redirecting to fallback path:', fallbackPath);
+    return <Navigate to={fallbackPath} replace />;
   }
 };
 
@@ -118,8 +143,13 @@ const App = () => {
                {/* Add other shared authenticated routes here */}
             </Route>
 
-            {/* Fallback redirect inside protected routes (if needed) */}
-            {/* <Route path="/dashboard" element={<Navigate based on role? />} /> */}
+            {/* Catch-all redirect for authenticated users */}
+            <Route path="*" element={
+              <Navigate to={user => {
+                const defaultPath = user?.role === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
+                return defaultPath;
+              }} replace />
+            } />
 
           </Route> { /* End AppLayout */}
         </Route> { /* End ProtectedRoute */}

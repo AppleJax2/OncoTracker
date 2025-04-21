@@ -53,9 +53,9 @@ const AddPetForm: React.FC = () => {
     console.log('Submitting pet data:', payload);
     setLoading(true);
     try {
-      const response = await api.post('/pets', payload);
+      const response = await api.post('/api/pets', payload);
       console.log('Pet added:', response.data);
-      navigate('/dashboard/owner');
+      navigate('/owner/dashboard');
     } catch (err: any) {
       console.error('Error adding pet:', err);
       const message = err?.response?.data?.message || err.message || 'Could not add pet. Please try again.';

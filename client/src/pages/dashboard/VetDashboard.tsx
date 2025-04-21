@@ -27,17 +27,31 @@ const VetDashboard: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        // Fetch patients
-        const patientsResponse = await api.get('/api/pets');
+        // Fetch patients and pending request count concurrently
+        const [patientsResponse, requestsResponse] = await Promise.all([
+          api.get('/api/patients'),
+          api.get('/api/link-requests/pending') 
+        ]);
+
+        // Process patients
         if (patientsResponse.data && patientsResponse.data.status === 'success') {
-          setPatients(patientsResponse.data.data.pets);
+          setPatients(patientsResponse.data.data?.patients || patientsResponse.data.patients || patientsResponse.data.data || []); 
         } else {
-          throw new Error('Failed to fetch patient list');
+          throw new Error(patientsResponse.data?.message || 'Failed to fetch patient list');
         }
 
-        // Get pending link requests count (mock data for now)
-        setPendingRequests(Math.floor(Math.random() * 5)); // Mock data for UI
-        
+        // Process pending requests count
+        if (requestsResponse.data && requestsResponse.data.status === 'success') {
+          // Assuming the API returns the count like { status: 'success', count: 3 } 
+          // or { status: 'success', data: { count: 3 } }
+          // Adjust based on actual API response
+          setPendingRequests(requestsResponse.data.count ?? requestsResponse.data.data?.count ?? 0);
+        } else {
+          // Don't throw an error, just log it, as the dashboard can still function partially
+          console.warn('Could not fetch pending link request count:', requestsResponse.data?.message || 'Unknown error');
+          setPendingRequests(0);
+        }
+
       } catch (err: any) {
         console.error('Error fetching data:', err);
         const message = err?.response?.data?.message || err.message || 'Could not load your dashboard data.';
