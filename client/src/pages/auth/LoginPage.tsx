@@ -37,11 +37,17 @@ const LoginPage: React.FC = () => {
       console.log('Login successful, user data received:', loggedInUser);
       
       if (loggedInUser) {
+        // Get role from user object, default to 'owner' if not specified
+        const userRole = loggedInUser.role || 'owner';
+        console.log('User role:', userRole);
+        
         // Navigate based on role
-        if (loggedInUser.role === 'vet') {
+        if (userRole === 'vet') {
           navigate('/vet/dashboard');
         } else {
-          navigate('/owner/dashboard');
+          // Force navigation to owner dashboard
+          console.log('Navigating to owner dashboard');
+          navigate('/owner/dashboard', { replace: true });
         }
       } else {
         setError('Login succeeded but failed to retrieve user data. Please try again.');

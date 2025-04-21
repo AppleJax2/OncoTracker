@@ -31,14 +31,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       try {
         const response = await api.get('/api/auth/me');
-        if (response.data && response.data.user) {
-          setUser(response.data.user);
+        console.log('Auth check response:', response.data);
+        
+        // Extract user from response - handle different possible structures
+        let userData = null;
+        
+        if (response.data?.data?.user) {
+          userData = response.data.data.user;
+        } else if (response.data?.user) {
+          userData = response.data.user;
+        } else if (response.data?.data) {
+          userData = response.data.data;
+        } else {
+          userData = response.data;
+        }
+        
+        // If we have user data, set authentication state
+        if (userData) {
+          console.log('User data extracted from auth check:', userData);
+          setUser(userData);
           setIsAuthenticated(true);
         } else {
+          console.log('No user data found in auth check response');
           setUser(null);
           setIsAuthenticated(false);
         }
       } catch (error: any) {
+        console.error('Auth check error:', error);
         setUser(null);
         setIsAuthenticated(false);
       } finally {
@@ -57,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(false);
     }
 
-  }, [location.pathname]); // Re-run effect if path changes
+  }, [location.pathname]);
 
   const login = async (credentials: { email: string; password: string }): Promise<User | null> => {
     setIsLoading(true);
@@ -70,7 +89,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       let userData = null;
       let token = null;
 
-      // Handle different possible response structures
+      // Enhanced handling of different possible response structures
       if (response.data?.data?.user) {
         // Format: { data: { user: {...} }, token: "..." }
         userData = response.data.data.user;
@@ -80,9 +99,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         userData = response.data.user;
         token = response.data.token;
       } else if (response.data?.data) {
-        // Try to find user object in data
+        // Format: { data: {...}, token: "..." }
         userData = response.data.data;
         token = response.data.token;
+      } else if (response.data?.status === 'success') {
+        // Format: { status: 'success', token: "...", data: {...} }
+        userData = response.data.data;
+        token = response.data.token;
+      } else {
+        // Try to extract data directly from response
+        userData = response.data;
+        token = response.data.token;
+      }
+
+      console.log('Extracted user data:', userData);
+      console.log('Extracted token:', token);
+
+      // Ensure userData has proper format and required fields
+      if (userData) {
+        // Handle id field (_id vs id)
+        if (userData._id && !userData.id) {
+          userData.id = userData._id;
+        }
+        
+        // Ensure role is set (default to 'owner' if not present)
+        if (!userData.role) {
+          console.log('User role not found, defaulting to owner');
+          userData.role = 'owner';
+        }
       }
 
       if (userData && token) {
@@ -91,6 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         setUser(userData);
         setIsAuthenticated(true);
+        console.log('User authenticated successfully:', userData);
         return userData;
       } else {
         console.error('Login response missing user data or token:', response.data);
