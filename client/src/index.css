@@ -27,14 +27,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f2; /* Slight green tint to the track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #a7c9b6; /* Light green for the thumb */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #059669; /* Primary green on hover */
 } 

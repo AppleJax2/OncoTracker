@@ -7,6 +7,7 @@ import AppLayout from './components/layout/AppLayout'; // Assume a main layout c
 
 // Common Components
 import LoadingSpinner from './components/common/LoadingSpinner'; // Assume a loading spinner exists
+import NotificationBanner from './components/common/NotificationBanner';
 
 // --- Page Imports (Create these files later) ---
 
@@ -32,6 +33,20 @@ import SettingsPage from './pages/dashboard/SettingsPage'; // Create this
 import NotFoundPage from './pages/public/NotFoundPage'; // Create this
 
 // --- Protected Route Components ---
+
+// Component to show welcome banner
+const WelcomeBanner = () => {
+  return (
+    <NotificationBanner 
+      message="Welcome to the newly redesigned OncoTracker with a refreshed green theme!"
+      variant="success"
+      action={{
+        label: "Learn More",
+        onClick: () => console.log("Learn more clicked")
+      }}
+    />
+  );
+};
 
 // Component to handle redirects based on auth status
 const ProtectedRoute = () => {

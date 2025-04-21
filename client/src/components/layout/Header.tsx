@@ -24,7 +24,16 @@ const Header: React.FC = () => {
   };
 
   return (
-    <AppBar position="sticky" elevation={2} color="inherit">
+    <AppBar 
+      position="sticky" 
+      elevation={0} 
+      color="inherit" 
+      sx={{ 
+        borderBottom: '1px solid', 
+        borderColor: 'rgba(5, 150, 105, 0.1)',
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
+      }}
+    >
       <Container maxWidth="lg">
         <Toolbar sx={{ py: 0.5, px: { xs: 1, sm: 2 } }}>
           {/* Logo/Brand */}
@@ -38,9 +47,12 @@ const Header: React.FC = () => {
               textDecoration: 'none',
               '&:hover': { color: 'primary.dark' },
               flexGrow: 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
             }}
           >
-            OncoTracker
+            <span style={{ color: '#059669' }}>Onco</span>Tracker
           </Box>
 
           {/* Navigation/User Actions */}
