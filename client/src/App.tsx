@@ -9,6 +9,9 @@ import AppLayout from './components/layout/AppLayout'; // Assume a main layout c
 import LoadingSpinner from './components/common/LoadingSpinner'; // Assume a loading spinner exists
 import NotificationBanner from './components/common/NotificationBanner';
 
+// Enhanced Routes
+import EnhancedRoutes from './routing/EnhancedRoutes';
+
 // --- Page Imports (Create these files later) ---
 
 // Public Pages
@@ -98,6 +101,13 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   }
 };
 
+// Custom redirect component to handle role-based redirects
+const RoleBasedRedirect = () => {
+  const { user } = useAuth();
+  const redirectPath = user?.role === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
+  return <Navigate to={redirectPath} replace />;
+};
+
 const App = () => {
   // const { isLoading } = useAuth(); // Removed unused variable
 
@@ -121,11 +131,10 @@ const App = () => {
         <Route element={<ProtectedRoute />}> { /* Checks if logged in */}
           <Route element={<AppLayout />}> { /* Wraps protected pages with common layout */}
 
-            {/* Owner Routes */}
+            {/* Owner Routes - using EnhancedRoutes for improved UX */}
             <Route element={<RoleBasedRoute allowedRoles={['owner']} />}>
-              <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+              <Route path="/owner/*" element={<EnhancedRoutes />} />
               <Route path="/owner/pets/new" element={<AddPetForm />} />
-              <Route path="/owner/pets/:petId" element={<PetDetail />} />
               <Route path="/owner/pets/:petId/report/new" element={<ReportForm />} />
               <Route path="/owner/find-vets" element={<FindVetPage />} />
             </Route>
@@ -144,12 +153,7 @@ const App = () => {
             </Route>
 
             {/* Catch-all redirect for authenticated users */}
-            <Route path="*" element={
-              <Navigate to={user => {
-                const defaultPath = user?.role === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
-                return defaultPath;
-              }} replace />
-            } />
+            <Route path="*" element={<RoleBasedRedirect />} />
 
           </Route> { /* End AppLayout */}
         </Route> { /* End ProtectedRoute */}
