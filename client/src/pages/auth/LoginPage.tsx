@@ -13,9 +13,18 @@ import {
   IconButton,
   Alert,
   Divider,
-  Stack
+  Stack,
+  useTheme,
+  keyframes,
+  alpha
 } from '@mui/material';
-import { Visibility, VisibilityOff, Email, Lock, Pets } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Email, Lock, ErrorOutline } from '@mui/icons-material';
+
+const pulse = keyframes`
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+`;
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -25,6 +34,7 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,29 +47,26 @@ const LoginPage: React.FC = () => {
       console.log('Login successful, user data received:', loggedInUser);
       
       if (loggedInUser) {
-        // Navigate based on role
         if (loggedInUser.role === 'vet') {
           navigate('/vet/dashboard');
         } else {
           navigate('/owner/dashboard');
         }
       } else {
-        setError('Login succeeded but failed to retrieve user data. Please try again.');
+        setError('Login succeeded but user data retrieval failed. Please try again.');
       }
     } catch (err: any) {
       console.error('Login form error:', err);
       
-      // Enhanced error handling
-      let message = 'Login failed. Please check your credentials.';
-      
-      if (err.message) {
-        message = err.message;
-      } else if (err.details?.message) {
-        message = err.details.message;
-      } else if (err?.response?.data?.message) {
+      let message = 'Login failed. Please check your credentials or network connection.';
+      if (err?.response?.data?.message) {
         message = err.response.data.message;
-      } else if (!navigator.onLine) {
-        message = 'You appear to be offline. Please check your internet connection.';
+      } else if (err?.message) {
+         if (err.message.includes('Network Error') || !navigator.onLine) {
+            message = 'Network error. Please check your internet connection.'
+         } else if (err.response?.status === 401) {
+            message = 'Invalid email or password.';
+         }
       }
       
       setError(message);
@@ -72,6 +79,9 @@ const LoginPage: React.FC = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  const medicalBlueGradient = `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 50%, ${theme.palette.primary.dark} 100%)`;
+  const soothingBlueGradient = `linear-gradient(135deg, ${theme.palette.info.light} 0%, ${theme.palette.info.main} 100%)`;
+
   return (
     <Box
       sx={{
@@ -79,46 +89,53 @@ const LoginPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #1a237e 0%, #0d47a1 50%, #01579b 100%)',
-        py: 8,
+        background: soothingBlueGradient,
+        backgroundAttachment: 'fixed',
+        py: { xs: 4, sm: 6, md: 8 },
         px: 2,
+        transition: 'background 0.5s ease-in-out',
       }}
     >
-      <Container maxWidth="sm">
+      <Container maxWidth="xs">
         <Paper
-          elevation={4}
+          elevation={6}
           sx={{
-            p: { xs: 4, md: 6 },
-            borderRadius: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            p: { xs: 3, sm: 4 },
+            borderRadius: 3,
+            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            transition: 'all 0.3s ease-in-out',
           }}
         >
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Pets 
-              sx={{ 
-                fontSize: 56, 
-                color: '#1a237e',
-                mb: 2
-              }} 
-            />
             <Typography 
               variant="h4" 
               component="h1" 
               fontWeight={700}
               color="primary.dark"
               gutterBottom
+              sx={{ mb: 1 }}
             >
-              Welcome Back
+              OncoTracker Login
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Sign in to access your OncoTracker account
+            <Typography variant="body2" color="text.secondary">
+              Access your veterinary oncology portal
             </Typography>
           </Box>
 
           {error && (
             <Alert 
               severity="error" 
-              sx={{ mb: 3, borderRadius: 1 }}
+              icon={<ErrorOutline fontSize="inherit" />}
+              sx={{ 
+                mb: 3, 
+                borderRadius: 1, 
+                backgroundColor: 'error.light',
+                color: 'error.dark',
+                border: `1px solid ${theme.palette.error.main}`
+              }}
+              variant="filled"
             >
               {error}
             </Alert>
@@ -141,10 +158,12 @@ const LoginPage: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Email color="action" />
+                      <Email color="action" sx={{ mr: 1 }} />
                     </InputAdornment>
                   ),
+                  sx: { borderRadius: 2 }
                 }}
+                InputLabelProps={{ shrink: true }}
               />
 
               <TextField
@@ -162,7 +181,7 @@ const LoginPage: React.FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Lock color="action" />
+                      <Lock color="action" sx={{ mr: 1 }} />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -171,12 +190,15 @@ const LoginPage: React.FC = () => {
                         aria-label="toggle password visibility"
                         onClick={handleTogglePasswordVisibility}
                         edge="end"
+                        color={showPassword ? "primary" : "default"}
                       >
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
+                  sx: { borderRadius: 2 }
                 }}
+                InputLabelProps={{ shrink: true }}
               />
 
               <Button
@@ -187,39 +209,83 @@ const LoginPage: React.FC = () => {
                 sx={{ 
                   py: 1.5,
                   mt: 1,
+                  borderRadius: 2,
                   textTransform: 'none',
                   fontSize: '1rem',
                   fontWeight: 600,
-                  boxShadow: 2
+                  color: 'white',
+                  background: medicalBlueGradient,
+                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: `0 4px 15px rgba(0, 0, 0, 0.2)`,
+                  },
+                  '&:disabled': {
+                    background: theme.palette.grey[400],
+                    cursor: 'not-allowed',
+                  }
                 }}
               >
-                {loading ? <LoadingSpinner size="small" color="inherit" /> : 'Sign In'}
+                {loading ? (
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    width: '100%', 
+                    height: '100%' 
+                  }}>
+                    <Box 
+                      component="span"
+                      sx={{
+                        display: 'inline-block',
+                        width: 24,
+                        height: 24,
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                        animation: `${pulse} 2s infinite ease-in-out`,
+                      }} 
+                    />
+                  </Box>
+                ) : (
+                  'Sign In'
+                )}
               </Button>
             </Stack>
           </form>
 
-          <Divider sx={{ my: 4 }}>
-            <Typography variant="body2" color="text.secondary">
+          <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.2)' }}>
+            <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
               OR
             </Typography>
           </Divider>
           
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="body1" color="text.secondary" gutterBottom>
-              Don't have an account?
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+              Don't have an account yet?
             </Typography>
             <Button
               component={Link}
               to="/signup"
               variant="outlined"
               fullWidth
+              disabled={loading}
               sx={{ 
                 py: 1.2,
+                borderRadius: 2,
                 textTransform: 'none',
-                fontSize: '1rem'
+                fontSize: '0.95rem',
+                borderColor: theme.palette.primary.main,
+                color: theme.palette.primary.main,
+                '&:hover': {
+                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                  borderColor: theme.palette.primary.dark,
+                  color: theme.palette.primary.dark,
+                }
               }}
             >
-              Create Account
+              Create New Account
             </Button>
           </Box>
         </Paper>
