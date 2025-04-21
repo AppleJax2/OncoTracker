@@ -9,7 +9,6 @@ import {
   TextField, 
   Button, 
   Typography, 
-  Paper, 
   InputAdornment, 
   IconButton,
   Alert,
@@ -24,14 +23,17 @@ import {
   Stepper,
   Step,
   StepLabel,
-  StepConnector, // For custom connector line
-  stepConnectorClasses, // For styling connector
-  StepIconProps, // For custom step icon
   useTheme,
-  styled, // For custom styled components
+  styled,
   alpha,
-  Collapse, // For animating conditional field
-  FormHelperText // For validation messages under fields
+  Collapse,
+  FormHelperText,
+  Card,
+  CardHeader,
+  CardContent,
+  Checkbox,
+  Tab,
+  Tabs
 } from '@mui/material';
 import { 
   Visibility, 
@@ -40,123 +42,42 @@ import {
   Lock, 
   Person, 
   Business, 
-  MedicalServices, // Vet icon
-  Pets, // Owner icon
-  CheckCircle, // Custom step icon
-  ErrorOutline, // Error icon
-  RadioButtonUnchecked, // Custom step icon
-  TaskAlt // Completed step icon
+  MedicalServices,
+  Pets,
+  ErrorOutline,
+  ArrowBack,
+  ChevronRight
 } from '@mui/icons-material';
+import { motion } from 'framer-motion';
 
-// --- Custom Stepper Styling ---
+// Define the MotionBox component
+const MotionBox = motion(Box);
+const MotionDiv = motion.div;
 
-const QontoConnector = styled(StepConnector)(({ theme }) => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 10,
-    left: 'calc(-50% + 16px)',
-    right: 'calc(50% + 16px)',
-  },
-  [`&.${stepConnectorClasses.active}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  [`&.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    borderColor: theme.palette.divider,
-    borderTopWidth: 2,
-    borderRadius: 1,
+// Custom styled radio for better appearance
+const StyledRadio = styled(Radio)(({ theme }) => ({
+  padding: 8,
+  '& .MuiSvgIcon-root': {
+    fontSize: 24,
   },
 }));
 
-const QontoStepIconRoot = styled('div')<{ ownerState: { active?: boolean, completed?: boolean } }>(
-  ({ theme, ownerState }) => ({
-    color: theme.palette.divider,
-    display: 'flex',
-    height: 22,
-    alignItems: 'center',
-    ...(ownerState.active && {
-      color: theme.palette.primary.main,
-    }),
-    '& .QontoStepIcon-circle': {
-      width: 24, // Make circle slightly larger
-      height: 24,
-      borderRadius: '50%',
-      backgroundColor: 'currentColor',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '0.8rem', // Font size for number inside circle
-      color: theme.palette.getContrastText(theme.palette.divider), // Text color for inactive
-      ...(ownerState.active && { // Style for active step number
-         color: theme.palette.getContrastText(theme.palette.primary.main),
-      }),
-       ...(ownerState.completed && { // Style for completed step icon color
-         color: theme.palette.primary.main,
-      }),
-    },
-     ...(ownerState.completed && {
-      color: theme.palette.primary.main,
-      zIndex: 1,
-      fontSize: 24, // Size of completed icon
-    }),
-  }),
-);
-
-
-function QontoStepIcon(props: StepIconProps) {
-  const { active, completed, className, icon } = props;
-
-  return (
-    <QontoStepIconRoot ownerState={{ active, completed }} className={className}>
-      {completed ? (
-        <TaskAlt className="QontoStepIcon-completedIcon" fontSize="inherit"/>
-      ) : (
-        <div className="QontoStepIcon-circle">
-          {/* Display step number */}
-          {typeof icon === 'number' ? icon : <RadioButtonUnchecked fontSize="small"/>}
-        </div>
-      )}
-    </QontoStepIconRoot>
-  );
-}
-
-// --- Custom Radio Button Styling ---
-
-const StyledFormControlLabel = styled(FormControlLabel)(({ theme }) => ({
-  border: `1px solid ${theme.palette.divider}`,
+// Custom radio option component
+const RoleRadioOption = styled(FormControlLabel)(({ theme }) => ({
+  margin: 0,
+  width: '100%',
   borderRadius: theme.shape.borderRadius * 2,
-  padding: theme.spacing(1.5, 2),
-  margin: theme.spacing(0, 1, 1, 0),
-  transition: 'border-color 0.2s ease-in-out, background-color 0.2s ease-in-out',
-  width: '100%', // Make labels take full width in column layout
-  [`@media (min-width: ${theme.breakpoints.values.sm}px)`]: {
-     width: 'auto', // Auto width on larger screens for row layout
-     marginRight: theme.spacing(2),
-  },
+  padding: theme.spacing(1.5),
+  transition: 'all 0.2s ease',
+  border: `1px solid ${theme.palette.divider}`,
   '&:hover': {
-    borderColor: theme.palette.primary.light,
     backgroundColor: alpha(theme.palette.primary.main, 0.04),
   },
-  '&.Mui-focused, &.Mui-checked': { // Use .Mui-checked pseudo class
-    borderColor: theme.palette.primary.main,
+  '&.Mui-checked': {
     backgroundColor: alpha(theme.palette.primary.main, 0.08),
+    borderColor: theme.palette.primary.main,
   },
-  '& .MuiRadio-root': {
-    display: 'none', // Hide the actual radio button
-  },
-  '& .MuiFormControlLabel-label': {
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing(1.5),
-    fontWeight: 500,
-  }
 }));
-
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -170,38 +91,40 @@ const SignupPage: React.FC = () => {
     passwordConfirm: '',
     role: '' as '' | 'owner' | 'vet', // Start empty to force selection
     clinicName: '',
+    agreeToTerms: false,
   });
-  const [formErrors, setFormErrors] = useState<Record<string, string | null>>({}); // For real-time field validation
+  const [formErrors, setFormErrors] = useState<Record<string, string | null>>({});
   const [showPassword, setShowPassword] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null); // Separate API error state
+  const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
 
-  const { firstName, lastName, email, password, passwordConfirm, role, clinicName } = formData;
+  const { firstName, lastName, email, password, passwordConfirm, role, clinicName, agreeToTerms } = formData;
 
   const steps = ['Account Type', 'Personal Details', 'Set Password'];
 
-  // --- Real-time Validation ---
-  const validateField = (name: string, value: string): string | null => {
+  // Validation
+  const validateField = (name: string, value: string | boolean): string | null => {
      switch (name) {
         case 'firstName':
-           return value.trim() ? null : 'First name is required';
+           return typeof value === 'string' && value.trim() ? null : 'First name is required';
         case 'lastName':
-           return value.trim() ? null : 'Last name is required';
+           return typeof value === 'string' && value.trim() ? null : 'Last name is required';
         case 'email':
-           if (!value.trim()) return 'Email is required';
+           if (typeof value !== 'string' || !value.trim()) return 'Email is required';
            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : 'Invalid email format';
         case 'password':
-           if (!value) return 'Password is required';
+           if (typeof value !== 'string' || !value) return 'Password is required';
            return value.length >= 8 ? null : 'Password must be at least 8 characters';
         case 'passwordConfirm':
-           if (!value) return 'Please confirm your password';
+           if (typeof value !== 'string' || !value) return 'Please confirm your password';
            return value === formData.password ? null : 'Passwords do not match';
         case 'clinicName':
-           // Only validate if role is 'vet'
-           return formData.role === 'vet' && !value.trim() ? 'Clinic name is required for veterinarians' : null;
-         case 'role':
-            return value ? null : 'Please select an account type';
+           return formData.role === 'vet' && typeof value === 'string' && !value.trim() ? 'Clinic name is required for veterinarians' : null;
+        case 'role':
+           return value ? null : 'Please select an account type';
+        case 'agreeToTerms':
+           return value ? null : 'You must agree to the terms and conditions';
         default:
            return null;
      }
@@ -214,7 +137,7 @@ const SignupPage: React.FC = () => {
     // Clear API error on input change
     if (apiError) setApiError(null);
 
-    // Validate the field that changed
+    // Validate the field
     const error = validateField(name, value);
     setFormErrors(prevErrors => ({ ...prevErrors, [name]: error }));
 
@@ -227,29 +150,37 @@ const SignupPage: React.FC = () => {
 
   const handleRoleChange = (e: ChangeEvent<HTMLInputElement>) => {
      const newRole = e.target.value as 'owner' | 'vet';
-     setFormData({ ...formData, role: newRole, clinicName: newRole === 'owner' ? '' : formData.clinicName }); // Clear clinic name if switching to owner
+     setFormData({ ...formData, role: newRole, clinicName: newRole === 'owner' ? '' : formData.clinicName });
 
      // Clear API error on input change
-    if (apiError) setApiError(null);
+     if (apiError) setApiError(null);
 
      const roleError = validateField('role', newRole);
-     const clinicError = validateField('clinicName', newRole === 'vet' ? formData.clinicName : ''); // Validate clinic name based on new role
+     const clinicError = validateField('clinicName', newRole === 'vet' ? formData.clinicName : '');
 
      setFormErrors(prevErrors => ({ ...prevErrors, role: roleError, clinicName: clinicError }));
   };
 
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = e.target;
+    setFormData({ ...formData, [name]: checked });
+    
+    // Validate the field
+    const error = validateField(name, checked);
+    setFormErrors(prevErrors => ({ ...prevErrors, [name]: error }));
+  };
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  // --- Stepper Logic with Validation ---
+  // Stepper Logic with Validation
   const validateStepFields = (stepIndex: number): boolean => {
     let fieldsToValidate: string[] = [];
     switch(stepIndex) {
       case 0: fieldsToValidate = ['role']; if (formData.role === 'vet') fieldsToValidate.push('clinicName'); break;
       case 1: fieldsToValidate = ['firstName', 'lastName', 'email']; break;
-      case 2: fieldsToValidate = ['password', 'passwordConfirm']; break;
+      case 2: fieldsToValidate = ['password', 'passwordConfirm', 'agreeToTerms']; break;
       default: return false;
     }
 
@@ -257,7 +188,6 @@ const SignupPage: React.FC = () => {
     const currentStepErrors: Record<string, string | null> = {};
 
     fieldsToValidate.forEach(field => {
-      // Need to cast field to keyof formData
       const value = formData[field as keyof typeof formData];
       const error = validateField(field, value);
       currentStepErrors[field] = error;
@@ -289,7 +219,6 @@ const SignupPage: React.FC = () => {
 
     // Final validation check before submitting
     if (!validateStepFields(activeStep)) {
-        // This should technically be caught by the button disable logic, but good as a fallback
         setApiError("Please fix the errors before submitting.");
         return;
     }
@@ -301,24 +230,24 @@ const SignupPage: React.FC = () => {
         lastName,
         email,
         password,
-        passwordConfirm, // Send confirmation for backend validation if needed
+        passwordConfirm,
         role,
         ...(role === 'vet' && { clinicName: clinicName.trim() })
       };
-      console.log("Submitting signup data:", userData); // Log before sending
+      console.log("Submitting signup data:", userData);
       await signup(userData);
       console.log("Signup successful");
-      // Optionally show a success message before navigating
-      navigate('/login', { state: { signupSuccess: true } }); // Pass state to login page if needed
+      
+      // Navigate to login after successful signup
+      navigate('/login', { state: { signupSuccess: true } });
     } catch (err: any) {
       console.error('Signup Failed:', err);
       let errorMessage = 'Signup failed. Please check your details and try again.';
        if (err?.response?.data?.message) {
            errorMessage = err.response.data.message;
        } else if (err?.message && !err.message.includes('Network Error')) {
-           // Avoid generic messages if possible, maybe check for specific status codes
            errorMessage = `An error occurred: ${err.message}`;
-       } else if (err.message.includes('Network Error') || !navigator.onLine) {
+       } else if (err.message?.includes('Network Error') || !navigator.onLine) {
            errorMessage = 'Network error. Please check your connection.';
        }
       setApiError(errorMessage);
@@ -327,7 +256,7 @@ const SignupPage: React.FC = () => {
     }
   };
 
-  // Memoize button disabled state calculation
+  // Button disabled state calculation
   const isNextDisabled = useMemo(() => {
     if (loading) return true;
     if (activeStep === 0) {
@@ -335,14 +264,13 @@ const SignupPage: React.FC = () => {
     } else if (activeStep === 1) {
       return !firstName.trim() || !lastName.trim() || !email.trim() || formErrors.firstName !== null || formErrors.lastName !== null || formErrors.email !== null;
     } else if (activeStep === 2) {
-      return !password || !passwordConfirm || formErrors.password !== null || formErrors.passwordConfirm !== null;
+      return !password || !passwordConfirm || !agreeToTerms || formErrors.password !== null || formErrors.passwordConfirm !== null || formErrors.agreeToTerms !== null;
     }
     return true; // Should not happen
-  }, [activeStep, role, clinicName, firstName, lastName, email, password, passwordConfirm, formErrors, loading]);
+  }, [activeStep, role, clinicName, firstName, lastName, email, password, passwordConfirm, agreeToTerms, formErrors, loading]);
 
-  // Background consistent with LoginPage
-  const soothingBlueGradient = `linear-gradient(135deg, ${theme.palette.info.light} 0%, ${theme.palette.info.main} 100%)`;
-  const medicalBlueGradient = `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 50%, ${theme.palette.primary.dark} 100%)`;
+  // Modern gradient background
+  const backgroundGradient = 'linear-gradient(135deg, #0B4F6C 0%, #01949A 100%)';
 
   return (
     <Box
@@ -351,357 +279,462 @@ const SignupPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: soothingBlueGradient, // Consistent background
+        background: backgroundGradient,
         backgroundAttachment: 'fixed',
         py: { xs: 4, sm: 6, md: 8 },
         px: 2,
-        transition: 'background 0.5s ease-in-out',
       }}
     >
-      {/* Use sm or md for max width depending on preference */}
       <Container maxWidth="sm">
-        <Paper
-          elevation={6}
-          sx={{
-            p: { xs: 3, sm: 4 }, // Consistent padding
-            borderRadius: 3, // Consistent rounding
-            backgroundColor: 'rgba(255, 255, 255, 0.85)', // Consistent card style
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            transition: 'all 0.3s ease-in-out',
-            overflow: 'hidden', // Prevent content overflow during transitions
-          }}
+        <MotionBox
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <Box sx={{ textAlign: 'center', mb: 3 }}>
-            {/* Consider a Logo component */}
-            <Typography
-              variant="h4"
-              component="h1"
-              fontWeight={700}
-              color="primary.dark"
-              gutterBottom
-              sx={{ mb: 1 }}
-            >
-              Create OncoTracker Account
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Start managing pet cancer care today
-            </Typography>
-          </Box>
+          <Card elevation={6} sx={{ borderRadius: 4, overflow: 'hidden' }}>
+            <CardHeader
+              title={
+                <Box sx={{ textAlign: 'center', mb: 1 }}>
+                  <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+                    <Box 
+                      sx={{ 
+                        width: 70, 
+                        height: 70, 
+                        borderRadius: '50%', 
+                        backgroundColor: 'rgba(26, 156, 176, 0.1)', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center' 
+                      }}
+                    >
+                      <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                    </Box>
+                  </Box>
+                  <Typography 
+                    variant="h4" 
+                    component="h1" 
+                    fontWeight={700}
+                    color="primary.dark"
+                  >
+                    Create Account
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    Join OncoTracker to access pet cancer care tools
+                  </Typography>
+                </Box>
+              }
+              sx={{ pb: 2 }}
+            />
 
-          {/* Styled Stepper */}
-          <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />} sx={{ mb: 4 }}>
-            {steps.map((label, index) => (
-              <Step key={label}>
-                {/* Pass index + 1 as icon number */}
-                <StepLabel StepIconComponent={QontoStepIcon} StepIconProps={{icon: index + 1}}>
-                    {label}
-                </StepLabel>
-              </Step>
-            ))}
-          </Stepper>
+            {/* Stepper */}
+            <Stepper activeStep={activeStep} sx={{ px: 4, pb: 2 }}>
+              {steps.map((label, index) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
 
-          {/* Centralized API Error Alert */}
-           {apiError && (
-            <Alert
-              severity="error"
-              icon={<ErrorOutline fontSize="inherit" />}
-              sx={{
-                mb: 3,
-                borderRadius: 1,
-                backgroundColor: 'error.light',
-                color: 'error.dark',
-                border: `1px solid ${theme.palette.error.main}`
-              }}
-              variant="filled"
-            >
-              {apiError}
-            </Alert>
-          )}
+            <CardContent>
+              {/* Error Display */}
+              {apiError && (
+                <Alert
+                  severity="error"
+                  icon={<ErrorOutline fontSize="inherit" />}
+                  sx={{
+                    mb: 3,
+                    borderRadius: 2,
+                    backgroundColor: 'error.light',
+                    color: 'error.dark',
+                    border: `1px solid ${theme.palette.error.main}`
+                  }}
+                  variant="filled"
+                >
+                  {apiError}
+                </Alert>
+              )}
 
-          {/* Form with transitions */}
-          <form onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
-             {/* Use Box with consistent height and overflow for smooth transitions */}
-             <Box sx={{ minHeight: 250, position: 'relative' /* Animation context */ }}>
-                 {/* Step 0: Account Type */}
-                 <Collapse in={activeStep === 0} timeout={300} unmountOnExit>
-                     <Stack spacing={3} sx={{ width: '100%', p: 1 }}>
-                         <FormControl component="fieldset" error={!!formErrors.role}>
-                           <FormLabel component="legend" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
-                             Select Account Type:
-                           </FormLabel>
-                           {/* Use Grid for better responsive layout of radios */}
-                           <RadioGroup
-                             name="role"
-                             value={role}
-                             onChange={handleRoleChange}
-                             sx={{
+              {/* Form Content */}
+              <form onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
+                <Box sx={{ minHeight: 250, position: 'relative' }}>
+                  {/* Step 0: Account Type */}
+                  <Collapse in={activeStep === 0} timeout={300} unmountOnExit>
+                    <Stack spacing={3} sx={{ width: '100%' }}>
+                      <FormControl component="fieldset" error={!!formErrors.role}>
+                        <FormLabel component="legend" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
+                          Select Account Type:
+                        </FormLabel>
+                        <RadioGroup
+                          name="role"
+                          value={role}
+                          onChange={handleRoleChange}
+                          sx={{
+                            display: 'flex',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            gap: 2
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, width: '100%' }}>
+                            <Box 
+                              className={role === 'owner' ? 'Mui-checked' : ''} 
+                              sx={{ 
+                                width: '100%',
                                 display: 'flex',
-                                flexDirection: { xs: 'column', sm: 'row' }, // Column on small, row on larger
-                                gap: { xs: 1, sm: 0 }
-                             }}
-                           >
-                             <StyledFormControlLabel
-                               value="owner"
-                               control={<Radio checked={role === 'owner'} />} // Controlled component
-                               label={<><Pets fontSize="small" /> Pet Owner</>}
-                               checked={role === 'owner'} // Apply checked style
-                             />
-                             <StyledFormControlLabel
-                               value="vet"
-                               control={<Radio checked={role === 'vet'} />}
-                               label={<><MedicalServices fontSize="small" /> Veterinarian</>}
-                               checked={role === 'vet'}
-                             />
-                           </RadioGroup>
-                            {formErrors.role && <FormHelperText error>{formErrors.role}</FormHelperText>}
-                         </FormControl>
+                                alignItems: 'center',
+                                p: 2,
+                                borderRadius: 2,
+                                border: `1px solid ${role === 'owner' ? theme.palette.primary.main : theme.palette.divider}`,
+                                bgcolor: role === 'owner' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                  bgcolor: alpha(theme.palette.primary.main, 0.04),
+                                }
+                              }}
+                              onClick={() => handleRoleChange({ target: { value: 'owner' } } as any)}
+                            >
+                              <Radio 
+                                value="owner"
+                                checked={role === 'owner'}
+                                sx={{ mr: 1 }}
+                              />
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Pets sx={{ mr: 1, color: 'primary.main' }} />
+                                <Typography>Pet Owner</Typography>
+                              </Box>
+                            </Box>
+                            
+                            <Box 
+                              className={role === 'vet' ? 'Mui-checked' : ''} 
+                              sx={{ 
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                p: 2,
+                                borderRadius: 2,
+                                border: `1px solid ${role === 'vet' ? theme.palette.primary.main : theme.palette.divider}`,
+                                bgcolor: role === 'vet' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                '&:hover': {
+                                  bgcolor: alpha(theme.palette.primary.main, 0.04),
+                                }
+                              }}
+                              onClick={() => handleRoleChange({ target: { value: 'vet' } } as any)}
+                            >
+                              <Radio 
+                                value="vet"
+                                checked={role === 'vet'}
+                                sx={{ mr: 1 }}
+                              />
+                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <MedicalServices sx={{ mr: 1, color: 'primary.main' }} />
+                                <Typography>Veterinarian</Typography>
+                              </Box>
+                            </Box>
+                          </Box>
+                        </RadioGroup>
+                        {formErrors.role && <FormHelperText error>{formErrors.role}</FormHelperText>}
+                      </FormControl>
 
-                         {/* Conditional Veterinarian Field with Animation */}
-                         <Collapse in={role === 'vet'} timeout={300} unmountOnExit>
-                             <TextField
-                               fullWidth
-                               id="clinicName"
-                               name="clinicName"
-                               label="Clinic Name"
-                               variant="outlined" // Consistent input style
-                               required={role === 'vet'}
-                               value={clinicName}
-                               onChange={handleChange}
-                               disabled={loading}
-                               error={!!formErrors.clinicName}
-                               helperText={formErrors.clinicName || (role === 'vet' ? 'Required for veterinarian accounts' : '')}
-                               InputProps={{
-                                 startAdornment: (
-                                   <InputAdornment position="start">
-                                     <Business color="action" sx={{ mr: 1 }} />
-                                   </InputAdornment>
-                                 ),
-                                 sx: { borderRadius: 2, bgcolor: alpha(theme.palette.info.light, 0.1) } // Accent color hint
-                               }}
-                               InputLabelProps={{ shrink: true }}
-                             />
-                         </Collapse>
-                     </Stack>
-                 </Collapse>
+                      {/* Conditional Clinic Name Field */}
+                      <Collapse in={role === 'vet'} timeout={300} unmountOnExit>
+                        <TextField
+                          fullWidth
+                          id="clinicName"
+                          name="clinicName"
+                          label="Clinic Name"
+                          variant="outlined"
+                          required={role === 'vet'}
+                          value={clinicName}
+                          onChange={handleChange}
+                          disabled={loading}
+                          error={!!formErrors.clinicName}
+                          helperText={formErrors.clinicName || ''}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Business color="action" sx={{ mr: 1 }} />
+                              </InputAdornment>
+                            ),
+                            sx: { borderRadius: 2 }
+                          }}
+                          InputLabelProps={{ shrink: true }}
+                          sx={{ mt: 1 }}
+                        />
+                      </Collapse>
+                    </Stack>
+                  </Collapse>
 
-                {/* Step 1: Personal Details */}
-                 <Collapse in={activeStep === 1} timeout={300} unmountOnExit>
-                     <Stack spacing={2.5} sx={{ width: '100%', p: 1 }}>
-                         <Grid container spacing={2}>
-                           <Grid item xs={12} sm={6}>
-                             <TextField
-                               fullWidth
-                               id="firstName"
-                               name="firstName"
-                               label="First Name"
-                               variant="outlined"
-                               required
-                               value={firstName}
-                               onChange={handleChange}
-                               disabled={loading}
-                               error={!!formErrors.firstName}
-                               helperText={formErrors.firstName}
-                               InputProps={{
-                                 startAdornment: ( <InputAdornment position="start"><Person color="action" sx={{ mr: 1 }} /></InputAdornment> ),
-                                 sx: { borderRadius: 2 }
-                               }}
-                               InputLabelProps={{ shrink: true }}
-                             />
-                           </Grid>
-                           <Grid item xs={12} sm={6}>
-                             <TextField
-                               fullWidth
-                               id="lastName"
-                               name="lastName"
-                               label="Last Name"
-                               variant="outlined"
-                               required
-                               value={lastName}
-                               onChange={handleChange}
-                               disabled={loading}
-                               error={!!formErrors.lastName}
-                               helperText={formErrors.lastName}
-                               InputProps={{
-                                 startAdornment: ( <InputAdornment position="start"><Person color="action" sx={{ mr: 1 }} /></InputAdornment> ),
-                                 sx: { borderRadius: 2 }
-                               }}
-                                InputLabelProps={{ shrink: true }}
-                             />
-                           </Grid>
-                         </Grid>
-
-                         <TextField
-                           fullWidth
-                           id="email-address"
-                           name="email"
-                           type="email"
-                           label="Email Address"
-                           variant="outlined"
-                           autoComplete="email"
-                           required
-                           value={email}
-                           onChange={handleChange}
-                           disabled={loading}
-                           error={!!formErrors.email}
-                           helperText={formErrors.email}
-                           InputProps={{
-                             startAdornment: ( <InputAdornment position="start"><Email color="action" sx={{ mr: 1 }} /></InputAdornment> ),
-                             sx: { borderRadius: 2 }
-                           }}
+                  {/* Step 1: Personal Details */}
+                  <Collapse in={activeStep === 1} timeout={300} unmountOnExit>
+                    <Stack spacing={3} sx={{ width: '100%' }}>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            id="firstName"
+                            name="firstName"
+                            label="First Name"
+                            variant="outlined"
+                            required
+                            value={firstName}
+                            onChange={handleChange}
+                            disabled={loading}
+                            error={!!formErrors.firstName}
+                            helperText={formErrors.firstName || ''}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <Person color="action" sx={{ mr: 1 }} />
+                                </InputAdornment>
+                              ),
+                              sx: { borderRadius: 2 }
+                            }}
                             InputLabelProps={{ shrink: true }}
-                         />
-                     </Stack>
-                 </Collapse>
-
-                {/* Step 2: Set Password */}
-                <Collapse in={activeStep === 2} timeout={300} unmountOnExit>
-                     <Stack spacing={2.5} sx={{ width: '100%', p: 1 }}>
-                         <TextField
-                           fullWidth
-                           id="password"
-                           name="password"
-                           type={showPassword ? 'text' : 'password'}
-                           label="Password"
-                           variant="outlined"
-                           autoComplete="new-password"
-                           required
-                           value={password}
-                           onChange={handleChange}
-                           disabled={loading}
-                           error={!!formErrors.password}
-                           helperText={formErrors.password || "Password must be at least 8 characters"} // Show validation error or hint
-                           InputProps={{
-                             startAdornment: ( <InputAdornment position="start"><Lock color="action" sx={{ mr: 1 }} /></InputAdornment> ),
-                             endAdornment: (
-                               <InputAdornment position="end">
-                                 <IconButton aria-label="toggle password visibility" onClick={handleTogglePasswordVisibility} edge="end" color={showPassword ? "primary" : "default"}>
-                                   {showPassword ? <VisibilityOff /> : <Visibility />}
-                                 </IconButton>
-                               </InputAdornment>
-                             ),
-                             sx: { borderRadius: 2 }
-                           }}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                          <TextField
+                            fullWidth
+                            id="lastName"
+                            name="lastName"
+                            label="Last Name"
+                            variant="outlined"
+                            required
+                            value={lastName}
+                            onChange={handleChange}
+                            disabled={loading}
+                            error={!!formErrors.lastName}
+                            helperText={formErrors.lastName || ''}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <Person color="action" sx={{ mr: 1 }} />
+                                </InputAdornment>
+                              ),
+                              sx: { borderRadius: 2 }
+                            }}
                             InputLabelProps={{ shrink: true }}
-                         />
+                          />
+                        </Grid>
+                      </Grid>
 
-                         <TextField
-                           fullWidth
-                           id="passwordConfirm"
-                           name="passwordConfirm"
-                           type={showPassword ? 'text' : 'password'} // Toggle confirmation field visibility too
-                           label="Confirm Password"
-                           variant="outlined"
-                           autoComplete="new-password"
-                           required
-                           value={passwordConfirm}
-                           onChange={handleChange}
-                           disabled={loading}
-                           error={!!formErrors.passwordConfirm}
-                           helperText={formErrors.passwordConfirm} // Show validation error
-                           InputProps={{
-                             startAdornment: ( <InputAdornment position="start"><Lock color="action" sx={{ mr: 1 }} /></InputAdornment> ),
-                             sx: { borderRadius: 2 }
-                           }}
-                            InputLabelProps={{ shrink: true }}
-                         />
-                     </Stack>
-                </Collapse>
-             </Box>
+                      <TextField
+                        fullWidth
+                        id="email"
+                        name="email"
+                        type="email"
+                        label="Email Address"
+                        variant="outlined"
+                        autoComplete="email"
+                        required
+                        value={email}
+                        onChange={handleChange}
+                        disabled={loading}
+                        error={!!formErrors.email}
+                        helperText={formErrors.email || ''}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Email color="action" sx={{ mr: 1 }} />
+                            </InputAdornment>
+                          ),
+                          sx: { borderRadius: 2 }
+                        }}
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    </Stack>
+                  </Collapse>
 
-            {/* Navigation Buttons */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-              <Button
-                onClick={handleBack}
-                disabled={activeStep === 0 || loading}
-                variant="text" // Use text button for Back for less emphasis
-                sx={{ textTransform: 'none', px: 3, color: 'text.secondary' }}
-              >
-                Back
-              </Button>
-              <Button
-                type="submit" // This button progresses or submits
-                variant="contained"
-                disabled={isNextDisabled} // Use memoized disable logic
-                sx={{
-                  py: 1.5,
-                  px: 4,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  color: 'white',
-                  background: medicalBlueGradient, // Consistent gradient button
-                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: `0 4px 15px rgba(0, 0, 0, 0.2)`,
-                  },
-                   '&:disabled': {
-                    background: theme.palette.grey[400],
-                    cursor: 'not-allowed',
-                  }
-                  // No pulsing animation needed here unless specifically for submit step
-                }}
-              >
-                {loading && activeStep === steps.length - 1 ? (
-                  <LoadingSpinner size="small" color="inherit" /> // Standard spinner for submit
-                ) : activeStep === steps.length - 1 ? (
-                  'Create Account'
-                ) : (
-                  'Next'
-                )}
-              </Button>
-            </Box>
-          </form>
+                  {/* Step 2: Set Password */}
+                  <Collapse in={activeStep === 2} timeout={300} unmountOnExit>
+                    <Stack spacing={3} sx={{ width: '100%' }}>
+                      <TextField
+                        fullWidth
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        label="Password"
+                        variant="outlined"
+                        autoComplete="new-password"
+                        required
+                        value={password}
+                        onChange={handleChange}
+                        disabled={loading}
+                        error={!!formErrors.password}
+                        helperText={formErrors.password || "Password must be at least 8 characters"}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Lock color="action" sx={{ mr: 1 }} />
+                            </InputAdornment>
+                          ),
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleTogglePasswordVisibility}
+                                edge="end"
+                                color={showPassword ? "primary" : "default"}
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                          sx: { borderRadius: 2 }
+                        }}
+                        InputLabelProps={{ shrink: true }}
+                      />
 
-          {/* Optional Veterinarian Note */}
-          <Collapse in={role === 'vet' && activeStep === steps.length - 1} timeout={300} unmountOnExit>
-             <Typography
-                variant="caption" // Use caption for less important notes
-                color="text.secondary"
-                sx={{ mt: 2, display: 'block', textAlign: 'center' }}
-             >
-                Note: Veterinarian accounts require manual verification after signup.
-             </Typography>
-          </Collapse>
+                      <TextField
+                        fullWidth
+                        id="passwordConfirm"
+                        name="passwordConfirm"
+                        type={showPassword ? 'text' : 'password'}
+                        label="Confirm Password"
+                        variant="outlined"
+                        autoComplete="new-password"
+                        required
+                        value={passwordConfirm}
+                        onChange={handleChange}
+                        disabled={loading}
+                        error={!!formErrors.passwordConfirm}
+                        helperText={formErrors.passwordConfirm || ''}
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <Lock color="action" sx={{ mr: 1 }} />
+                            </InputAdornment>
+                          ),
+                          sx: { borderRadius: 2 }
+                        }}
+                        InputLabelProps={{ shrink: true }}
+                      />
 
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={agreeToTerms}
+                            onChange={handleCheckboxChange}
+                            name="agreeToTerms"
+                            color="primary"
+                          />
+                        }
+                        label={
+                          <Typography variant="body2">
+                            I agree to the{' '}
+                            <Link 
+                              to="/terms" 
+                              style={{ 
+                                textDecoration: 'none', 
+                                color: theme.palette.primary.main 
+                              }}
+                            >
+                              Terms and Conditions
+                            </Link>
+                          </Typography>
+                        }
+                      />
+                      {formErrors.agreeToTerms && (
+                        <FormHelperText error>{formErrors.agreeToTerms}</FormHelperText>
+                      )}
 
-          {/* Link back to Login */}
-          <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.2)' }}>
-            <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
-              OR
-            </Typography>
-          </Divider>
+                      {/* Veterinarian Note */}
+                      <Collapse in={role === 'vet'} timeout={300} unmountOnExit>
+                        <Alert severity="info" sx={{ mt: 1, borderRadius: 2 }}>
+                          <Typography variant="caption">
+                            Note: Veterinarian accounts require manual verification after signup.
+                          </Typography>
+                        </Alert>
+                      </Collapse>
+                    </Stack>
+                  </Collapse>
+                </Box>
 
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Already have an account?
-            </Typography>
-            <Button
-              component={Link}
-              to="/login"
-              variant="outlined" // Consistent secondary button style
-              fullWidth
-              disabled={loading}
-              sx={{
-                py: 1.2,
-                borderRadius: 2,
-                textTransform: 'none',
-                fontSize: '0.95rem',
-                borderColor: theme.palette.primary.main,
-                color: theme.palette.primary.main,
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                  borderColor: theme.palette.primary.dark,
-                  color: theme.palette.primary.dark,
-                }
-              }}
-            >
-              Sign In Instead
-            </Button>
-          </Box>
-        </Paper>
+                {/* Navigation Buttons */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
+                  <Button
+                    onClick={handleBack}
+                    disabled={activeStep === 0 || loading}
+                    startIcon={<ArrowBack />}
+                    sx={{ 
+                      color: 'text.secondary',
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                      }
+                    }}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={isNextDisabled}
+                    endIcon={activeStep === steps.length - 1 ? undefined : <ChevronRight />}
+                    sx={{
+                      py: 1,
+                      px: 3,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      color: 'white',
+                      background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
+                      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 4px 15px rgba(0, 0, 0, 0.2)`,
+                        background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
+                      },
+                      '&:disabled': {
+                        background: theme.palette.grey[400],
+                        cursor: 'not-allowed',
+                      }
+                    }}
+                  >
+                    {loading && activeStep === steps.length - 1 ? (
+                      <LoadingSpinner size="small" color="inherit" />
+                    ) : activeStep === steps.length - 1 ? (
+                      'Create Account'
+                    ) : (
+                      'Next'
+                    )}
+                  </Button>
+                </Box>
+              </form>
+
+              {/* Link to Login */}
+              <Box sx={{ textAlign: 'center', mt: 4 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  Already have an account?
+                </Typography>
+                <Button
+                  component={Link}
+                  to="/login"
+                  variant="outlined"
+                  fullWidth
+                  disabled={loading}
+                  sx={{
+                    py: 1.2,
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontSize: '0.95rem',
+                    borderColor: theme.palette.primary.main,
+                    color: theme.palette.primary.main,
+                    '&:hover': {
+                      backgroundColor: `${theme.palette.primary.main}10`,
+                      borderColor: theme.palette.primary.dark,
+                      color: theme.palette.primary.dark,
+                    }
+                  }}
+                >
+                  Sign In Instead
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </MotionBox>
       </Container>
     </Box>
   );

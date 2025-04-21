@@ -15,16 +15,24 @@ import {
   Divider,
   Stack,
   useTheme,
-  keyframes,
-  alpha
+  Checkbox,
+  FormControlLabel,
+  Card,
+  CardContent,
+  CardHeader
 } from '@mui/material';
-import { Visibility, VisibilityOff, Email, Lock, ErrorOutline } from '@mui/icons-material';
+import { 
+  Visibility, 
+  VisibilityOff, 
+  Email, 
+  Lock, 
+  ErrorOutline, 
+  Pets 
+} from '@mui/icons-material';
+import { motion } from 'framer-motion';
 
-const pulse = keyframes`
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 123, 255, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
-`;
+// Animation component wrapper
+const MotionBox = motion(Box);
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -32,6 +40,7 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -86,8 +95,8 @@ const LoginPage: React.FC = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const medicalBlueGradient = `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 50%, ${theme.palette.primary.dark} 100%)`;
-  const soothingBlueGradient = `linear-gradient(135deg, ${theme.palette.info.light} 0%, ${theme.palette.info.main} 100%)`;
+  // Modern gradient background
+  const backgroundGradient = 'linear-gradient(135deg, #0B4F6C 0%, #01949A 100%)';
 
   return (
     <Box
@@ -96,206 +105,221 @@ const LoginPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: soothingBlueGradient,
+        background: backgroundGradient,
         backgroundAttachment: 'fixed',
         py: { xs: 4, sm: 6, md: 8 },
         px: 2,
-        transition: 'background 0.5s ease-in-out',
       }}
     >
       <Container maxWidth="xs">
-        <Paper
-          elevation={6}
-          sx={{
-            p: { xs: 3, sm: 4 },
-            borderRadius: 3,
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            transition: 'all 0.3s ease-in-out',
-          }}
+        <MotionBox
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Typography 
-              variant="h4" 
-              component="h1" 
-              fontWeight={700}
-              color="primary.dark"
-              gutterBottom
-              sx={{ mb: 1 }}
-            >
-              OncoTracker Login
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Access your veterinary oncology portal
-            </Typography>
-          </Box>
-
-          {error && (
-            <Alert 
-              severity="error" 
-              icon={<ErrorOutline fontSize="inherit" />}
-              sx={{ 
-                mb: 3, 
-                borderRadius: 1, 
-                backgroundColor: 'error.light',
-                color: 'error.dark',
-                border: `1px solid ${theme.palette.error.main}`
-              }}
-              variant="filled"
-            >
-              {error}
-            </Alert>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            <Stack spacing={3}>
-              <TextField
-                fullWidth
-                id="email-address"
-                name="email"
-                type="email"
-                label="Email Address"
-                variant="outlined"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Email color="action" sx={{ mr: 1 }} />
-                    </InputAdornment>
-                  ),
-                  sx: { borderRadius: 2 }
-                }}
-                InputLabelProps={{ shrink: true }}
-              />
-
-              <TextField
-                fullWidth
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                label="Password"
-                variant="outlined"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Lock color="action" sx={{ mr: 1 }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleTogglePasswordVisibility}
-                        edge="end"
-                        color={showPassword ? "primary" : "default"}
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  sx: { borderRadius: 2 }
-                }}
-                InputLabelProps={{ shrink: true }}
-              />
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={loading}
-                sx={{ 
-                  py: 1.5,
-                  mt: 1,
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontSize: '1rem',
-                  fontWeight: 600,
-                  color: 'white',
-                  background: medicalBlueGradient,
-                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: `0 4px 15px rgba(0, 0, 0, 0.2)`,
-                  },
-                  '&:disabled': {
-                    background: theme.palette.grey[400],
-                    cursor: 'not-allowed',
-                  }
-                }}
-              >
-                {loading ? (
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    width: '100%', 
-                    height: '100%' 
-                  }}>
+          <Card elevation={6} sx={{ borderRadius: 4, overflow: 'hidden' }}>
+            <CardHeader
+              title={
+                <Box sx={{ textAlign: 'center', mb: 1 }}>
+                  <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
                     <Box 
-                      component="span"
-                      sx={{
-                        display: 'inline-block',
-                        width: 24,
-                        height: 24,
-                        borderRadius: '50%',
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                        animation: `${pulse} 2s infinite ease-in-out`,
-                      }} 
-                    />
+                      sx={{ 
+                        width: 70, 
+                        height: 70, 
+                        borderRadius: '50%', 
+                        backgroundColor: 'rgba(26, 156, 176, 0.1)', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center' 
+                      }}
+                    >
+                      <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                    </Box>
                   </Box>
-                ) : (
-                  'Sign In'
-                )}
-              </Button>
-            </Stack>
-          </form>
+                  <Typography 
+                    variant="h4" 
+                    component="h1" 
+                    fontWeight={700}
+                    color="primary.dark"
+                  >
+                    OncoTracker
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    Veterinary oncology management system
+                  </Typography>
+                </Box>
+              }
+              sx={{ pb: 0 }}
+            />
+            
+            <CardContent>
+              {error && (
+                <Alert 
+                  severity="error" 
+                  icon={<ErrorOutline fontSize="inherit" />}
+                  sx={{ 
+                    mb: 3, 
+                    borderRadius: 2, 
+                    backgroundColor: 'error.light',
+                    color: 'error.dark',
+                    border: `1px solid ${theme.palette.error.main}`
+                  }}
+                  variant="filled"
+                >
+                  {error}
+                </Alert>
+              )}
 
-          <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.2)' }}>
-            <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
-              OR
-            </Typography>
-          </Divider>
-          
-          <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-              Don't have an account yet?
-            </Typography>
-            <Button
-              component={Link}
-              to="/signup"
-              variant="outlined"
-              fullWidth
-              disabled={loading}
-              sx={{ 
-                py: 1.2,
-                borderRadius: 2,
-                textTransform: 'none',
-                fontSize: '0.95rem',
-                borderColor: theme.palette.primary.main,
-                color: theme.palette.primary.main,
-                '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                  borderColor: theme.palette.primary.dark,
-                  color: theme.palette.primary.dark,
-                }
-              }}
-            >
-              Create New Account
-            </Button>
-          </Box>
-        </Paper>
+              <form onSubmit={handleSubmit}>
+                <Stack spacing={3}>
+                  <TextField
+                    fullWidth
+                    id="email-address"
+                    name="email"
+                    type="email"
+                    label="Email Address"
+                    variant="outlined"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Email color="action" sx={{ mr: 1 }} />
+                        </InputAdornment>
+                      ),
+                      sx: { borderRadius: 2 }
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                  />
+
+                  <TextField
+                    fullWidth
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    label="Password"
+                    variant="outlined"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Lock color="action" sx={{ mr: 1 }} />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleTogglePasswordVisibility}
+                            edge="end"
+                            color={showPassword ? "primary" : "default"}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                      sx: { borderRadius: 2 }
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                  
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          color="primary"
+                          size="small"
+                        />
+                      }
+                      label={<Typography variant="body2">Remember me</Typography>}
+                    />
+                    <Link to="#" style={{ 
+                      textDecoration: 'none', 
+                      color: theme.palette.primary.main,
+                      fontSize: '0.875rem'
+                    }}>
+                      Forgot password?
+                    </Link>
+                  </Box>
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    disabled={loading}
+                    sx={{ 
+                      py: 1.5,
+                      mt: 2,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      color: 'white',
+                      background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
+                      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 4px 15px rgba(0, 0, 0, 0.2)`,
+                        background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
+                      },
+                      '&:disabled': {
+                        background: theme.palette.grey[400],
+                        cursor: 'not-allowed',
+                      }
+                    }}
+                  >
+                    {loading ? <LoadingSpinner size="small" color="inherit" /> : 'Sign In'}
+                  </Button>
+                </Stack>
+              </form>
+
+              <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.2)' }}>
+                <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
+                  OR
+                </Typography>
+              </Divider>
+              
+              <Box sx={{ textAlign: 'center', mt: 2 }}>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                  Don't have an account yet?
+                </Typography>
+                <Button
+                  component={Link}
+                  to="/signup"
+                  variant="outlined"
+                  fullWidth
+                  disabled={loading}
+                  sx={{ 
+                    py: 1.2,
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontSize: '0.95rem',
+                    borderColor: theme.palette.primary.main,
+                    color: theme.palette.primary.main,
+                    '&:hover': {
+                      backgroundColor: `${theme.palette.primary.main}10`,
+                      borderColor: theme.palette.primary.dark,
+                      color: theme.palette.primary.dark,
+                    }
+                  }}
+                >
+                  Create New Account
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </MotionBox>
       </Container>
     </Box>
   );
