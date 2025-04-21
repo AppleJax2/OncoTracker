@@ -23,7 +23,10 @@ import {
   Pets, 
   HealthAndSafetyOutlined,
   MedicalInformationOutlined,
-  SupportOutlined
+  LocalHospitalOutlined,
+  PsychologyOutlined,
+  FavoriteBorderOutlined,
+  EmojiObjectsOutlined
 } from '@mui/icons-material';
 
 const HomePage: React.FC = () => {
@@ -85,7 +88,7 @@ const HomePage: React.FC = () => {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        background: `linear-gradient(180deg, ${alpha(theme.palette.primary.light, 0.08)} 0%, ${alpha(theme.palette.background.default, 0.3)} 100%)`,
+        background: `linear-gradient(170deg, ${alpha(theme.palette.primary.light, 0.1)} 0%, ${alpha(theme.palette.background.default, 0.1)} 30%, ${theme.palette.background.paper} 100%)`,
       }}
     >
       {/* Hero Section */}
@@ -93,9 +96,10 @@ const HomePage: React.FC = () => {
         sx={{
           position: 'relative',
           overflow: 'hidden',
-          pt: { xs: 10, sm: 12, md: 15 },
-          pb: { xs: 8, sm: 10, md: 12 },
+          pt: { xs: 10, sm: 14, md: 18 },
+          pb: { xs: 10, sm: 12, md: 16 },
           textAlign: 'center',
+          borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
         <Container maxWidth="lg">
@@ -111,23 +115,23 @@ const HomePage: React.FC = () => {
                   display: 'flex', 
                   justifyContent: 'center', 
                   alignItems: 'center', 
-                  mb: 2 
+                  mb: 3 
                 }}
               >
                 <Box
                   sx={{
-                    width: { xs: 60, sm: 75 },
-                    height: { xs: 60, sm: 75 },
+                    width: { xs: 70, sm: 85 },
+                    height: { xs: 70, sm: 85 },
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: alpha(theme.palette.primary.main, 0.1),
                     borderRadius: '50%',
-                    boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.15)}`,
+                    boxShadow: `0 6px 16px ${alpha(theme.palette.primary.main, 0.2)}`,
                     mb: 2
                   }}
                 >
-                  <Pets sx={{ fontSize: { xs: 32, sm: 40 }, color: theme.palette.primary.main }} />
+                  <Pets sx={{ fontSize: { xs: 38, sm: 48 }, color: theme.palette.primary.dark }} />
                 </Box>
               </Box>
               <Typography
@@ -135,14 +139,14 @@ const HomePage: React.FC = () => {
                 component="h1"
                 sx={{
                   fontWeight: 800,
-                  fontSize: { xs: '2.5rem', sm: '3rem', md: '3.75rem' },
+                  fontSize: { xs: '2.75rem', sm: '3.5rem', md: '4.25rem' },
                   backgroundImage: `linear-gradient(90deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  textShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                  textShadow: `0 3px 8px ${alpha(theme.palette.primary.dark, 0.15)}`,
                   letterSpacing: '-0.02em',
-                  mb: 2,
+                  mb: 2.5,
                   position: 'relative',
                   display: 'inline-block',
                 }}
@@ -157,13 +161,14 @@ const HomePage: React.FC = () => {
                 component="h2"
                 color="textSecondary"
                 sx={{
-                  maxWidth: '800px',
+                  maxWidth: '850px',
                   mx: 'auto',
-                  lineHeight: 1.6,
+                  lineHeight: 1.65,
                   fontWeight: 400,
-                  mb: 4,
+                  fontSize: { xs: '1.1rem', sm: '1.25rem'},
+                  mb: 5,
                   px: { xs: 2, sm: 0 },
-                  color: alpha(theme.palette.text.primary, 0.8),
+                  color: alpha(theme.palette.text.primary, 0.85),
                 }}
               >
                 Compassionate tools for veterinarians and pet parents, simplifying the journey of cancer treatment for beloved companions.
@@ -189,17 +194,19 @@ const HomePage: React.FC = () => {
                     variant="contained"
                     size="large"
                     sx={{
-                      py: 1.5,
-                      px: 3.5,
-                      borderRadius: 3,
+                      py: 1.8,
+                      px: 4,
+                      borderRadius: 8,
                       textTransform: 'none',
-                      fontSize: { xs: '1rem', sm: '1.1rem' },
-                      fontWeight: 600,
-                      background: `linear-gradient(90deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
-                      boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.3)}`,
+                      fontSize: { xs: '1rem', sm: '1.15rem' },
+                      fontWeight: 700,
+                      background: `linear-gradient(95deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                      boxShadow: `0 5px 15px ${alpha(theme.palette.primary.main, 0.35)}`,
+                      transition: 'all 0.3s ease',
                       '&:hover': {
-                        boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
-                        background: `linear-gradient(90deg, ${theme.palette.primary.dark} 10%, ${theme.palette.primary.main} 90%)`,
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 8px 20px ${alpha(theme.palette.primary.main, 0.45)}`,
+                        background: `linear-gradient(95deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                       },
                     }}
                   >
@@ -218,18 +225,22 @@ const HomePage: React.FC = () => {
                     variant="outlined"
                     size="large"
                     sx={{
-                      py: 1.5,
-                      px: 3.5,
-                      borderRadius: 3,
+                      py: 1.8,
+                      px: 4,
+                      borderRadius: 8,
                       textTransform: 'none',
-                      fontSize: { xs: '1rem', sm: '1.1rem' },
+                      fontSize: { xs: '1rem', sm: '1.15rem' },
                       fontWeight: 600,
                       borderWidth: 2,
                       borderColor: theme.palette.primary.main,
+                      color: theme.palette.primary.dark,
+                      transition: 'all 0.3s ease',
                       '&:hover': {
                         borderWidth: 2,
-                        backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
                         borderColor: theme.palette.primary.dark,
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 4px 12px ${alpha(theme.palette.primary.light, 0.1)}`,
                       },
                     }}
                   >
@@ -243,25 +254,27 @@ const HomePage: React.FC = () => {
             <Box
               sx={{
                 position: 'absolute',
-                top: -100,
-                right: -100,
-                width: 300,
-                height: 300,
-                background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.15)} 0%, transparent 70%)`,
+                top: -150,
+                right: -150,
+                width: 400,
+                height: 400,
+                background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.12)} 0%, transparent 65%)`,
                 borderRadius: '50%',
                 zIndex: -1,
+                opacity: 0.8,
               }}
             />
             <Box
               sx={{
                 position: 'absolute',
-                bottom: -80,
-                left: -80,
-                width: 250,
-                height: 250,
-                background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.15)} 0%, transparent 70%)`,
+                bottom: -120,
+                left: -120,
+                width: 350,
+                height: 350,
+                background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.1)} 0%, transparent 70%)`,
                 borderRadius: '50%',
                 zIndex: -1,
+                opacity: 0.7,
               }}
             />
           </motion.div>
@@ -271,8 +284,10 @@ const HomePage: React.FC = () => {
       {/* Features Section */}
       <Box
         sx={{
-          py: { xs: 6, md: 10 },
-          background: '#ffffff',
+          py: { xs: 8, md: 12 },
+          bgcolor: alpha(theme.palette.primary.light, 0.05),
+          borderTop: `1px solid ${theme.palette.divider}`,
+          borderBottom: `1px solid ${theme.palette.divider}`,
         }}
       >
         <Container maxWidth="lg">
@@ -289,8 +304,9 @@ const HomePage: React.FC = () => {
                 align="center"
                 sx={{
                   fontWeight: 700,
-                  mb: { xs: 2, md: 3 },
+                  mb: 2,
                   color: theme.palette.text.primary,
+                  letterSpacing: '-0.01em',
                 }}
               >
                 Dedicated Support for Every Step
@@ -306,15 +322,16 @@ const HomePage: React.FC = () => {
                 sx={{
                   maxWidth: '800px',
                   mx: 'auto',
-                  mb: { xs: 6, md: 8 },
+                  mb: { xs: 8, md: 10 },
                   fontWeight: 400,
+                  fontSize: '1.1rem',
                 }}
               >
                 OncoTracker provides essential tools to navigate pet cancer treatment with confidence and clarity.
               </Typography>
             </motion.div>
 
-            <Grid container spacing={4}>
+            <Grid container spacing={isMedium ? 3 : 5}>
               <Grid item xs={12} md={4}>
                 <motion.div
                   variants={cardVariants}
@@ -326,10 +343,15 @@ const HomePage: React.FC = () => {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      borderRadius: 3,
+                      borderRadius: 4,
                       transition: 'all 0.3s ease-in-out',
-                      boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.07)}`,
-                      overflow: 'hidden',
+                      boxShadow: `0 6px 24px ${alpha(theme.palette.common.black, 0.06)}`,
+                      overflow: 'visible',
+                      background: theme.palette.background.paper,
+                      '&:hover': {
+                        transform: 'translateY(-6px)',
+                        boxShadow: `0 12px 30px ${alpha(theme.palette.primary.light, 0.15)}`,
+                      }
                     }}
                   >
                     <Box
@@ -337,24 +359,28 @@ const HomePage: React.FC = () => {
                         height: 8,
                         width: '100%',
                         bgcolor: theme.palette.primary.main,
+                        borderTopLeftRadius: theme.shape.borderRadius * 2,
+                        borderTopRightRadius: theme.shape.borderRadius * 2,
                       }}
                     />
-                    <CardContent sx={{ flexGrow: 1, p: 4 }}>
+                    <CardContent sx={{ flexGrow: 1, p: { xs: 3, md: 4 } }}>
                       <Box
                         sx={{
-                          mb: 2.5,
+                          mb: 3,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 70,
-                          height: 70,
+                          width: 75,
+                          height: 75,
                           borderRadius: '50%',
                           bgcolor: alpha(theme.palette.primary.main, 0.1),
                           mx: 'auto',
+                          mt: -4,
+                          boxShadow: `0 4px 10px ${alpha(theme.palette.primary.light, 0.1)}`,
                         }}
                       >
                         <MonitorHeartOutlined
-                          sx={{ fontSize: 36, color: theme.palette.primary.main }}
+                          sx={{ fontSize: 40, color: theme.palette.primary.dark }}
                         />
                       </Box>
                       <Typography
@@ -363,7 +389,7 @@ const HomePage: React.FC = () => {
                         component="h3"
                         align="center"
                         fontWeight={600}
-                        sx={{ mb: 2 }}
+                        sx={{ mb: 1.5 }}
                       >
                         Symptom Monitoring
                       </Typography>
@@ -371,7 +397,7 @@ const HomePage: React.FC = () => {
                         variant="body1"
                         color="textSecondary"
                         align="center"
-                        sx={{ lineHeight: 1.7 }}
+                        sx={{ lineHeight: 1.7, px: 1 }}
                       >
                         Easily track treatment side effects and your pet's well-being, fostering clear communication with your vet.
                       </Typography>
@@ -391,10 +417,15 @@ const HomePage: React.FC = () => {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      borderRadius: 3,
+                      borderRadius: 4,
                       transition: 'all 0.3s ease-in-out',
-                      boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.07)}`,
-                      overflow: 'hidden',
+                      boxShadow: `0 6px 24px ${alpha(theme.palette.common.black, 0.06)}`,
+                      overflow: 'visible',
+                      background: theme.palette.background.paper,
+                      '&:hover': {
+                        transform: 'translateY(-6px)',
+                        boxShadow: `0 12px 30px ${alpha(theme.palette.primary.light, 0.15)}`,
+                      }
                     }}
                   >
                     <Box
@@ -402,24 +433,28 @@ const HomePage: React.FC = () => {
                         height: 8,
                         width: '100%',
                         bgcolor: theme.palette.primary.main,
+                        borderTopLeftRadius: theme.shape.borderRadius * 2,
+                        borderTopRightRadius: theme.shape.borderRadius * 2,
                       }}
                     />
-                    <CardContent sx={{ flexGrow: 1, p: 4 }}>
+                    <CardContent sx={{ flexGrow: 1, p: { xs: 3, md: 4 } }}>
                       <Box
                         sx={{
-                          mb: 2.5,
+                          mb: 3,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 70,
-                          height: 70,
+                          width: 75,
+                          height: 75,
                           borderRadius: '50%',
                           bgcolor: alpha(theme.palette.primary.main, 0.1),
                           mx: 'auto',
+                          mt: -4,
+                          boxShadow: `0 4px 10px ${alpha(theme.palette.primary.light, 0.1)}`,
                         }}
                       >
                         <CalendarMonthOutlined
-                          sx={{ fontSize: 36, color: theme.palette.primary.main }}
+                          sx={{ fontSize: 40, color: theme.palette.primary.dark }}
                         />
                       </Box>
                       <Typography
@@ -428,7 +463,7 @@ const HomePage: React.FC = () => {
                         component="h3"
                         align="center"
                         fontWeight={600}
-                        sx={{ mb: 2 }}
+                        sx={{ mb: 1.5 }}
                       >
                         Treatment Management
                       </Typography>
@@ -436,7 +471,7 @@ const HomePage: React.FC = () => {
                         variant="body1"
                         color="textSecondary"
                         align="center"
-                        sx={{ lineHeight: 1.7 }}
+                        sx={{ lineHeight: 1.7, px: 1 }}
                       >
                         Keep complex treatment protocols, medication schedules, and appointments organized in one central place.
                       </Typography>
@@ -456,10 +491,15 @@ const HomePage: React.FC = () => {
                       height: '100%',
                       display: 'flex',
                       flexDirection: 'column',
-                      borderRadius: 3,
+                      borderRadius: 4,
                       transition: 'all 0.3s ease-in-out',
-                      boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.07)}`,
-                      overflow: 'hidden',
+                      boxShadow: `0 6px 24px ${alpha(theme.palette.common.black, 0.06)}`,
+                      overflow: 'visible',
+                      background: theme.palette.background.paper,
+                      '&:hover': {
+                        transform: 'translateY(-6px)',
+                        boxShadow: `0 12px 30px ${alpha(theme.palette.primary.light, 0.15)}`,
+                      }
                     }}
                   >
                     <Box
@@ -467,24 +507,28 @@ const HomePage: React.FC = () => {
                         height: 8,
                         width: '100%',
                         bgcolor: theme.palette.primary.main,
+                        borderTopLeftRadius: theme.shape.borderRadius * 2,
+                        borderTopRightRadius: theme.shape.borderRadius * 2,
                       }}
                     />
-                    <CardContent sx={{ flexGrow: 1, p: 4 }}>
+                    <CardContent sx={{ flexGrow: 1, p: { xs: 3, md: 4 } }}>
                       <Box
                         sx={{
-                          mb: 2.5,
+                          mb: 3,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 70,
-                          height: 70,
+                          width: 75,
+                          height: 75,
                           borderRadius: '50%',
                           bgcolor: alpha(theme.palette.primary.main, 0.1),
                           mx: 'auto',
+                          mt: -4,
+                          boxShadow: `0 4px 10px ${alpha(theme.palette.primary.light, 0.1)}`,
                         }}
                       >
                         <Groups2Outlined
-                          sx={{ fontSize: 36, color: theme.palette.primary.main }}
+                          sx={{ fontSize: 40, color: theme.palette.primary.dark }}
                         />
                       </Box>
                       <Typography
@@ -493,7 +537,7 @@ const HomePage: React.FC = () => {
                         component="h3"
                         align="center"
                         fontWeight={600}
-                        sx={{ mb: 2 }}
+                        sx={{ mb: 1.5 }}
                       >
                         Care Coordination
                       </Typography>
@@ -501,7 +545,7 @@ const HomePage: React.FC = () => {
                         variant="body1"
                         color="textSecondary"
                         align="center"
-                        sx={{ lineHeight: 1.7 }}
+                        sx={{ lineHeight: 1.7, px: 1 }}
                       >
                         Enhance teamwork between vet and pet parent, ensuring seamless, informed care throughout the journey.
                       </Typography>
@@ -517,8 +561,8 @@ const HomePage: React.FC = () => {
       {/* Benefits Section */}
       <Box
         sx={{
-          py: { xs: 6, md: 10 },
-          background: alpha(theme.palette.primary.light, 0.05),
+          py: { xs: 8, md: 12 },
+          bgcolor: theme.palette.background.paper,
         }}
       >
         <Container maxWidth="lg">
@@ -535,8 +579,9 @@ const HomePage: React.FC = () => {
                 align="center"
                 sx={{
                   fontWeight: 700,
-                  mb: { xs: 2, md: 3 },
+                  mb: 2,
                   color: theme.palette.text.primary,
+                  letterSpacing: '-0.01em',
                 }}
               >
                 Why Choose OncoTracker
@@ -552,86 +597,197 @@ const HomePage: React.FC = () => {
                 sx={{
                   maxWidth: '800px',
                   mx: 'auto',
-                  mb: { xs: 6, md: 8 },
+                  mb: { xs: 8, md: 10 },
                   fontWeight: 400,
+                  fontSize: '1.1rem',
                 }}
               >
                 Created with compassion and expertise to support you during challenging times.
               </Typography>
             </motion.div>
 
-            <Grid container spacing={4}>
-              {[
-                {
-                  icon: <HealthAndSafetyOutlined sx={{ fontSize: 28, color: theme.palette.primary.main }} />,
-                  title: 'Improved Quality of Care',
-                  description: "Better tracking leads to more informed decisions for your pet's health journey."
-                },
-                {
-                  icon: <MedicalInformationOutlined sx={{ fontSize: 28, color: theme.palette.primary.main }} />,
-                  title: 'Expert-Led Design',
-                  description: 'Developed with veterinary oncologists to ensure clinical relevance and usability.'
-                },
-                {
-                  icon: <SupportOutlined sx={{ fontSize: 28, color: theme.palette.primary.main }} />,
-                  title: 'Peace of Mind',
-                  description: "Reduce anxiety by feeling more in control of your pet's treatment plan."
-                },
-                {
-                  icon: <Pets sx={{ fontSize: 28, color: theme.palette.primary.main }} />,
-                  title: 'Pet-Centered Approach',
-                  description: "Every feature is designed with your pet's comfort and wellbeing in mind."
-                }
-              ].map((benefit, index) => (
-                <Grid item xs={12} sm={6} key={index}>
-                  <motion.div
-                    variants={cardVariants}
-                    custom={index}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            <Grid container spacing={isMedium ? 3 : 4}>
+              <Grid item xs={12} sm={6} md={3}>
+                <motion.div
+                  variants={cardVariants}
+                  custom={0}
+                  whileHover="hover"
+                >
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      textAlign: 'center',
+                      borderRadius: 3,
+                      borderColor: alpha(theme.palette.primary.light, 0.5),
+                      transition: 'all 0.3s ease-in-out',
+                      bgcolor: alpha(theme.palette.primary.light, 0.03),
+                      '&:hover': {
+                        borderColor: theme.palette.primary.main,
+                        boxShadow: `0 8px 20px ${alpha(theme.palette.primary.light, 0.1)}`,
+                        transform: 'translateY(-4px)',
+                      }
+                    }}
                   >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        mb: 3,
-                        px: { xs: 2, md: 3 },
-                      }}
-                    >
+                    <CardContent sx={{ flexGrow: 1, p: {xs: 2.5, md: 3.5} }}>
                       <Box
                         sx={{
-                          mr: 3,
-                          display: 'flex',
+                          mb: 2.5,
+                          display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 52,
-                          height: 52,
+                          width: 60,
+                          height: 60,
                           borderRadius: '50%',
-                          flexShrink: 0,
                           bgcolor: alpha(theme.palette.primary.main, 0.1),
                         }}
                       >
-                        {benefit.icon}
+                        <EmojiObjectsOutlined
+                          sx={{ fontSize: 32, color: theme.palette.primary.dark }}
+                        />
                       </Box>
-                      <Box>
-                        <Typography
-                          variant="h6"
-                          component="h3"
-                          fontWeight={600}
-                          gutterBottom
-                        >
-                          {benefit.title}
-                        </Typography>
-                        <Typography
-                          variant="body1"
-                          color="textSecondary"
-                          sx={{ lineHeight: 1.7 }}
-                        >
-                          {benefit.description}
-                        </Typography>
+                      <Typography
+                        gutterBottom
+                        variant="h6"
+                        component="h3"
+                        fontWeight={600}
+                        sx={{ mb: 1 }}
+                      >
+                        Improved Quality of Care
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        sx={{ lineHeight: 1.6 }}
+                      >
+                        Better tracking leads to more informed decisions for your pet's health journey.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <motion.div
+                  variants={cardVariants}
+                  custom={1}
+                  whileHover="hover"
+                >
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      textAlign: 'center',
+                      borderRadius: 3,
+                      borderColor: alpha(theme.palette.primary.light, 0.5),
+                      transition: 'all 0.3s ease-in-out',
+                      bgcolor: alpha(theme.palette.primary.light, 0.03),
+                      '&:hover': {
+                        borderColor: theme.palette.primary.main,
+                        boxShadow: `0 8px 20px ${alpha(theme.palette.primary.light, 0.1)}`,
+                        transform: 'translateY(-4px)',
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1, p: {xs: 2.5, md: 3.5} }}>
+                      <Box sx={{ mb: 2.5, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, borderRadius: '50%', bgcolor: alpha(theme.palette.primary.main, 0.1), }}>
+                        <LocalHospitalOutlined
+                          sx={{ fontSize: 32, color: theme.palette.primary.dark }}
+                        />
                       </Box>
-                    </Box>
-                  </motion.div>
-                </Grid>
-              ))}
+                      <Typography gutterBottom variant="h6" component="h3" fontWeight={600} sx={{ mb: 1 }}>
+                        Expert-Led Design
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" sx={{ lineHeight: 1.6 }}>
+                        Developed with veterinary oncologists to ensure clinical relevance and usability.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <motion.div
+                  variants={cardVariants}
+                  custom={2}
+                  whileHover="hover"
+                >
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      textAlign: 'center',
+                      borderRadius: 3,
+                      borderColor: alpha(theme.palette.primary.light, 0.5),
+                      transition: 'all 0.3s ease-in-out',
+                      bgcolor: alpha(theme.palette.primary.light, 0.03),
+                      '&:hover': {
+                        borderColor: theme.palette.primary.main,
+                        boxShadow: `0 8px 20px ${alpha(theme.palette.primary.light, 0.1)}`,
+                        transform: 'translateY(-4px)',
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1, p: {xs: 2.5, md: 3.5} }}>
+                      <Box sx={{ mb: 2.5, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, borderRadius: '50%', bgcolor: alpha(theme.palette.primary.main, 0.1), }}>
+                        <PsychologyOutlined
+                          sx={{ fontSize: 32, color: theme.palette.primary.dark }}
+                        />
+                      </Box>
+                      <Typography gutterBottom variant="h6" component="h3" fontWeight={600} sx={{ mb: 1 }}>
+                        Peace of Mind
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" sx={{ lineHeight: 1.6 }}>
+                         Reduce anxiety by feeling more in control of your pet's treatment plan.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
+              <Grid item xs={12} sm={6} md={3}>
+                <motion.div
+                  variants={cardVariants}
+                  custom={3}
+                  whileHover="hover"
+                >
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      textAlign: 'center',
+                      borderRadius: 3,
+                      borderColor: alpha(theme.palette.primary.light, 0.5),
+                      transition: 'all 0.3s ease-in-out',
+                      bgcolor: alpha(theme.palette.primary.light, 0.03),
+                      '&:hover': {
+                        borderColor: theme.palette.primary.main,
+                        boxShadow: `0 8px 20px ${alpha(theme.palette.primary.light, 0.1)}`,
+                        transform: 'translateY(-4px)',
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ flexGrow: 1, p: {xs: 2.5, md: 3.5} }}>
+                      <Box sx={{ mb: 2.5, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, borderRadius: '50%', bgcolor: alpha(theme.palette.primary.main, 0.1), }}>
+                        <FavoriteBorderOutlined
+                          sx={{ fontSize: 32, color: theme.palette.primary.dark }}
+                        />
+                      </Box>
+                      <Typography gutterBottom variant="h6" component="h3" fontWeight={600} sx={{ mb: 1 }}>
+                        Pet-Centered Approach
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary" sx={{ lineHeight: 1.6 }}>
+                         Every feature is designed with your pet's comfort and wellbeing in mind.
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </Grid>
             </Grid>
           </motion.div>
         </Container>
@@ -641,7 +797,8 @@ const HomePage: React.FC = () => {
       <Box
         sx={{
           py: { xs: 8, md: 12 },
-          background: '#ffffff',
+          bgcolor: alpha(theme.palette.primary.dark, 0.9),
+          color: theme.palette.common.white,
           textAlign: 'center',
         }}
       >
@@ -659,8 +816,9 @@ const HomePage: React.FC = () => {
                 align="center"
                 sx={{
                   fontWeight: 700,
-                  mb: 3,
-                  color: theme.palette.text.primary,
+                  mb: 2,
+                  color: 'inherit',
+                  textShadow: `0 2px 5px ${alpha(theme.palette.common.black, 0.3)}`,
                 }}
               >
                 Ready to Get Started?
@@ -672,12 +830,13 @@ const HomePage: React.FC = () => {
                 variant="h6"
                 component="p"
                 align="center"
-                color="textSecondary"
                 sx={{
                   maxWidth: '700px',
                   mx: 'auto',
                   mb: 5,
                   fontWeight: 400,
+                  color: alpha(theme.palette.common.white, 0.85),
+                  lineHeight: 1.7,
                 }}
               >
                 Join our community of veterinarians and pet parents dedicated to providing the best care possible during cancer treatment.
@@ -689,28 +848,39 @@ const HomePage: React.FC = () => {
               whileHover="hover"
               whileTap="tap"
             >
-              <Button
-                component={Link}
-                to="/signup"
-                variant="contained"
-                size="large"
-                sx={{
-                  py: 1.8,
-                  px: 4,
-                  borderRadius: 3,
-                  textTransform: 'none',
-                  fontSize: { xs: '1.1rem', sm: '1.2rem' },
-                  fontWeight: 600,
-                  background: `linear-gradient(90deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
-                  boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.3)}`,
-                  '&:hover': {
-                    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
-                    background: `linear-gradient(90deg, ${theme.palette.primary.dark} 10%, ${theme.palette.primary.main} 90%)`,
-                  },
-                }}
+              <motion.div
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                style={{ display: 'inline-block' }}
               >
-                Create Your Free Account
-              </Button>
+                <Button
+                  component={Link}
+                  to="/signup"
+                  variant="contained"
+                  size="large"
+                  color="secondary"
+                  sx={{
+                    py: 2,
+                    px: 5,
+                    borderRadius: 8,
+                    textTransform: 'none',
+                    fontSize: '1.2rem',
+                    fontWeight: 700,
+                    bgcolor: theme.palette.background.paper,
+                    color: theme.palette.primary.dark,
+                    boxShadow: `0 6px 18px ${alpha(theme.palette.common.black, 0.2)}`,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-3px) scale(1.02)',
+                      bgcolor: theme.palette.background.paper,
+                      boxShadow: `0 10px 25px ${alpha(theme.palette.common.black, 0.3)}`,
+                    },
+                  }}
+                >
+                  Create Your Free Account
+                </Button>
+              </motion.div>
             </motion.div>
           </motion.div>
         </Container>
@@ -720,100 +890,81 @@ const HomePage: React.FC = () => {
       <Box
         component="footer"
         sx={{
-          py: 5,
-          backgroundColor: alpha(theme.palette.primary.dark, 0.05),
-          borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-          mt: 'auto',
+          py: { xs: 4, md: 6 },
+          px: 2,
+          bgcolor: theme.palette.background.default,
+          borderTop: `1px solid ${theme.palette.divider}`,
         }}
       >
-        <Container>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              justifyContent: 'space-between',
-              alignItems: { xs: 'center', sm: 'flex-start' },
-            }}
-          >
-            <Box sx={{ mb: { xs: 3, sm: 0 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Pets sx={{ color: theme.palette.primary.main, mr: 1, fontSize: 24 }} />
-                <Typography
-                  variant="h6"
-                  component="span"
+        <Container maxWidth="lg">
+          <Grid container spacing={4} justifyContent="space-between" alignItems="center">
+            <Grid item md="auto" xs={12}>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                 <Box
                   sx={{
-                    fontWeight: 700,
-                    color: theme.palette.primary.main,
+                    width: 36,
+                    height: 36,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
                 >
+                  <Pets sx={{ fontSize: 28, color: theme.palette.primary.main }} />
+                </Box>
+                <Typography variant="h6" color="text.primary" fontWeight={600}>
                   OncoTracker
                 </Typography>
-              </Box>
-              <Typography variant="body2" color="textSecondary">
+              </Stack>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                 Compassionate cancer care coordination for pets.
               </Typography>
-            </Box>
-
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                gap: { xs: 2, sm: 4 },
-                alignItems: { xs: 'center', sm: 'flex-start' },
-              }}
-            >
-              <Box>
-                <Typography variant="subtitle2" gutterBottom fontWeight={600}>
-                  Product
-                </Typography>
-                <Stack spacing={1}>
-                  <Link to="/features" style={{ textDecoration: 'none', color: theme.palette.text.secondary }}>
-                    <Typography variant="body2">Features</Typography>
-                  </Link>
-                  <Link to="/pricing" style={{ textDecoration: 'none', color: theme.palette.text.secondary }}>
-                    <Typography variant="body2">Pricing</Typography>
-                  </Link>
-                </Stack>
-              </Box>
-              
-              <Box>
-                <Typography variant="subtitle2" gutterBottom fontWeight={600}>
-                  Support
-                </Typography>
-                <Stack spacing={1}>
-                  <Link to="/faq" style={{ textDecoration: 'none', color: theme.palette.text.secondary }}>
-                    <Typography variant="body2">FAQ</Typography>
-                  </Link>
-                  <Link to="/contact" style={{ textDecoration: 'none', color: theme.palette.text.secondary }}>
-                    <Typography variant="body2">Contact Us</Typography>
-                  </Link>
-                </Stack>
-              </Box>
-              
-              <Box>
-                <Typography variant="subtitle2" gutterBottom fontWeight={600}>
-                  Legal
-                </Typography>
-                <Stack spacing={1}>
-                  <Link to="/terms" style={{ textDecoration: 'none', color: theme.palette.text.secondary }}>
-                    <Typography variant="body2">Terms</Typography>
-                  </Link>
-                  <Link to="/privacy" style={{ textDecoration: 'none', color: theme.palette.text.secondary }}>
-                    <Typography variant="body2">Privacy</Typography>
-                  </Link>
-                </Stack>
-              </Box>
-            </Box>
-          </Box>
-
-          <Divider sx={{ my: 3 }} />
-
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            align="center"
-            sx={{ mt: 2 }}
-          >
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <Grid container spacing={4} justifyContent={{ xs: 'flex-start', md: 'flex-end' }}>
+                <Grid item xs={6} sm={4} md="auto">
+                  <Typography variant="overline" color="text.secondary" gutterBottom>
+                    Product
+                  </Typography>
+                  <Stack spacing={1}>
+                    <Link to="/features" style={{ textDecoration: 'none' }}>
+                      <Typography variant="body2" color="text.primary" sx={{ '&:hover': { color: theme.palette.primary.main }}}>Features</Typography>
+                    </Link>
+                    <Link to="/pricing" style={{ textDecoration: 'none' }}>
+                       <Typography variant="body2" color="text.primary" sx={{ '&:hover': { color: theme.palette.primary.main }}}>Pricing</Typography>
+                    </Link>
+                  </Stack>
+                </Grid>
+                <Grid item xs={6} sm={4} md="auto">
+                  <Typography variant="overline" color="text.secondary" gutterBottom>
+                    Support
+                  </Typography>
+                  <Stack spacing={1}>
+                    <Link to="/faq" style={{ textDecoration: 'none' }}>
+                       <Typography variant="body2" color="text.primary" sx={{ '&:hover': { color: theme.palette.primary.main }}}>FAQ</Typography>
+                    </Link>
+                    <Link to="/contact" style={{ textDecoration: 'none' }}>
+                       <Typography variant="body2" color="text.primary" sx={{ '&:hover': { color: theme.palette.primary.main }}}>Contact Us</Typography>
+                    </Link>
+                  </Stack>
+                </Grid>
+                <Grid item xs={6} sm={4} md="auto">
+                  <Typography variant="overline" color="text.secondary" gutterBottom>
+                    Legal
+                  </Typography>
+                  <Stack spacing={1}>
+                    <Link to="/terms" style={{ textDecoration: 'none' }}>
+                       <Typography variant="body2" color="text.primary" sx={{ '&:hover': { color: theme.palette.primary.main }}}>Terms</Typography>
+                    </Link>
+                    <Link to="/privacy" style={{ textDecoration: 'none' }}>
+                      <Typography variant="body2" color="text.primary" sx={{ '&:hover': { color: theme.palette.primary.main }}}>Privacy</Typography>
+                    </Link>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Divider sx={{ my: 4 }} />
+          <Typography variant="body2" color="text.secondary" align="center">
             © {new Date().getFullYear()} OncoTracker. All rights reserved.
           </Typography>
         </Container>
