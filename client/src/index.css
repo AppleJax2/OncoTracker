@@ -27,14 +27,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f2; /* Slight green tint to the track */
+  background: #f5f0e8; /* Match MUI theme background.default (warmBeige) */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #a7c9b6; /* Light green for the thumb */
+  background: #84bdbb; /* Match MUI theme primary.light (lightTeal) for a softer default */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #059669; /* Primary green on hover */
+  background: #65a8a6; /* Match MUI theme primary.main (softTeal) on hover */
 } 
