@@ -68,6 +68,33 @@ import { motion } from 'framer-motion';
 const MotionBox = motion(Box);
 const MotionDiv = motion.div;
 
+// Animation variants for elements
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      duration: 0.5,
+      when: "beforeChildren",
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" }
+  }
+};
+
+const buttonHoverTap = {
+  hover: { scale: 1.03, transition: { duration: 0.2 } },
+  tap: { scale: 0.98 }
+};
+
 // Custom step connector
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.MuiStepConnector-alternativeLabel`]: {
@@ -451,8 +478,8 @@ const SignupPage: React.FC = () => {
     return true; // Should not happen
   }, [activeStep, role, clinicName, firstName, lastName, email, password, passwordConfirm, agreeToTerms, formErrors, loading]);
 
-  // Modern gradient background
-  const backgroundGradient = 'linear-gradient(135deg, #0B4F6C 0%, #01949A 100%)';
+  // Modern gradient background matching theme.ts colors
+  const backgroundGradient = 'linear-gradient(135deg, #4a8a88 0%, #65a8a6 100%)';
 
   // Custom Grid component that works with 'item' prop
   const Grid = MuiGrid;
@@ -472,9 +499,9 @@ const SignupPage: React.FC = () => {
     >
       <Container maxWidth="sm">
         <MotionBox
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
           <Card 
             elevation={6} 
@@ -493,47 +520,57 @@ const SignupPage: React.FC = () => {
                 <Box sx={{ textAlign: 'center', mb: 1 }}>
                   <Fade in={true} timeout={800}>
                     <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-                      <Box 
-                        sx={{ 
-                          width: 70, 
-                          height: 70, 
-                          borderRadius: '50%', 
-                          backgroundColor: 'rgba(5, 150, 105, 0.1)', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          boxShadow: '0 4px 14px rgba(5, 150, 105, 0.15)'
-                        }}
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                       >
-                        <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
-                      </Box>
+                        <Box 
+                          sx={{ 
+                            width: 70, 
+                            height: 70, 
+                            borderRadius: '50%', 
+                            backgroundColor: 'rgba(101, 168, 166, 0.1)', // Updated to match theme teal
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 14px rgba(101, 168, 166, 0.15)' // Updated to match theme teal
+                          }}
+                        >
+                          <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                        </Box>
+                      </motion.div>
                     </Box>
                   </Fade>
-                  <Typography 
-                    variant="h4" 
-                    component="h1" 
-                    fontWeight={700}
-                    color="primary.dark"
-                    sx={{ 
-                      backgroundImage: 'linear-gradient(90deg, #047857, #059669)',
-                      backgroundClip: 'text',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      textShadow: '0 2px 5px rgba(0,0,0,0.05)'
-                    }}
-                  >
-                    Create Account
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    sx={{ 
-                      mt: 1,
-                      fontWeight: 500
-                    }}
-                  >
-                    Join OncoTracker to access pet cancer care tools
-                  </Typography>
+                  <motion.div variants={itemVariants}>
+                    <Typography 
+                      variant="h4" 
+                      component="h1" 
+                      fontWeight={700}
+                      color="primary.dark"
+                      sx={{ 
+                        backgroundImage: 'linear-gradient(90deg, #4a8a88, #65a8a6)', // Updated to match theme teal
+                        backgroundClip: 'text',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textShadow: '0 2px 5px rgba(0,0,0,0.05)'
+                      }}
+                    >
+                      Create Account
+                    </Typography>
+                  </motion.div>
+                  <motion.div variants={itemVariants}>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary" 
+                      sx={{ 
+                        mt: 1,
+                        fontWeight: 500
+                      }}
+                    >
+                      Join OncoTracker to access pet cancer care tools
+                    </Typography>
+                  </motion.div>
                 </Box>
               }
               sx={{ pb: 2 }}
@@ -1026,69 +1063,81 @@ const SignupPage: React.FC = () => {
 
                 {/* Navigation Buttons */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-                  <Button
-                    onClick={handleBack}
-                    disabled={activeStep === 0 || loading}
-                    startIcon={<ArrowBack />}
-                    sx={{ 
-                      color: 'text.secondary',
-                      transition: 'all 0.2s ease',
-                      borderRadius: 6,
-                      px: 2,
-                      py: 1,
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                        transform: 'translateX(-2px)'
-                      }
-                    }}
+                  <motion.div
+                    variants={buttonHoverTap}
+                    whileHover="hover"
+                    whileTap="tap"
                   >
-                    Back
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    disabled={isNextDisabled}
-                    endIcon={activeStep === steps.length - 1 ? undefined : <ChevronRight />}
-                    sx={{
-                      py: 1,
-                      px: 3,
-                      borderRadius: 6,
-                      textTransform: 'none',
-                      fontSize: '1rem',
-                      fontWeight: 600,
-                      color: 'white',
-                      background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      transition: 'all 0.25s ease-in-out',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: `0 6px 20px rgba(5, 150, 105, 0.3)`,
-                        background: 'linear-gradient(90deg, #047857 10%, #059669 90%)',
-                      },
-                      '&:active': {
-                        transform: 'translateY(0)',
-                        boxShadow: `0 2px 10px rgba(5, 150, 105, 0.2)`,
-                      },
-                      '&:disabled': {
-                        background: theme.palette.grey[400],
-                        cursor: 'not-allowed',
-                      }
-                    }}
+                    <Button
+                      onClick={handleBack}
+                      disabled={activeStep === 0 || loading}
+                      startIcon={<ArrowBack />}
+                      sx={{ 
+                        color: 'text.secondary',
+                        transition: 'all 0.2s ease',
+                        borderRadius: 6,
+                        px: 2,
+                        py: 1,
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                          transform: 'translateX(-2px)'
+                        }
+                      }}
+                    >
+                      Back
+                    </Button>
+                  </motion.div>
+                  <motion.div
+                    variants={buttonHoverTap}
+                    whileHover="hover"
+                    whileTap="tap"
                   >
-                    {loading && activeStep === steps.length - 1 ? (
-                      <>
-                        <LoadingSpinner size="small" color="inherit" />
-                        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
-                          <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
-                        </Box>
-                      </>
-                    ) : activeStep === steps.length - 1 ? (
-                      'Create Account'
-                    ) : (
-                      'Next'
-                    )}
-                  </Button>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={isNextDisabled}
+                      endIcon={activeStep === steps.length - 1 ? undefined : <ChevronRight />}
+                      sx={{
+                        py: 1,
+                        px: 3,
+                        borderRadius: 6,
+                        textTransform: 'none',
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        color: 'white',
+                        background: 'linear-gradient(90deg, #4a8a88 0%, #65a8a6 100%)', // Updated to match theme teal
+                        position: 'relative',
+                        overflow: 'hidden',
+                        transition: 'all 0.25s ease-in-out',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: `0 6px 20px rgba(101, 168, 166, 0.3)`, // Updated to match theme teal
+                          background: 'linear-gradient(90deg, #4a8a88 10%, #65a8a6 90%)', // Updated to match theme teal
+                        },
+                        '&:active': {
+                          transform: 'translateY(0)',
+                          boxShadow: `0 2px 10px rgba(101, 168, 166, 0.2)`, // Updated to match theme teal
+                        },
+                        '&:disabled': {
+                          background: theme.palette.grey[400],
+                          cursor: 'not-allowed',
+                        }
+                      }}
+                    >
+                      {loading && activeStep === steps.length - 1 ? (
+                        <>
+                          <LoadingSpinner size="small" color="inherit" />
+                          <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
+                            <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
+                          </Box>
+                        </>
+                      ) : activeStep === steps.length - 1 ? (
+                        'Create Account'
+                      ) : (
+                        'Next'
+                      )}
+                    </Button>
+                  </motion.div>
                 </Box>
               </form>
 
@@ -1098,33 +1147,39 @@ const SignupPage: React.FC = () => {
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                     Already have an account?
                   </Typography>
-                  <Button
-                    component={Link}
-                    to="/login"
-                    variant="outlined"
-                    fullWidth
-                    disabled={loading}
-                    sx={{
-                      py: 1.2,
-                      borderRadius: 6,
-                      textTransform: 'none',
-                      fontSize: '0.95rem',
-                      fontWeight: 500,
-                      borderColor: theme.palette.primary.main,
-                      color: theme.palette.primary.main,
-                      borderWidth: 1.5,
-                      transition: 'all 0.25s ease',
-                      '&:hover': {
-                        backgroundColor: `${theme.palette.primary.main}10`,
-                        borderColor: theme.palette.primary.dark,
-                        color: theme.palette.primary.dark,
-                        transform: 'translateY(-2px)',
-                        boxShadow: `0 4px 12px rgba(5, 150, 105, 0.15)`,
-                      }
-                    }}
+                  <motion.div
+                    variants={buttonHoverTap}
+                    whileHover="hover"
+                    whileTap="tap"
                   >
-                    Sign In Instead
-                  </Button>
+                    <Button
+                      component={Link}
+                      to="/login"
+                      variant="outlined"
+                      fullWidth
+                      disabled={loading}
+                      sx={{
+                        py: 1.2,
+                        borderRadius: 6,
+                        textTransform: 'none',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        borderColor: theme.palette.primary.main,
+                        color: theme.palette.primary.main,
+                        borderWidth: 1.5,
+                        transition: 'all 0.25s ease',
+                        '&:hover': {
+                          backgroundColor: `${theme.palette.primary.main}10`,
+                          borderColor: theme.palette.primary.dark,
+                          color: theme.palette.primary.dark,
+                          transform: 'translateY(-2px)',
+                          boxShadow: `0 4px 12px rgba(101, 168, 166, 0.15)`, // Updated to match theme teal
+                        }
+                      }}
+                    >
+                      Sign In Instead
+                    </Button>
+                  </motion.div>
                 </Box>
               </Fade>
             </CardContent>

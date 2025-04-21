@@ -136,8 +136,35 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Modern gradient background
-  const backgroundGradient = 'linear-gradient(135deg, #0B4F6C 0%, #01949A 100%)';
+  // Animation variants for elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        duration: 0.5,
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" }
+    }
+  };
+
+  const buttonHoverTap = {
+    hover: { scale: 1.03, transition: { duration: 0.2 } },
+    tap: { scale: 0.98 }
+  };
+
+  // Updated warm gradient background matching theme.ts colors
+  const backgroundGradient = 'linear-gradient(135deg, #4a8a88 0%, #65a8a6 100%)';
 
   return (
     <Box
@@ -154,9 +181,9 @@ const LoginPage: React.FC = () => {
     >
       <Container maxWidth="xs">
         <MotionBox
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
           <Card 
             elevation={6} 
@@ -175,47 +202,61 @@ const LoginPage: React.FC = () => {
                 <Box sx={{ textAlign: 'center', mb: 1 }}>
                   <Fade in={true} timeout={800}>
                     <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-                      <Box 
-                        sx={{ 
-                          width: 70, 
-                          height: 70, 
-                          borderRadius: '50%', 
-                          backgroundColor: 'rgba(5, 150, 105, 0.1)', 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          boxShadow: '0 4px 14px rgba(5, 150, 105, 0.15)'
-                        }}
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                       >
-                        <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
-                      </Box>
+                        <Box 
+                          sx={{ 
+                            width: 70, 
+                            height: 70, 
+                            borderRadius: '50%', 
+                            backgroundColor: 'rgba(101, 168, 166, 0.1)', // Updated to match theme teal
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center',
+                            boxShadow: '0 4px 14px rgba(101, 168, 166, 0.15)' // Updated to match theme teal
+                          }}
+                        >
+                          <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                        </Box>
+                      </motion.div>
                     </Box>
                   </Fade>
-                  <Typography 
-                    variant="h4" 
-                    component="h1" 
-                    fontWeight={700}
-                    color="primary.dark"
-                    sx={{ 
-                      backgroundImage: 'linear-gradient(90deg, #047857, #059669)',
-                      backgroundClip: 'text',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      textShadow: '0 2px 5px rgba(0,0,0,0.05)'
-                    }}
+                  <motion.div 
+                    variants={itemVariants}
                   >
-                    OncoTracker
-                  </Typography>
-                  <Typography 
-                    variant="body2" 
-                    color="text.secondary" 
-                    sx={{ 
-                      mt: 1,
-                      fontWeight: 500
-                    }}
+                    <Typography 
+                      variant="h4" 
+                      component="h1" 
+                      fontWeight={700}
+                      color="primary.dark"
+                      sx={{ 
+                        backgroundImage: 'linear-gradient(90deg, #4a8a88, #65a8a6)', // Updated to match theme teal
+                        backgroundClip: 'text',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textShadow: '0 2px 5px rgba(0,0,0,0.05)'
+                      }}
+                    >
+                      OncoTracker
+                    </Typography>
+                  </motion.div>
+                  <motion.div 
+                    variants={itemVariants}
                   >
-                    Veterinary oncology management system
-                  </Typography>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary" 
+                      sx={{ 
+                        mt: 1,
+                        fontWeight: 500
+                      }}
+                    >
+                      Veterinary oncology management system
+                    </Typography>
+                  </motion.div>
                 </Box>
               }
               sx={{ pb: 0 }}
@@ -263,159 +304,171 @@ const LoginPage: React.FC = () => {
 
               <form onSubmit={handleSubmit}>
                 <Stack spacing={3}>
-                  <TextField
-                    fullWidth
-                    id="email-address"
-                    name="email"
-                    type="email"
-                    label="Email Address"
-                    variant="outlined"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={handleEmailChange}
-                    disabled={loading}
-                    error={!!emailError}
-                    helperText={emailError}
-                    onFocus={() => setEmailFocused(true)}
-                    onBlur={() => {
-                      setEmailFocused(false);
-                      if (email) validateEmail(email);
-                    }}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email color={emailFocused ? "primary" : "action"} sx={{ mr: 1 }} />
-                        </InputAdornment>
-                      ),
-                      sx: { 
-                        borderRadius: 2,
-                        transition: 'all 0.2s ease',
-                        '&.Mui-focused': {
-                          boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                  <motion.div variants={itemVariants}>
+                    <TextField
+                      fullWidth
+                      id="email-address"
+                      name="email"
+                      type="email"
+                      label="Email Address"
+                      variant="outlined"
+                      autoComplete="email"
+                      required
+                      value={email}
+                      onChange={handleEmailChange}
+                      disabled={loading}
+                      error={!!emailError}
+                      helperText={emailError}
+                      onFocus={() => setEmailFocused(true)}
+                      onBlur={() => {
+                        setEmailFocused(false);
+                        if (email) validateEmail(email);
+                      }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Email color={emailFocused ? "primary" : "action"} sx={{ mr: 1 }} />
+                          </InputAdornment>
+                        ),
+                        sx: { 
+                          borderRadius: 2,
+                          transition: 'all 0.2s ease',
+                          '&.Mui-focused': {
+                            boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                          }
                         }
-                      }
-                    }}
-                    InputLabelProps={{ 
-                      shrink: true,
-                      sx: {
-                        color: emailFocused ? theme.palette.primary.main : undefined
-                      }
-                    }}
-                  />
-
-                  <TextField
-                    fullWidth
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    label="Password"
-                    variant="outlined"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                    onFocus={() => setPasswordFocused(true)}
-                    onBlur={() => setPasswordFocused(false)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock color={passwordFocused ? "primary" : "action"} sx={{ mr: 1 }} />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleTogglePasswordVisibility}
-                            edge="end"
-                            color={showPassword ? "primary" : "default"}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                      sx: { 
-                        borderRadius: 2,
-                        transition: 'all 0.2s ease',
-                        '&.Mui-focused': {
-                          boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                      }}
+                      InputLabelProps={{ 
+                        shrink: true,
+                        sx: {
+                          color: emailFocused ? theme.palette.primary.main : undefined
                         }
-                      }
-                    }}
-                    InputLabelProps={{ 
-                      shrink: true,
-                      sx: {
-                        color: passwordFocused ? theme.palette.primary.main : undefined
-                      }
-                    }}
-                  />
-                  
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={rememberMe}
-                          onChange={(e) => setRememberMe(e.target.checked)}
-                          color="primary"
-                          size="small"
-                        />
-                      }
-                      label={<Typography variant="body2">Remember me</Typography>}
+                      }}
                     />
-                    <Link to="/forgot-password" style={{ 
-                      textDecoration: 'none', 
-                      color: theme.palette.primary.main,
-                      fontSize: '0.875rem',
-                      fontWeight: 500,
-                      transition: 'color 0.2s ease'
-                    }}>
-                      Forgot password?
-                    </Link>
-                  </Box>
+                  </motion.div>
 
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    disabled={loading}
-                    sx={{ 
-                      py: 1.5,
-                      mt: 2,
-                      borderRadius: 6,
-                      textTransform: 'none',
-                      fontSize: '1rem',
-                      fontWeight: 600,
-                      color: 'white',
-                      background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      transition: 'all 0.25s ease-in-out',
-                      '&:hover': {
-                        transform: 'translateY(-2px)',
-                        boxShadow: `0 6px 20px rgba(5, 150, 105, 0.3)`,
-                        background: 'linear-gradient(90deg, #047857 10%, #059669 90%)',
-                      },
-                      '&:active': {
-                        transform: 'translateY(0)',
-                        boxShadow: `0 2px 10px rgba(5, 150, 105, 0.2)`,
-                      },
-                      '&:disabled': {
-                        background: theme.palette.grey[400],
-                        cursor: 'not-allowed',
-                      }
-                    }}
+                  <motion.div variants={itemVariants}>
+                    <TextField
+                      fullWidth
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      label="Password"
+                      variant="outlined"
+                      autoComplete="current-password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      disabled={loading}
+                      onFocus={() => setPasswordFocused(true)}
+                      onBlur={() => setPasswordFocused(false)}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock color={passwordFocused ? "primary" : "action"} sx={{ mr: 1 }} />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleTogglePasswordVisibility}
+                              edge="end"
+                              color={showPassword ? "primary" : "default"}
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        sx: { 
+                          borderRadius: 2,
+                          transition: 'all 0.2s ease',
+                          '&.Mui-focused': {
+                            boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                          }
+                        }
+                      }}
+                      InputLabelProps={{ 
+                        shrink: true,
+                        sx: {
+                          color: passwordFocused ? theme.palette.primary.main : undefined
+                        }
+                      }}
+                    />
+                  </motion.div>
+                  
+                  <motion.div variants={itemVariants}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            color="primary"
+                            size="small"
+                          />
+                        }
+                        label={<Typography variant="body2">Remember me</Typography>}
+                      />
+                      <Link to="/forgot-password" style={{ 
+                        textDecoration: 'none', 
+                        color: theme.palette.primary.main,
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        transition: 'color 0.2s ease'
+                      }}>
+                        Forgot password?
+                      </Link>
+                    </Box>
+                  </motion.div>
+
+                  <motion.div 
+                    variants={buttonHoverTap}
+                    whileHover="hover"
+                    whileTap="tap"
                   >
-                    {loading ? (
-                      <>
-                        <LoadingSpinner size="small" color="inherit" />
-                        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
-                          <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
-                        </Box>
-                      </>
-                    ) : 'Sign In'}
-                  </Button>
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      disabled={loading}
+                      sx={{ 
+                        py: 1.5,
+                        mt: 2,
+                        borderRadius: 6,
+                        textTransform: 'none',
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        color: 'white',
+                        background: 'linear-gradient(90deg, #4a8a88 0%, #65a8a6 100%)', // Updated to match theme teal
+                        position: 'relative',
+                        overflow: 'hidden',
+                        transition: 'all 0.25s ease-in-out',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: `0 6px 20px rgba(101, 168, 166, 0.3)`, // Updated to match theme teal
+                          background: 'linear-gradient(90deg, #4a8a88 10%, #65a8a6 90%)', // Updated to match theme teal
+                        },
+                        '&:active': {
+                          transform: 'translateY(0)',
+                          boxShadow: `0 2px 10px rgba(101, 168, 166, 0.2)`, // Updated to match theme teal
+                        },
+                        '&:disabled': {
+                          background: theme.palette.grey[400],
+                          cursor: 'not-allowed',
+                        }
+                      }}
+                    >
+                      {loading ? (
+                        <>
+                          <LoadingSpinner size="small" color="inherit" />
+                          <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
+                            <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
+                          </Box>
+                        </>
+                      ) : 'Sign In'}
+                    </Button>
+                  </motion.div>
                 </Stack>
               </form>
 
@@ -430,33 +483,39 @@ const LoginPage: React.FC = () => {
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                     Don't have an account yet?
                   </Typography>
-                  <Button
-                    component={Link}
-                    to="/signup"
-                    variant="outlined"
-                    fullWidth
-                    disabled={loading}
-                    sx={{ 
-                      py: 1.2,
-                      borderRadius: 6,
-                      textTransform: 'none',
-                      fontSize: '0.95rem',
-                      fontWeight: 500,
-                      borderColor: theme.palette.primary.main,
-                      color: theme.palette.primary.main,
-                      borderWidth: 1.5,
-                      transition: 'all 0.25s ease',
-                      '&:hover': {
-                        backgroundColor: `${theme.palette.primary.main}10`,
-                        borderColor: theme.palette.primary.dark,
-                        color: theme.palette.primary.dark,
-                        transform: 'translateY(-2px)',
-                        boxShadow: `0 4px 12px rgba(5, 150, 105, 0.15)`,
-                      }
-                    }}
+                  <motion.div
+                    whileHover="hover"
+                    whileTap="tap"
+                    variants={buttonHoverTap}
                   >
-                    Create New Account
-                  </Button>
+                    <Button
+                      component={Link}
+                      to="/signup"
+                      variant="outlined"
+                      fullWidth
+                      disabled={loading}
+                      sx={{ 
+                        py: 1.2,
+                        borderRadius: 6,
+                        textTransform: 'none',
+                        fontSize: '0.95rem',
+                        fontWeight: 500,
+                        borderColor: theme.palette.primary.main,
+                        color: theme.palette.primary.main,
+                        borderWidth: 1.5,
+                        transition: 'all 0.25s ease',
+                        '&:hover': {
+                          backgroundColor: `${theme.palette.primary.main}10`,
+                          borderColor: theme.palette.primary.dark,
+                          color: theme.palette.primary.dark,
+                          transform: 'translateY(-2px)',
+                          boxShadow: `0 4px 12px rgba(101, 168, 166, 0.15)`, // Updated to match theme teal
+                        }
+                      }}
+                    >
+                      Create New Account
+                    </Button>
+                  </motion.div>
                 </Box>
               </Slide>
             </CardContent>
