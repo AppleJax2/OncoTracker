@@ -14,7 +14,7 @@ import {
   Alert,
   Divider,
   Stack,
-  Grid,
+  Grid as MuiGrid,
   FormControl,
   FormLabel,
   RadioGroup,
@@ -33,7 +33,16 @@ import {
   CardContent,
   Checkbox,
   Tab,
-  Tabs
+  Tabs,
+  CircularProgress,
+  StepConnector,
+  StepIconProps,
+  LinearProgress,
+  Tooltip,
+  Fade,
+  Grow,
+  Zoom,
+  useMediaQuery
 } from '@mui/material';
 import { 
   Visibility, 
@@ -46,13 +55,91 @@ import {
   Pets,
   ErrorOutline,
   ArrowBack,
-  ChevronRight
+  ChevronRight,
+  CheckCircle,
+  AccountCircle,
+  Badge,
+  VpnKey,
+  Check
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 
 // Define the MotionBox component
 const MotionBox = motion(Box);
 const MotionDiv = motion.div;
+
+// Custom step connector
+const QontoConnector = styled(StepConnector)(({ theme }) => ({
+  [`&.MuiStepConnector-alternativeLabel`]: {
+    top: 10,
+    left: 'calc(-50% + 16px)',
+    right: 'calc(50% + 16px)',
+  },
+  [`&.MuiStepConnector-active`]: {
+    [`& .MuiStepConnector-line`]: {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+  [`&.MuiStepConnector-completed`]: {
+    [`& .MuiStepConnector-line`]: {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+  [`& .MuiStepConnector-line`]: {
+    borderColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
+    borderTopWidth: 3,
+    borderRadius: 1,
+  },
+}));
+
+// Custom step icon
+const QontoStepIcon = (props: StepIconProps) => {
+  const { active, completed, className } = props;
+  const theme = useTheme();
+
+  const icons: { [index: string]: React.ReactElement } = {
+    1: <VpnKey />,
+    2: <Badge />,
+    3: <AccountCircle />,
+  };
+
+  return (
+    <Box
+      className={className}
+      sx={{
+        height: 22,
+        display: 'flex',
+        color: active ? theme.palette.primary.main : theme.palette.text.disabled,
+        alignItems: 'center',
+        ...(active && {
+          color: theme.palette.primary.main,
+        }),
+        ...(completed && {
+          color: theme.palette.primary.main,
+        }),
+      }}
+    >
+      {completed ? (
+        <CheckCircle sx={{ fontSize: 26 }} />
+      ) : (
+        <Box
+          sx={{
+            width: 26,
+            height: 26,
+            borderRadius: '50%',
+            bgcolor: active ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
+            border: `2px solid ${active ? theme.palette.primary.main : theme.palette.divider}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {icons[String(props.icon)]}
+        </Box>
+      )}
+    </Box>
+  );
+};
 
 // Custom styled radio for better appearance
 const StyledRadio = styled(Radio)(({ theme }) => ({
@@ -79,9 +166,78 @@ const RoleRadioOption = styled(FormControlLabel)(({ theme }) => ({
   },
 }));
 
+// Password strength component
+const PasswordStrengthMeter = ({ password }: { password: string }) => {
+  const theme = useTheme();
+  
+  // Calculate password strength
+  const calculateStrength = (password: string): number => {
+    if (!password) return 0;
+    
+    let strength = 0;
+    
+    // Length check
+    if (password.length >= 8) strength += 25;
+    
+    // Contains lowercase
+    if (/[a-z]/.test(password)) strength += 25;
+    
+    // Contains uppercase
+    if (/[A-Z]/.test(password)) strength += 25;
+    
+    // Contains number or special char
+    if (/[0-9]|[^a-zA-Z0-9]/.test(password)) strength += 25;
+    
+    return strength;
+  };
+  
+  const strength = calculateStrength(password);
+  
+  // Determine color based on strength
+  const getColor = () => {
+    if (strength < 25) return theme.palette.error.main;
+    if (strength < 50) return theme.palette.error.light;
+    if (strength < 75) return theme.palette.warning.main;
+    return theme.palette.success.main;
+  };
+  
+  // Determine label based on strength
+  const getLabel = () => {
+    if (strength < 25) return 'Very weak';
+    if (strength < 50) return 'Weak';
+    if (strength < 75) return 'Good';
+    return 'Strong';
+  };
+  
+  return (
+    <Box sx={{ mt: 1, mb: 1, display: password ? 'block' : 'none' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+        <Typography variant="caption" color="text.secondary">
+          Password strength:
+        </Typography>
+        <Typography variant="caption" sx={{ color: getColor(), fontWeight: 600 }}>
+          {getLabel()}
+        </Typography>
+      </Box>
+      <Box sx={{ width: '100%', bgcolor: alpha(theme.palette.divider, 0.5), borderRadius: 5, height: 6, overflow: 'hidden' }}>
+        <Box
+          sx={{
+            width: `${strength}%`,
+            bgcolor: getColor(),
+            height: '100%',
+            transition: 'width 0.3s ease, background-color 0.3s ease',
+            borderRadius: 5,
+          }}
+        />
+      </Box>
+    </Box>
+  );
+};
+
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -97,6 +253,7 @@ const SignupPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fieldFocus, setFieldFocus] = useState<Record<string, boolean>>({});
   const { signup } = useAuth();
 
   const { firstName, lastName, email, password, passwordConfirm, role, clinicName, agreeToTerms } = formData;
@@ -115,7 +272,11 @@ const SignupPage: React.FC = () => {
            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : 'Invalid email format';
         case 'password':
            if (typeof value !== 'string' || !value) return 'Password is required';
-           return value.length >= 8 ? null : 'Password must be at least 8 characters';
+           if (value.length < 8) return 'Password must be at least 8 characters';
+           if (!/[a-z]/.test(value)) return 'Password must include lowercase letters';
+           if (!/[A-Z]/.test(value)) return 'Password must include uppercase letters';
+           if (!/[0-9]|[^a-zA-Z0-9]/.test(value)) return 'Password must include numbers or special characters';
+           return null;
         case 'passwordConfirm':
            if (typeof value !== 'string' || !value) return 'Please confirm your password';
            return value === formData.password ? null : 'Passwords do not match';
@@ -137,9 +298,11 @@ const SignupPage: React.FC = () => {
     // Clear API error on input change
     if (apiError) setApiError(null);
 
-    // Validate the field
-    const error = validateField(name, value);
-    setFormErrors(prevErrors => ({ ...prevErrors, [name]: error }));
+    // Validate the field if focused
+    if (fieldFocus[name]) {
+      const error = validateField(name, value);
+      setFormErrors(prevErrors => ({ ...prevErrors, [name]: error }));
+    }
 
     // Special case: re-validate passwordConfirm when password changes
     if (name === 'password' && formData.passwordConfirm) {
@@ -174,6 +337,19 @@ const SignupPage: React.FC = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  const handleFocus = (field: string) => {
+    setFieldFocus(prev => ({ ...prev, [field]: true }));
+  };
+
+  const handleBlur = (field: string) => {
+    setFieldFocus(prev => ({ ...prev, [field]: false }));
+    
+    // Validate on blur
+    const value = formData[field as keyof typeof formData];
+    const error = validateField(field, value);
+    setFormErrors(prev => ({ ...prev, [field]: error }));
+  };
+
   // Stepper Logic with Validation
   const validateStepFields = (stepIndex: number): boolean => {
     let fieldsToValidate: string[] = [];
@@ -205,12 +381,18 @@ const SignupPage: React.FC = () => {
      if (validateStepFields(activeStep)) {
         setApiError(null); // Clear previous API errors when moving next
         setActiveStep((prevStep) => prevStep + 1);
+
+        // Scroll to top of form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
      }
   };
 
   const handleBack = () => {
     setApiError(null); // Clear errors when moving back
     setActiveStep((prevStep) => prevStep - 1);
+    
+    // Scroll to top of form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -272,6 +454,9 @@ const SignupPage: React.FC = () => {
   // Modern gradient background
   const backgroundGradient = 'linear-gradient(135deg, #0B4F6C 0%, #01949A 100%)';
 
+  // Custom Grid component that works with 'item' prop
+  const Grid = MuiGrid;
+
   return (
     <Box
       sx={{
@@ -291,34 +476,62 @@ const SignupPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card elevation={6} sx={{ borderRadius: 4, overflow: 'hidden' }}>
+          <Card 
+            elevation={6} 
+            sx={{ 
+              borderRadius: 4, 
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+              transition: 'box-shadow 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 15px 35px rgba(0, 0, 0, 0.15)'
+              }
+            }}
+          >
             <CardHeader
               title={
                 <Box sx={{ textAlign: 'center', mb: 1 }}>
-                  <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-                    <Box 
-                      sx={{ 
-                        width: 70, 
-                        height: 70, 
-                        borderRadius: '50%', 
-                        backgroundColor: 'rgba(26, 156, 176, 0.1)', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center' 
-                      }}
-                    >
-                      <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                  <Fade in={true} timeout={800}>
+                    <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+                      <Box 
+                        sx={{ 
+                          width: 70, 
+                          height: 70, 
+                          borderRadius: '50%', 
+                          backgroundColor: 'rgba(5, 150, 105, 0.1)', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          boxShadow: '0 4px 14px rgba(5, 150, 105, 0.15)'
+                        }}
+                      >
+                        <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                      </Box>
                     </Box>
-                  </Box>
+                  </Fade>
                   <Typography 
                     variant="h4" 
                     component="h1" 
                     fontWeight={700}
                     color="primary.dark"
+                    sx={{ 
+                      backgroundImage: 'linear-gradient(90deg, #047857, #059669)',
+                      backgroundClip: 'text',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      textShadow: '0 2px 5px rgba(0,0,0,0.05)'
+                    }}
                   >
                     Create Account
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary" 
+                    sx={{ 
+                      mt: 1,
+                      fontWeight: 500
+                    }}
+                  >
                     Join OncoTracker to access pet cancer care tools
                   </Typography>
                 </Box>
@@ -327,10 +540,18 @@ const SignupPage: React.FC = () => {
             />
 
             {/* Stepper */}
-            <Stepper activeStep={activeStep} sx={{ px: 4, pb: 2 }}>
+            <Stepper 
+              activeStep={activeStep} 
+              connector={<QontoConnector />}
+              sx={{ 
+                px: { xs: 2, sm: 4 }, 
+                pb: 2 
+              }}
+              alternativeLabel={!isMobile}
+            >
               {steps.map((label, index) => (
                 <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
+                  <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
                 </Step>
               ))}
             </Stepper>
@@ -338,315 +559,466 @@ const SignupPage: React.FC = () => {
             <CardContent>
               {/* Error Display */}
               {apiError && (
-                <Alert
-                  severity="error"
-                  icon={<ErrorOutline fontSize="inherit" />}
-                  sx={{
-                    mb: 3,
-                    borderRadius: 2,
-                    backgroundColor: 'error.light',
-                    color: 'error.dark',
-                    border: `1px solid ${theme.palette.error.main}`
-                  }}
-                  variant="filled"
-                >
-                  {apiError}
-                </Alert>
+                <Grow in={true} timeout={800}>
+                  <Alert
+                    severity="error"
+                    icon={<ErrorOutline fontSize="inherit" />}
+                    sx={{
+                      mb: 3,
+                      borderRadius: 2,
+                      backgroundColor: 'error.light',
+                      color: 'error.dark',
+                      border: `1px solid ${theme.palette.error.main}`
+                    }}
+                    variant="filled"
+                    onClose={() => setApiError(null)}
+                  >
+                    {apiError}
+                  </Alert>
+                </Grow>
               )}
 
               {/* Form Content */}
               <form onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
-                <Box sx={{ minHeight: 250, position: 'relative' }}>
+                <Box sx={{ minHeight: 280, position: 'relative' }}>
                   {/* Step 0: Account Type */}
-                  <Collapse in={activeStep === 0} timeout={300} unmountOnExit>
+                  <Collapse in={activeStep === 0} timeout={500} unmountOnExit>
                     <Stack spacing={3} sx={{ width: '100%' }}>
-                      <FormControl component="fieldset" error={!!formErrors.role}>
-                        <FormLabel component="legend" sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
-                          Select Account Type:
-                        </FormLabel>
-                        <RadioGroup
-                          name="role"
-                          value={role}
-                          onChange={handleRoleChange}
-                          sx={{
-                            display: 'flex',
-                            flexDirection: { xs: 'column', sm: 'row' },
-                            gap: 2
-                          }}
-                        >
-                          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, width: '100%' }}>
-                            <Box 
-                              className={role === 'owner' ? 'Mui-checked' : ''} 
-                              sx={{ 
-                                width: '100%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                p: 2,
-                                borderRadius: 2,
-                                border: `1px solid ${role === 'owner' ? theme.palette.primary.main : theme.palette.divider}`,
-                                bgcolor: role === 'owner' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                  bgcolor: alpha(theme.palette.primary.main, 0.04),
-                                }
-                              }}
-                              onClick={() => handleRoleChange({ target: { value: 'owner' } } as any)}
-                            >
-                              <Radio 
-                                value="owner"
-                                checked={role === 'owner'}
-                                sx={{ mr: 1 }}
-                              />
-                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Pets sx={{ mr: 1, color: 'primary.main' }} />
-                                <Typography>Pet Owner</Typography>
+                      <Zoom in={true} timeout={500}>
+                        <FormControl component="fieldset" error={!!formErrors.role}>
+                          <FormLabel component="legend" sx={{ mb: 1.5, fontWeight: 500, color: 'text.primary' }}>
+                            Select Account Type:
+                          </FormLabel>
+                          <RadioGroup
+                            name="role"
+                            value={role}
+                            onChange={handleRoleChange}
+                            sx={{
+                              display: 'flex',
+                              flexDirection: { xs: 'column', sm: 'row' },
+                              gap: 2
+                            }}
+                          >
+                            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, width: '100%' }}>
+                              <Box 
+                                className={role === 'owner' ? 'Mui-checked' : ''} 
+                                sx={{ 
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  p: 2.5,
+                                  borderRadius: 3,
+                                  border: `2px solid ${role === 'owner' ? theme.palette.primary.main : theme.palette.divider}`,
+                                  bgcolor: role === 'owner' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.3s ease',
+                                  '&:hover': {
+                                    bgcolor: alpha(theme.palette.primary.main, 0.05),
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: role === 'owner' ? `0 6px 15px ${alpha(theme.palette.primary.main, 0.2)}` : `0 4px 10px ${alpha(theme.palette.grey[500], 0.1)}`,
+                                  }
+                                }}
+                                onClick={() => handleRoleChange({ target: { value: 'owner' } } as any)}
+                              >
+                                <Radio 
+                                  value="owner"
+                                  checked={role === 'owner'}
+                                  sx={{ mr: 1 }}
+                                />
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <Pets sx={{ 
+                                    mr: 1.5, 
+                                    color: 'primary.main',
+                                    fontSize: 26
+                                  }} />
+                                  <Typography sx={{ fontWeight: 500 }}>Pet Owner</Typography>
+                                </Box>
+                              </Box>
+                              
+                              <Box 
+                                className={role === 'vet' ? 'Mui-checked' : ''} 
+                                sx={{ 
+                                  width: '100%',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  p: 2.5,
+                                  borderRadius: 3,
+                                  border: `2px solid ${role === 'vet' ? theme.palette.primary.main : theme.palette.divider}`,
+                                  bgcolor: role === 'vet' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.3s ease',
+                                  '&:hover': {
+                                    bgcolor: alpha(theme.palette.primary.main, 0.05),
+                                    transform: 'translateY(-2px)',
+                                    boxShadow: role === 'vet' ? `0 6px 15px ${alpha(theme.palette.primary.main, 0.2)}` : `0 4px 10px ${alpha(theme.palette.grey[500], 0.1)}`,
+                                  }
+                                }}
+                                onClick={() => handleRoleChange({ target: { value: 'vet' } } as any)}
+                              >
+                                <Radio 
+                                  value="vet"
+                                  checked={role === 'vet'}
+                                  sx={{ mr: 1 }}
+                                />
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  <MedicalServices sx={{ 
+                                    mr: 1.5, 
+                                    color: 'primary.main',
+                                    fontSize: 26
+                                  }} />
+                                  <Typography sx={{ fontWeight: 500 }}>Veterinarian</Typography>
+                                </Box>
                               </Box>
                             </Box>
-                            
-                            <Box 
-                              className={role === 'vet' ? 'Mui-checked' : ''} 
-                              sx={{ 
-                                width: '100%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                p: 2,
-                                borderRadius: 2,
-                                border: `1px solid ${role === 'vet' ? theme.palette.primary.main : theme.palette.divider}`,
-                                bgcolor: role === 'vet' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
-                                cursor: 'pointer',
-                                transition: 'all 0.2s ease',
-                                '&:hover': {
-                                  bgcolor: alpha(theme.palette.primary.main, 0.04),
-                                }
-                              }}
-                              onClick={() => handleRoleChange({ target: { value: 'vet' } } as any)}
-                            >
-                              <Radio 
-                                value="vet"
-                                checked={role === 'vet'}
-                                sx={{ mr: 1 }}
-                              />
-                              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <MedicalServices sx={{ mr: 1, color: 'primary.main' }} />
-                                <Typography>Veterinarian</Typography>
-                              </Box>
-                            </Box>
-                          </Box>
-                        </RadioGroup>
-                        {formErrors.role && <FormHelperText error>{formErrors.role}</FormHelperText>}
-                      </FormControl>
+                          </RadioGroup>
+                          {formErrors.role && (
+                            <FormHelperText error sx={{ mt: 1, ml: 1, fontWeight: 500 }}>
+                              {formErrors.role}
+                            </FormHelperText>
+                          )}
+                        </FormControl>
+                      </Zoom>
 
                       {/* Conditional Clinic Name Field */}
-                      <Collapse in={role === 'vet'} timeout={300} unmountOnExit>
-                        <TextField
-                          fullWidth
-                          id="clinicName"
-                          name="clinicName"
-                          label="Clinic Name"
-                          variant="outlined"
-                          required={role === 'vet'}
-                          value={clinicName}
-                          onChange={handleChange}
-                          disabled={loading}
-                          error={!!formErrors.clinicName}
-                          helperText={formErrors.clinicName || ''}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <Business color="action" sx={{ mr: 1 }} />
-                              </InputAdornment>
-                            ),
-                            sx: { borderRadius: 2 }
-                          }}
-                          InputLabelProps={{ shrink: true }}
-                          sx={{ mt: 1 }}
-                        />
+                      <Collapse in={role === 'vet'} timeout={500} unmountOnExit>
+                        <Zoom in={role === 'vet'} timeout={300}>
+                          <TextField
+                            fullWidth
+                            id="clinicName"
+                            name="clinicName"
+                            label="Clinic Name"
+                            variant="outlined"
+                            required={role === 'vet'}
+                            value={clinicName}
+                            onChange={handleChange}
+                            disabled={loading}
+                            error={!!formErrors.clinicName}
+                            helperText={formErrors.clinicName || ''}
+                            onFocus={() => handleFocus('clinicName')}
+                            onBlur={() => handleBlur('clinicName')}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <Business 
+                                    color={fieldFocus.clinicName ? "primary" : "action"} 
+                                    sx={{ mr: 1 }} 
+                                  />
+                                </InputAdornment>
+                              ),
+                              sx: { 
+                                borderRadius: 2,
+                                transition: 'all 0.2s ease',
+                                '&.Mui-focused': {
+                                  boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                                }
+                              }
+                            }}
+                            InputLabelProps={{ 
+                              shrink: true,
+                              sx: {
+                                color: fieldFocus.clinicName ? theme.palette.primary.main : undefined
+                              }
+                            }}
+                            sx={{ mt: 1 }}
+                          />
+                        </Zoom>
                       </Collapse>
                     </Stack>
                   </Collapse>
 
                   {/* Step 1: Personal Details */}
-                  <Collapse in={activeStep === 1} timeout={300} unmountOnExit>
+                  <Collapse in={activeStep === 1} timeout={500} unmountOnExit>
                     <Stack spacing={3} sx={{ width: '100%' }}>
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            id="firstName"
-                            name="firstName"
-                            label="First Name"
-                            variant="outlined"
-                            required
-                            value={firstName}
-                            onChange={handleChange}
-                            disabled={loading}
-                            error={!!formErrors.firstName}
-                            helperText={formErrors.firstName || ''}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <Person color="action" sx={{ mr: 1 }} />
-                                </InputAdornment>
-                              ),
-                              sx: { borderRadius: 2 }
-                            }}
-                            InputLabelProps={{ shrink: true }}
-                          />
+                      <Zoom in={true} timeout={500}>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12} sm={6}>
+                            <TextField
+                              fullWidth
+                              id="firstName"
+                              name="firstName"
+                              label="First Name"
+                              variant="outlined"
+                              required
+                              value={firstName}
+                              onChange={handleChange}
+                              disabled={loading}
+                              error={!!formErrors.firstName}
+                              helperText={formErrors.firstName || ''}
+                              onFocus={() => handleFocus('firstName')}
+                              onBlur={() => handleBlur('firstName')}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <Person 
+                                      color={fieldFocus.firstName ? "primary" : "action"} 
+                                      sx={{ mr: 1 }} 
+                                    />
+                                  </InputAdornment>
+                                ),
+                                sx: { 
+                                  borderRadius: 2,
+                                  transition: 'all 0.2s ease',
+                                  '&.Mui-focused': {
+                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                                  }
+                                }
+                              }}
+                              InputLabelProps={{ 
+                                shrink: true,
+                                sx: {
+                                  color: fieldFocus.firstName ? theme.palette.primary.main : undefined
+                                }
+                              }}
+                            />
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <TextField
+                              fullWidth
+                              id="lastName"
+                              name="lastName"
+                              label="Last Name"
+                              variant="outlined"
+                              required
+                              value={lastName}
+                              onChange={handleChange}
+                              disabled={loading}
+                              error={!!formErrors.lastName}
+                              helperText={formErrors.lastName || ''}
+                              onFocus={() => handleFocus('lastName')}
+                              onBlur={() => handleBlur('lastName')}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <Person 
+                                      color={fieldFocus.lastName ? "primary" : "action"} 
+                                      sx={{ mr: 1 }} 
+                                    />
+                                  </InputAdornment>
+                                ),
+                                sx: { 
+                                  borderRadius: 2,
+                                  transition: 'all 0.2s ease',
+                                  '&.Mui-focused': {
+                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                                  }
+                                }
+                              }}
+                              InputLabelProps={{ 
+                                shrink: true,
+                                sx: {
+                                  color: fieldFocus.lastName ? theme.palette.primary.main : undefined
+                                }
+                              }}
+                            />
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            fullWidth
-                            id="lastName"
-                            name="lastName"
-                            label="Last Name"
-                            variant="outlined"
-                            required
-                            value={lastName}
-                            onChange={handleChange}
-                            disabled={loading}
-                            error={!!formErrors.lastName}
-                            helperText={formErrors.lastName || ''}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <Person color="action" sx={{ mr: 1 }} />
-                                </InputAdornment>
-                              ),
-                              sx: { borderRadius: 2 }
-                            }}
-                            InputLabelProps={{ shrink: true }}
-                          />
-                        </Grid>
-                      </Grid>
+                      </Zoom>
 
-                      <TextField
-                        fullWidth
-                        id="email"
-                        name="email"
-                        type="email"
-                        label="Email Address"
-                        variant="outlined"
-                        autoComplete="email"
-                        required
-                        value={email}
-                        onChange={handleChange}
-                        disabled={loading}
-                        error={!!formErrors.email}
-                        helperText={formErrors.email || ''}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Email color="action" sx={{ mr: 1 }} />
-                            </InputAdornment>
-                          ),
-                          sx: { borderRadius: 2 }
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                      />
+                      <Zoom in={true} timeout={600}>
+                        <TextField
+                          fullWidth
+                          id="email"
+                          name="email"
+                          type="email"
+                          label="Email Address"
+                          variant="outlined"
+                          autoComplete="email"
+                          required
+                          value={email}
+                          onChange={handleChange}
+                          disabled={loading}
+                          error={!!formErrors.email}
+                          helperText={formErrors.email || ''}
+                          onFocus={() => handleFocus('email')}
+                          onBlur={() => handleBlur('email')}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Email 
+                                  color={fieldFocus.email ? "primary" : "action"} 
+                                  sx={{ mr: 1 }} 
+                                />
+                              </InputAdornment>
+                            ),
+                            sx: { 
+                              borderRadius: 2,
+                              transition: 'all 0.2s ease',
+                              '&.Mui-focused': {
+                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                              }
+                            }
+                          }}
+                          InputLabelProps={{ 
+                            shrink: true,
+                            sx: {
+                              color: fieldFocus.email ? theme.palette.primary.main : undefined
+                            }
+                          }}
+                        />
+                      </Zoom>
                     </Stack>
                   </Collapse>
 
                   {/* Step 2: Set Password */}
-                  <Collapse in={activeStep === 2} timeout={300} unmountOnExit>
+                  <Collapse in={activeStep === 2} timeout={500} unmountOnExit>
                     <Stack spacing={3} sx={{ width: '100%' }}>
-                      <TextField
-                        fullWidth
-                        id="password"
-                        name="password"
-                        type={showPassword ? 'text' : 'password'}
-                        label="Password"
-                        variant="outlined"
-                        autoComplete="new-password"
-                        required
-                        value={password}
-                        onChange={handleChange}
-                        disabled={loading}
-                        error={!!formErrors.password}
-                        helperText={formErrors.password || "Password must be at least 8 characters"}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Lock color="action" sx={{ mr: 1 }} />
-                            </InputAdornment>
-                          ),
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={handleTogglePasswordVisibility}
-                                edge="end"
-                                color={showPassword ? "primary" : "default"}
-                              >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                          sx: { borderRadius: 2 }
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                      />
+                      <Zoom in={true} timeout={500}>
+                        <TextField
+                          fullWidth
+                          id="password"
+                          name="password"
+                          type={showPassword ? 'text' : 'password'}
+                          label="Password"
+                          variant="outlined"
+                          autoComplete="new-password"
+                          required
+                          value={password}
+                          onChange={handleChange}
+                          disabled={loading}
+                          error={!!formErrors.password}
+                          helperText={formErrors.password || ''}
+                          onFocus={() => handleFocus('password')}
+                          onBlur={() => handleBlur('password')}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Lock 
+                                  color={fieldFocus.password ? "primary" : "action"} 
+                                  sx={{ mr: 1 }} 
+                                />
+                              </InputAdornment>
+                            ),
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={handleTogglePasswordVisibility}
+                                  edge="end"
+                                  color={showPassword ? "primary" : "default"}
+                                >
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                            sx: { 
+                              borderRadius: 2,
+                              transition: 'all 0.2s ease',
+                              '&.Mui-focused': {
+                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                              }
+                            }
+                          }}
+                          InputLabelProps={{ 
+                            shrink: true,
+                            sx: {
+                              color: fieldFocus.password ? theme.palette.primary.main : undefined
+                            }
+                          }}
+                        />
+                      </Zoom>
 
-                      <TextField
-                        fullWidth
-                        id="passwordConfirm"
-                        name="passwordConfirm"
-                        type={showPassword ? 'text' : 'password'}
-                        label="Confirm Password"
-                        variant="outlined"
-                        autoComplete="new-password"
-                        required
-                        value={passwordConfirm}
-                        onChange={handleChange}
-                        disabled={loading}
-                        error={!!formErrors.passwordConfirm}
-                        helperText={formErrors.passwordConfirm || ''}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Lock color="action" sx={{ mr: 1 }} />
-                            </InputAdornment>
-                          ),
-                          sx: { borderRadius: 2 }
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                      />
+                      {/* Password strength meter */}
+                      <Fade in={password.length > 0} timeout={300}>
+                        <Box>
+                          <PasswordStrengthMeter password={password} />
+                        </Box>
+                      </Fade>
 
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={agreeToTerms}
-                            onChange={handleCheckboxChange}
-                            name="agreeToTerms"
-                            color="primary"
+                      <Zoom in={true} timeout={600}>
+                        <TextField
+                          fullWidth
+                          id="passwordConfirm"
+                          name="passwordConfirm"
+                          type={showPassword ? 'text' : 'password'}
+                          label="Confirm Password"
+                          variant="outlined"
+                          autoComplete="new-password"
+                          required
+                          value={passwordConfirm}
+                          onChange={handleChange}
+                          disabled={loading}
+                          error={!!formErrors.passwordConfirm}
+                          helperText={formErrors.passwordConfirm || ''}
+                          onFocus={() => handleFocus('passwordConfirm')}
+                          onBlur={() => handleBlur('passwordConfirm')}
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Lock 
+                                  color={fieldFocus.passwordConfirm ? "primary" : "action"} 
+                                  sx={{ mr: 1 }} 
+                                />
+                              </InputAdornment>
+                            ),
+                            sx: { 
+                              borderRadius: 2,
+                              transition: 'all 0.2s ease',
+                              '&.Mui-focused': {
+                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                              }
+                            }
+                          }}
+                          InputLabelProps={{ 
+                            shrink: true,
+                            sx: {
+                              color: fieldFocus.passwordConfirm ? theme.palette.primary.main : undefined
+                            }
+                          }}
+                        />
+                      </Zoom>
+
+                      <Zoom in={true} timeout={700}>
+                        <FormControl error={!!formErrors.agreeToTerms}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={agreeToTerms}
+                                onChange={handleCheckboxChange}
+                                name="agreeToTerms"
+                                color="primary"
+                              />
+                            }
+                            label={
+                              <Typography variant="body2">
+                                I agree to the{' '}
+                                <Link 
+                                  to="/terms" 
+                                  style={{ 
+                                    textDecoration: 'none', 
+                                    color: theme.palette.primary.main,
+                                    fontWeight: 500
+                                  }}
+                                >
+                                  Terms and Conditions
+                                </Link>
+                              </Typography>
+                            }
                           />
-                        }
-                        label={
-                          <Typography variant="body2">
-                            I agree to the{' '}
-                            <Link 
-                              to="/terms" 
-                              style={{ 
-                                textDecoration: 'none', 
-                                color: theme.palette.primary.main 
-                              }}
-                            >
-                              Terms and Conditions
-                            </Link>
-                          </Typography>
-                        }
-                      />
-                      {formErrors.agreeToTerms && (
-                        <FormHelperText error>{formErrors.agreeToTerms}</FormHelperText>
-                      )}
+                          {formErrors.agreeToTerms && (
+                            <FormHelperText error sx={{ ml: 1, fontWeight: 500 }}>
+                              {formErrors.agreeToTerms}
+                            </FormHelperText>
+                          )}
+                        </FormControl>
+                      </Zoom>
 
                       {/* Veterinarian Note */}
                       <Collapse in={role === 'vet'} timeout={300} unmountOnExit>
-                        <Alert severity="info" sx={{ mt: 1, borderRadius: 2 }}>
-                          <Typography variant="caption">
-                            Note: Veterinarian accounts require manual verification after signup.
-                          </Typography>
-                        </Alert>
+                        <Fade in={role === 'vet'} timeout={400}>
+                          <Alert 
+                            severity="info" 
+                            sx={{ 
+                              mt: 1, 
+                              borderRadius: 2,
+                              border: `1px solid ${theme.palette.info.main}40`,
+                            }}
+                            icon={<MedicalServices />}
+                          >
+                            <Typography variant="body2" fontWeight={500}>
+                              Note: Veterinarian accounts require manual verification after signup.
+                            </Typography>
+                          </Alert>
+                        </Fade>
                       </Collapse>
                     </Stack>
                   </Collapse>
@@ -660,8 +1032,13 @@ const SignupPage: React.FC = () => {
                     startIcon={<ArrowBack />}
                     sx={{ 
                       color: 'text.secondary',
+                      transition: 'all 0.2s ease',
+                      borderRadius: 6,
+                      px: 2,
+                      py: 1,
                       '&:hover': {
                         backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                        transform: 'translateX(-2px)'
                       }
                     }}
                   >
@@ -675,17 +1052,23 @@ const SignupPage: React.FC = () => {
                     sx={{
                       py: 1,
                       px: 3,
-                      borderRadius: 2,
+                      borderRadius: 6,
                       textTransform: 'none',
                       fontSize: '1rem',
                       fontWeight: 600,
                       color: 'white',
-                      background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
-                      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                      background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'all 0.25s ease-in-out',
                       '&:hover': {
                         transform: 'translateY(-2px)',
-                        boxShadow: `0 4px 15px rgba(0, 0, 0, 0.2)`,
-                        background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
+                        boxShadow: `0 6px 20px rgba(5, 150, 105, 0.3)`,
+                        background: 'linear-gradient(90deg, #047857 10%, #059669 90%)',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0)',
+                        boxShadow: `0 2px 10px rgba(5, 150, 105, 0.2)`,
                       },
                       '&:disabled': {
                         background: theme.palette.grey[400],
@@ -694,7 +1077,12 @@ const SignupPage: React.FC = () => {
                     }}
                   >
                     {loading && activeStep === steps.length - 1 ? (
-                      <LoadingSpinner size="small" color="inherit" />
+                      <>
+                        <LoadingSpinner size="small" color="inherit" />
+                        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
+                          <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
+                        </Box>
+                      </>
                     ) : activeStep === steps.length - 1 ? (
                       'Create Account'
                     ) : (
@@ -705,33 +1093,40 @@ const SignupPage: React.FC = () => {
               </form>
 
               {/* Link to Login */}
-              <Box sx={{ textAlign: 'center', mt: 4 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                  Already have an account?
-                </Typography>
-                <Button
-                  component={Link}
-                  to="/login"
-                  variant="outlined"
-                  fullWidth
-                  disabled={loading}
-                  sx={{
-                    py: 1.2,
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    fontSize: '0.95rem',
-                    borderColor: theme.palette.primary.main,
-                    color: theme.palette.primary.main,
-                    '&:hover': {
-                      backgroundColor: `${theme.palette.primary.main}10`,
-                      borderColor: theme.palette.primary.dark,
-                      color: theme.palette.primary.dark,
-                    }
-                  }}
-                >
-                  Sign In Instead
-                </Button>
-              </Box>
+              <Fade in={true} timeout={1000}>
+                <Box sx={{ textAlign: 'center', mt: 4 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                    Already have an account?
+                  </Typography>
+                  <Button
+                    component={Link}
+                    to="/login"
+                    variant="outlined"
+                    fullWidth
+                    disabled={loading}
+                    sx={{
+                      py: 1.2,
+                      borderRadius: 6,
+                      textTransform: 'none',
+                      fontSize: '0.95rem',
+                      fontWeight: 500,
+                      borderColor: theme.palette.primary.main,
+                      color: theme.palette.primary.main,
+                      borderWidth: 1.5,
+                      transition: 'all 0.25s ease',
+                      '&:hover': {
+                        backgroundColor: `${theme.palette.primary.main}10`,
+                        borderColor: theme.palette.primary.dark,
+                        color: theme.palette.primary.dark,
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 4px 12px rgba(5, 150, 105, 0.15)`,
+                      }
+                    }}
+                  >
+                    Sign In Instead
+                  </Button>
+                </Box>
+              </Fade>
             </CardContent>
           </Card>
         </MotionBox>

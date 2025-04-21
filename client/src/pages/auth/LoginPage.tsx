@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { 
@@ -19,7 +19,12 @@ import {
   FormControlLabel,
   Card,
   CardContent,
-  CardHeader
+  CardHeader,
+  Fade,
+  Grow,
+  Slide,
+  useMediaQuery,
+  LinearProgress
 } from '@mui/material';
 import { 
   Visibility, 
@@ -27,7 +32,8 @@ import {
   Email, 
   Lock, 
   ErrorOutline, 
-  Pets 
+  Pets,
+  CheckCircleOutline
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 
@@ -39,14 +45,40 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // Check for success message from signup
+  useEffect(() => {
+    if (location.state?.signupSuccess) {
+      setSuccess('Account created successfully! Please login with your credentials.');
+    }
+  }, [location]);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(email);
+    setEmailError(isValid ? null : 'Please enter a valid email address');
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email first
+    if (!validateEmail(email)) {
+      return;
+    }
+    
     setError(null);
     setLoading(true);
 
@@ -95,6 +127,15 @@ const LoginPage: React.FC = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (emailFocused && e.target.value) {
+      validateEmail(e.target.value);
+    } else {
+      setEmailError(null);
+    }
+  };
+
   // Modern gradient background
   const backgroundGradient = 'linear-gradient(135deg, #0B4F6C 0%, #01949A 100%)';
 
@@ -117,34 +158,62 @@ const LoginPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Card elevation={6} sx={{ borderRadius: 4, overflow: 'hidden' }}>
+          <Card 
+            elevation={6} 
+            sx={{ 
+              borderRadius: 4, 
+              overflow: 'hidden',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+              transition: 'box-shadow 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 15px 35px rgba(0, 0, 0, 0.15)'
+              }
+            }}
+          >
             <CardHeader
               title={
                 <Box sx={{ textAlign: 'center', mb: 1 }}>
-                  <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-                    <Box 
-                      sx={{ 
-                        width: 70, 
-                        height: 70, 
-                        borderRadius: '50%', 
-                        backgroundColor: 'rgba(26, 156, 176, 0.1)', 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center' 
-                      }}
-                    >
-                      <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                  <Fade in={true} timeout={800}>
+                    <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+                      <Box 
+                        sx={{ 
+                          width: 70, 
+                          height: 70, 
+                          borderRadius: '50%', 
+                          backgroundColor: 'rgba(5, 150, 105, 0.1)', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          boxShadow: '0 4px 14px rgba(5, 150, 105, 0.15)'
+                        }}
+                      >
+                        <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                      </Box>
                     </Box>
-                  </Box>
+                  </Fade>
                   <Typography 
                     variant="h4" 
                     component="h1" 
                     fontWeight={700}
                     color="primary.dark"
+                    sx={{ 
+                      backgroundImage: 'linear-gradient(90deg, #047857, #059669)',
+                      backgroundClip: 'text',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      textShadow: '0 2px 5px rgba(0,0,0,0.05)'
+                    }}
                   >
                     OncoTracker
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary" 
+                    sx={{ 
+                      mt: 1,
+                      fontWeight: 500
+                    }}
+                  >
                     Veterinary oncology management system
                   </Typography>
                 </Box>
@@ -153,21 +222,43 @@ const LoginPage: React.FC = () => {
             />
             
             <CardContent>
+              {success && (
+                <Grow in={true} timeout={800}>
+                  <Alert 
+                    severity="success" 
+                    icon={<CheckCircleOutline fontSize="inherit" />}
+                    sx={{ 
+                      mb: 3, 
+                      borderRadius: 2, 
+                      backgroundColor: 'success.light',
+                      color: 'success.dark',
+                      border: `1px solid ${theme.palette.success.main}`
+                    }}
+                    onClose={() => setSuccess(null)}
+                  >
+                    {success}
+                  </Alert>
+                </Grow>
+              )}
+
               {error && (
-                <Alert 
-                  severity="error" 
-                  icon={<ErrorOutline fontSize="inherit" />}
-                  sx={{ 
-                    mb: 3, 
-                    borderRadius: 2, 
-                    backgroundColor: 'error.light',
-                    color: 'error.dark',
-                    border: `1px solid ${theme.palette.error.main}`
-                  }}
-                  variant="filled"
-                >
-                  {error}
-                </Alert>
+                <Grow in={true} timeout={800}>
+                  <Alert 
+                    severity="error" 
+                    icon={<ErrorOutline fontSize="inherit" />}
+                    sx={{ 
+                      mb: 3, 
+                      borderRadius: 2, 
+                      backgroundColor: 'error.light',
+                      color: 'error.dark',
+                      border: `1px solid ${theme.palette.error.main}`
+                    }}
+                    variant="filled"
+                    onClose={() => setError(null)}
+                  >
+                    {error}
+                  </Alert>
+                </Grow>
               )}
 
               <form onSubmit={handleSubmit}>
@@ -182,17 +273,35 @@ const LoginPage: React.FC = () => {
                     autoComplete="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     disabled={loading}
+                    error={!!emailError}
+                    helperText={emailError}
+                    onFocus={() => setEmailFocused(true)}
+                    onBlur={() => {
+                      setEmailFocused(false);
+                      if (email) validateEmail(email);
+                    }}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Email color="action" sx={{ mr: 1 }} />
+                          <Email color={emailFocused ? "primary" : "action"} sx={{ mr: 1 }} />
                         </InputAdornment>
                       ),
-                      sx: { borderRadius: 2 }
+                      sx: { 
+                        borderRadius: 2,
+                        transition: 'all 0.2s ease',
+                        '&.Mui-focused': {
+                          boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                        }
+                      }
                     }}
-                    InputLabelProps={{ shrink: true }}
+                    InputLabelProps={{ 
+                      shrink: true,
+                      sx: {
+                        color: emailFocused ? theme.palette.primary.main : undefined
+                      }
+                    }}
                   />
 
                   <TextField
@@ -207,10 +316,12 @@ const LoginPage: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     disabled={loading}
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Lock color="action" sx={{ mr: 1 }} />
+                          <Lock color={passwordFocused ? "primary" : "action"} sx={{ mr: 1 }} />
                         </InputAdornment>
                       ),
                       endAdornment: (
@@ -225,9 +336,20 @@ const LoginPage: React.FC = () => {
                           </IconButton>
                         </InputAdornment>
                       ),
-                      sx: { borderRadius: 2 }
+                      sx: { 
+                        borderRadius: 2,
+                        transition: 'all 0.2s ease',
+                        '&.Mui-focused': {
+                          boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                        }
+                      }
                     }}
-                    InputLabelProps={{ shrink: true }}
+                    InputLabelProps={{ 
+                      shrink: true,
+                      sx: {
+                        color: passwordFocused ? theme.palette.primary.main : undefined
+                      }
+                    }}
                   />
                   
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
@@ -242,10 +364,12 @@ const LoginPage: React.FC = () => {
                       }
                       label={<Typography variant="body2">Remember me</Typography>}
                     />
-                    <Link to="#" style={{ 
+                    <Link to="/forgot-password" style={{ 
                       textDecoration: 'none', 
                       color: theme.palette.primary.main,
-                      fontSize: '0.875rem'
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      transition: 'color 0.2s ease'
                     }}>
                       Forgot password?
                     </Link>
@@ -259,19 +383,23 @@ const LoginPage: React.FC = () => {
                     sx={{ 
                       py: 1.5,
                       mt: 2,
-                      borderRadius: 2,
+                      borderRadius: 6,
                       textTransform: 'none',
                       fontSize: '1rem',
                       fontWeight: 600,
                       color: 'white',
-                      background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
-                      transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                      background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
                       position: 'relative',
                       overflow: 'hidden',
+                      transition: 'all 0.25s ease-in-out',
                       '&:hover': {
                         transform: 'translateY(-2px)',
-                        boxShadow: `0 4px 15px rgba(0, 0, 0, 0.2)`,
-                        background: 'linear-gradient(90deg, #0B4F6C 0%, #01949A 100%)',
+                        boxShadow: `0 6px 20px rgba(5, 150, 105, 0.3)`,
+                        background: 'linear-gradient(90deg, #047857 10%, #059669 90%)',
+                      },
+                      '&:active': {
+                        transform: 'translateY(0)',
+                        boxShadow: `0 2px 10px rgba(5, 150, 105, 0.2)`,
                       },
                       '&:disabled': {
                         background: theme.palette.grey[400],
@@ -279,44 +407,58 @@ const LoginPage: React.FC = () => {
                       }
                     }}
                   >
-                    {loading ? <LoadingSpinner size="small" color="inherit" /> : 'Sign In'}
+                    {loading ? (
+                      <>
+                        <LoadingSpinner size="small" color="inherit" />
+                        <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
+                          <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
+                        </Box>
+                      </>
+                    ) : 'Sign In'}
                   </Button>
                 </Stack>
               </form>
 
-              <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.2)' }}>
+              <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.15)' }}>
                 <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
                   OR
                 </Typography>
               </Divider>
               
-              <Box sx={{ textAlign: 'center', mt: 2 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                  Don't have an account yet?
-                </Typography>
-                <Button
-                  component={Link}
-                  to="/signup"
-                  variant="outlined"
-                  fullWidth
-                  disabled={loading}
-                  sx={{ 
-                    py: 1.2,
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    fontSize: '0.95rem',
-                    borderColor: theme.palette.primary.main,
-                    color: theme.palette.primary.main,
-                    '&:hover': {
-                      backgroundColor: `${theme.palette.primary.main}10`,
-                      borderColor: theme.palette.primary.dark,
-                      color: theme.palette.primary.dark,
-                    }
-                  }}
-                >
-                  Create New Account
-                </Button>
-              </Box>
+              <Slide direction="up" in={true} mountOnEnter unmountOnExit timeout={800}>
+                <Box sx={{ textAlign: 'center', mt: 2 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                    Don't have an account yet?
+                  </Typography>
+                  <Button
+                    component={Link}
+                    to="/signup"
+                    variant="outlined"
+                    fullWidth
+                    disabled={loading}
+                    sx={{ 
+                      py: 1.2,
+                      borderRadius: 6,
+                      textTransform: 'none',
+                      fontSize: '0.95rem',
+                      fontWeight: 500,
+                      borderColor: theme.palette.primary.main,
+                      color: theme.palette.primary.main,
+                      borderWidth: 1.5,
+                      transition: 'all 0.25s ease',
+                      '&:hover': {
+                        backgroundColor: `${theme.palette.primary.main}10`,
+                        borderColor: theme.palette.primary.dark,
+                        color: theme.palette.primary.dark,
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 4px 12px rgba(5, 150, 105, 0.15)`,
+                      }
+                    }}
+                  >
+                    Create New Account
+                  </Button>
+                </Box>
+              </Slide>
             </CardContent>
           </Card>
         </MotionBox>
