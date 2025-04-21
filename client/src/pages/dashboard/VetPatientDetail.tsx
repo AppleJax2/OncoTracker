@@ -27,9 +27,9 @@ const VetPatientDetail: React.FC = () => {
 
       try {
           const [petRes, reportRes, notesRes] = await Promise.all([
-              api.get(`/pets/${petId}`),
-              api.get(`/pets/${petId}/reports`),
-              api.get(`/pets/${petId}/vetnotes`)
+              api.get(`/api/pets/${petId}`),
+              api.get(`/api/pets/${petId}/reports`),
+              api.get(`/api/pets/${petId}/vetnotes`)
           ]);
 
           if (petRes.data?.status === 'success') {
@@ -73,7 +73,7 @@ const VetPatientDetail: React.FC = () => {
           setLoadingNotes(true);
           setError('');
           try {
-              const notesRes = await api.get(`/pets/${petId}/vetnotes`);
+              const notesRes = await api.get(`/api/pets/${petId}/vetnotes`);
               if (notesRes.data?.status === 'success') {
                   setVetNotes(notesRes.data.data.vetNotes);
               } else {

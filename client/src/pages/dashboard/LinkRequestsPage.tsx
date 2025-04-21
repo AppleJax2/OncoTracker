@@ -23,7 +23,7 @@ const LinkRequestsPage: React.FC = () => {
     setError(null);
     setResponseStatus({});
     try {
-      const response = await api.get('/link-requests/pending');
+      const response = await api.get('/api/link-requests/pending');
       if (response.data?.status === 'success') {
         setRequests(response.data.data.linkRequests);
       } else {
@@ -43,7 +43,7 @@ const LinkRequestsPage: React.FC = () => {
   const handleResponse = async (requestId: string, status: 'approved' | 'rejected') => {
       setResponseStatus(prev => ({ ...prev, [requestId]: 'processing' }));
       try {
-          await api.patch(`/link-requests/${requestId}/respond`, { status });
+          await api.patch(`/api/link-requests/${requestId}/respond`, { status });
           setResponseStatus(prev => ({ ...prev, [requestId]: 'success' }));
           // Refresh the list after successful response
           fetchRequests(); 

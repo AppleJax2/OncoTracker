@@ -37,7 +37,7 @@ const FindVetPage: React.FC = () => {
         setRequestStatus({}); // Clear previous request statuses
         setRequestError(null);
         try {
-            const response = await api.get(`/link-requests/find-vets?searchTerm=${encodeURIComponent(term)}`);
+            const response = await api.get(`/api/link-requests/find-vets?searchTerm=${encodeURIComponent(term)}`);
             if (response.data?.status === 'success') {
                 setResults(response.data.data.vets);
                 if (response.data.data.vets.length === 0) {
@@ -62,7 +62,7 @@ const FindVetPage: React.FC = () => {
         setRequestStatus(prev => ({ ...prev, [vetId]: 'sending' }));
         setRequestError(null);
         try {
-            await api.post('/link-requests', { vetId, petId });
+            await api.post('/api/link-requests', { vetId, petId });
             setRequestStatus(prev => ({ ...prev, [vetId]: 'success' }));
         } catch (err: any) {
             setRequestStatus(prev => ({ ...prev, [vetId]: 'error' }));
