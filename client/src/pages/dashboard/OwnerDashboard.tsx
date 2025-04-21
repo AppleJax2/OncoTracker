@@ -18,7 +18,7 @@ const OwnerDashboard: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get('/pets');
+        const response = await api.get('/api/pets');
         if (response.data && response.data.status === 'success') {
           setPets(response.data.data.pets);
         } else {

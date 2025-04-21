@@ -28,7 +28,7 @@ const VetDashboard: React.FC = () => {
       setError(null);
       try {
         // Fetch patients
-        const patientsResponse = await api.get('/pets');
+        const patientsResponse = await api.get('/api/pets');
         if (patientsResponse.data && patientsResponse.data.status === 'success') {
           setPatients(patientsResponse.data.data.pets);
         } else {
