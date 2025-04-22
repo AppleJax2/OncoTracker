@@ -3,13 +3,13 @@ import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Fade } from '@mui/material';
 
 // Import our enhanced dashboard components
-import OwnerDashboardNew from '../pages/dashboard/OwnerDashboardNew';
+import PetParentDashboard from '../pages/dashboard/OwnerDashboardNew';
 import PetDetailNew from '../pages/dashboard/PetDetailNew';
 
 // Helper component for pet detail route redirection
 const PetDetailRedirect: React.FC = () => {
   const { petId } = useParams<{ petId: string }>();
-  return <Navigate to={`/owner/pets/${petId}/enhanced`} replace />;
+  return <Navigate to={`/pet-parent/pets/${petId}/enhanced`} replace />;
 };
 
 // This component defines the routes for our enhanced pet parent pages
@@ -19,11 +19,11 @@ const EnhancedRoutes: React.FC = () => {
     <Routes>
       {/* Enhanced Pet Parent Dashboard */}
       <Route 
-        path="/owner/dashboard/enhanced" 
+        path="/pet-parent/dashboard/enhanced" 
         element={
           <Fade in={true} timeout={500}>
             <div>
-              <OwnerDashboardNew />
+              <PetParentDashboard />
             </div>
           </Fade>
         } 
@@ -31,7 +31,7 @@ const EnhancedRoutes: React.FC = () => {
       
       {/* Enhanced Pet Detail Page */}
       <Route 
-        path="/owner/pets/:petId/enhanced" 
+        path="/pet-parent/pets/:petId/enhanced" 
         element={
           <Fade in={true} timeout={500}>
             <div>
@@ -43,12 +43,12 @@ const EnhancedRoutes: React.FC = () => {
 
       {/* Redirect legacy URLs to enhanced versions */}
       <Route 
-        path="/owner/dashboard" 
-        element={<Navigate to="/owner/dashboard/enhanced" replace />} 
+        path="/pet-parent/dashboard" 
+        element={<Navigate to="/pet-parent/dashboard/enhanced" replace />} 
       />
       
       <Route 
-        path="/owner/pets/:petId" 
+        path="/pet-parent/pets/:petId" 
         element={<PetDetailRedirect />} 
       />
     </Routes>

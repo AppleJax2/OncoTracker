@@ -2,7 +2,7 @@
 export interface User {
   _id: string;
   email: string;
-  role: 'owner' | 'vet';
+  role: 'pet-parent' | 'vet';
   firstName: string;
   lastName: string;
   fullName?: string; // Virtual property
@@ -101,7 +101,7 @@ export interface Submission {
   additionalNotes?: string;
   submittedBy: {
     name?: string;
-    role: 'owner' | 'vet' | 'system';
+    role: 'pet-parent' | 'vet' | 'system';
   };
   deviceInfo?: {
     browser?: string;
@@ -169,7 +169,7 @@ export interface AggregateData {
 // Based on the Pet model in the backend
 export interface Pet {
   _id: string;
-  owner: string | User; // Can be populated with User object or just ID string
+  petParent: string | User; // Can be populated with User object or just ID string (previously 'owner')
   vet?: string | User; // Optional, can be populated
   name: string;
   species: 'dog' | 'cat';
@@ -226,7 +226,7 @@ export interface VetNote {
 // Based on the LinkRequest model
 export interface LinkRequest {
     _id: string;
-    owner: string | User; // Can be populated
+    petParent: string | User; // Can be populated (previously 'owner')
     vet: string | User; // Can be populated
     pet: string | Pet; // Can be populated
     status: 'pending' | 'approved' | 'rejected';

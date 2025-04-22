@@ -19,8 +19,8 @@ import HomePage from './pages/public/HomePage'; // Create this
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage'; // Rename/create from RegisterPage
 
-// Owner Pages
-import OwnerDashboard from './pages/dashboard/OwnerDashboard'; // Create this
+// Pet Parent Pages
+import PetParentDashboard from './pages/dashboard/OwnerDashboardNew'; // Renamed for clarity
 import PetDetail from './pages/dashboard/PetDetail'; // Create this
 import ReportForm from './pages/dashboard/ReportForm'; // Create this
 import AddPetForm from './pages/dashboard/AddPetForm'; // Create this
@@ -80,8 +80,8 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Default to 'owner' role if none is specified
-  const userRole = user.role || 'owner';
+  // Default to 'pet-parent' role if none is specified
+  const userRole = user.role || 'pet-parent';
   console.log('Current user role for route check:', userRole);
 
   // Check if user role is allowed
@@ -95,7 +95,7 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
     return <Navigate to="/vet-verification-pending" replace />;
   } else {
     // Redirect to the appropriate dashboard based on role
-    const fallbackPath = userRole === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
+    const fallbackPath = userRole === 'vet' ? '/vet/dashboard' : '/pet-parent/dashboard';
     console.log('Redirecting to fallback path:', fallbackPath);
     return <Navigate to={fallbackPath} replace />;
   }
@@ -104,7 +104,7 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
 // Custom redirect component to handle role-based redirects
 const RoleBasedRedirect = () => {
   const { user } = useAuth();
-  const redirectPath = user?.role === 'vet' ? '/vet/dashboard' : '/owner/dashboard';
+  const redirectPath = user?.role === 'vet' ? '/vet/dashboard' : '/pet-parent/dashboard';
   return <Navigate to={redirectPath} replace />;
 };
 
@@ -131,12 +131,12 @@ const App = () => {
         <Route element={<ProtectedRoute />}> { /* Checks if logged in */}
           <Route element={<AppLayout />}> { /* Wraps protected pages with common layout */}
 
-            {/* Owner Routes - using EnhancedRoutes for improved UX */}
-            <Route element={<RoleBasedRoute allowedRoles={['owner']} />}>
-              <Route path="/owner/*" element={<EnhancedRoutes />} />
-              <Route path="/owner/pets/new" element={<AddPetForm />} />
-              <Route path="/owner/pets/:petId/report/new" element={<ReportForm />} />
-              <Route path="/owner/find-vets" element={<FindVetPage />} />
+            {/* Pet Parent Routes - using EnhancedRoutes for improved UX */}
+            <Route element={<RoleBasedRoute allowedRoles={['pet-parent']} />}>
+              <Route path="/pet-parent/*" element={<EnhancedRoutes />} />
+              <Route path="/pet-parent/pets/new" element={<AddPetForm />} />
+              <Route path="/pet-parent/pets/:petId/report/new" element={<ReportForm />} />
+              <Route path="/pet-parent/find-vets" element={<FindVetPage />} />
             </Route>
 
             {/* Vet Routes */}
@@ -146,8 +146,8 @@ const App = () => {
               <Route path="/vet/link-requests" element={<LinkRequestsPage />} />
             </Route>
 
-            {/* Routes accessible by both authenticated owners and verified vets */}
-            <Route element={<RoleBasedRoute allowedRoles={['owner', 'vet']} />}>
+            {/* Routes accessible by both authenticated pet parents and verified vets */}
+            <Route element={<RoleBasedRoute allowedRoles={['pet-parent', 'vet']} />}>
                <Route path="/settings" element={<SettingsPage />} />
                {/* Add other shared authenticated routes here */}
             </Route>

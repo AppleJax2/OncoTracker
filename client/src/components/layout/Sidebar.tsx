@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   Box,
@@ -29,12 +29,13 @@ interface SidebarProps {
 const Sidebar = ({ closeSidebar }: SidebarProps) => {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   
   // Define navigation based on user role
-  const ownerNavigation = [
-    { name: 'Dashboard', href: '/owner/dashboard', icon: HomeIcon },
-    { name: 'Add New Pet', href: '/owner/pets/new', icon: PlusCircleIcon },
-    { name: 'Find Veterinarian', href: '/owner/find-vets', icon: UserGroupIcon },
+  const petParentNavigation = [
+    { name: 'Dashboard', href: '/pet-parent/dashboard', icon: HomeIcon },
+    { name: 'Add New Pet', href: '/pet-parent/pets/new', icon: PlusCircleIcon },
+    { name: 'Find Veterinarian', href: '/pet-parent/find-vets', icon: UserGroupIcon },
     { name: 'Settings', href: '/settings', icon: SettingsIcon },
   ];
   
@@ -44,7 +45,14 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
     { name: 'Settings', href: '/settings', icon: SettingsIcon },
   ];
   
-  const navigation = user?.role === 'vet' ? vetNavigation : ownerNavigation;
+  const navigation = user?.role === 'vet' ? vetNavigation : petParentNavigation;
+  
+  const handleViewProfile = () => {
+    navigate('/settings');
+    if (closeSidebar) {
+      closeSidebar();
+    }
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', pt: 2, pb: 2, overflow: 'auto' }}>
@@ -69,7 +77,7 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
               {user.firstName || 'User'} {user.lastName || ''}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-              {user.role || 'Unknown'}
+              {user.role === 'pet-parent' ? 'Pet Parent' : user.role || 'Unknown'}
             </Typography>
           </Box>
         </Box>
@@ -122,7 +130,7 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
           })}
         </List>
         
-        {user?.role === 'owner' && (
+        {user?.role === 'pet-parent' && (
           <>
             <Divider sx={{ my: 2 }} />
             <Box sx={{ px: 2, mb: 1 }}>
@@ -186,12 +194,12 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
                 {user.firstName || 'User'} {user.lastName || ''}
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-                {user.role || 'Unknown'}
+                {user.role === 'pet-parent' ? 'Pet Parent' : user.role || 'Unknown'}
               </Typography>
             </Box>
           </Box>
           <Button 
-            onClick={() => {/* Handle profile */}}
+            onClick={handleViewProfile}
             sx={{ 
               mt: 1, 
               justifyContent: 'flex-start', 
