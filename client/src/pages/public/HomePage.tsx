@@ -184,7 +184,7 @@ const HomePage: React.FC = () => {
           pb: { xs: 10, md: 0 },
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
               <motion.div
@@ -346,12 +346,12 @@ const HomePage: React.FC = () => {
       <Box
         sx={{
           bgcolor: theme.palette.background.paper,
-          py: { xs: 10, md: 14 },
+          py: { xs: 8, sm: 10, md: 12, lg: 14 },
           color: theme.palette.text.primary
         }}
         id="features"
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -447,11 +447,11 @@ const HomePage: React.FC = () => {
       {/* Key Benefits Section */}
       <Box
         sx={{
-          py: { xs: 10, md: 14 },
+          py: { xs: 8, sm: 10, md: 12, lg: 14 },
           background: `linear-gradient(to bottom, ${alpha(theme.palette.background.paper, 1)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`,
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
               <motion.div
@@ -561,11 +561,11 @@ const HomePage: React.FC = () => {
       {/* Testimonials Section */}
       <Box
         sx={{
-          py: { xs: 10, md: 14 },
+          py: { xs: 8, sm: 10, md: 12, lg: 14 },
           background: theme.palette.background.default,
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -669,11 +669,11 @@ const HomePage: React.FC = () => {
       {/* Privacy Section */}
       <Box
         sx={{
-          py: { xs: 10, md: 14 },
+          py: { xs: 8, sm: 10, md: 12, lg: 14 },
           background: alpha(theme.palette.primary.light, 0.1),
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Grid container spacing={5} alignItems="center">
             <Grid item xs={12} md={6}>
               <motion.div
@@ -768,7 +768,7 @@ const HomePage: React.FC = () => {
       {/* Newsletter Section */}
       <Box
         sx={{
-          py: { xs: 10, md: 14 },
+          py: { xs: 8, sm: 10, md: 12, lg: 14 },
           background: theme.palette.primary.main,
           color: '#fff'
         }}
@@ -882,12 +882,12 @@ const HomePage: React.FC = () => {
       {/* CTA Section */}
       <Box
         sx={{
-          py: { xs: 10, md: 14 },
+          py: { xs: 8, sm: 10, md: 12, lg: 14 },
           backgroundImage: 'linear-gradient(135deg, rgba(6, 147, 227, 0.1) 0%, rgba(155, 81, 224, 0.1) 100%)',
           textAlign: 'center'
         }}
       >
-        <Container maxWidth="md">
+        <Container maxWidth="xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -991,11 +991,11 @@ const HomePage: React.FC = () => {
       {/* Contact Form Section */}
       <Box
         sx={{
-          py: { xs: 10, md: 14 },
+          py: { xs: 8, sm: 10, md: 12, lg: 14 },
           background: theme.palette.background.paper,
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Grid container spacing={6}>
             <Grid item xs={12} md={5}>
               <motion.div
@@ -1177,7 +1177,7 @@ const HomePage: React.FC = () => {
           color: 'rgba(255,255,255,0.8)',
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="xl">
           <Grid container spacing={6}>
             <Grid item xs={12} md={4}>
               <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 3 }}>
