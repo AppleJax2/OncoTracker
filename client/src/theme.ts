@@ -60,18 +60,21 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Nunito Sans", "Inter", "Roboto", "Helvetica", "Arial", sans-serif', // Prioritize Nunito Sans
+    // Implement Roboto as the primary font with consistent weights
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
-      fontSize: '2.2rem', // Slightly larger H1 for impact
+      fontSize: '2.2rem',
       fontWeight: 700,
       lineHeight: 1.2,
-      color: darkText, // Ensure headings use primary text color
+      color: darkText,
+      letterSpacing: '-0.01em',
     },
     h2: {
-      fontSize: '1.8rem', // Adjust heading sizes for hierarchy
+      fontSize: '1.8rem',
       fontWeight: 700,
       lineHeight: 1.3,
       color: darkText,
+      letterSpacing: '-0.01em',
     },
     h3: {
       fontSize: '1.4rem',
@@ -86,7 +89,7 @@ const theme = createTheme({
       color: darkText,
     },
     h5: {
-      fontSize: '1rem', // Adjust smaller headings too
+      fontSize: '1rem',
       fontWeight: 600,
       lineHeight: 1.5,
       color: darkText,
@@ -99,18 +102,28 @@ const theme = createTheme({
     },
     body1: {
       fontSize: '1rem',
-      lineHeight: 1.6, // Slightly more line height for readability
-      color: mediumText, // Default body text uses secondary color for softness
+      fontWeight: 400,
+      lineHeight: 1.6,
+      color: mediumText,
     },
     body2: {
       fontSize: '0.875rem',
+      fontWeight: 400,
       lineHeight: 1.6,
       color: mediumText,
     },
     button: {
       textTransform: 'none',
-      fontWeight: 600, // Slightly bolder buttons
-      letterSpacing: '0.5px', // Add subtle letter spacing
+      fontWeight: 600,
+      letterSpacing: '0.5px',
+    },
+    subtitle1: {
+      fontWeight: 500,
+      lineHeight: 1.6,
+    },
+    subtitle2: {
+      fontWeight: 500,
+      lineHeight: 1.6,
     },
   },
   shape: {
@@ -161,10 +174,6 @@ const theme = createTheme({
           boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)', // Default softer shadow for cards
           borderRadius: '12px', // Match global radius
           transition: 'box-shadow 0.3s ease, transform 0.3s ease',
-          // '&:hover': { // Optional: subtle lift on hover
-          //   transform: 'translateY(-3px)',
-          //   boxShadow: '0 5px 15px 0 rgba(0, 0, 0, 0.12)',
-          // },
         },
       },
     },
@@ -176,7 +185,6 @@ const theme = createTheme({
         elevation1: { boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.06)'}, // Define specific elevation shadows if needed
         elevation2: { boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.08)'},
         elevation3: { boxShadow: '0 4px 12px 0 rgba(0, 0, 0, 0.1)'},
-
       },
     },
     MuiTableCell: {
@@ -195,7 +203,7 @@ const theme = createTheme({
         },
       },
     },
-     MuiLink: { // Style links to match the theme
+    MuiLink: { // Style links to match the theme
       styleOverrides: {
         root: {
           color: softTeal,
@@ -203,6 +211,38 @@ const theme = createTheme({
            '&:hover': {
             textDecorationColor: softTeal, // Stronger underline on hover
            },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            transition: 'all 0.3s ease',
+          },
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem',
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {
+          minWidth: '40px', // Ensure consistent alignment for list icons
+          display: 'flex',
+          alignItems: 'center',
+        },
+      },
+    },
+    MuiListItemText: {
+      styleOverrides: {
+        root: {
+          margin: '4px 0',
         },
       },
     },

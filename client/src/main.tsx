@@ -8,6 +8,12 @@ import { AuthProvider } from './contexts/AuthContext.tsx'
 import theme from './theme'
 import './index.css'
 
+// Import Roboto font
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 // Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

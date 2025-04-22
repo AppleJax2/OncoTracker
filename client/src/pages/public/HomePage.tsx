@@ -346,7 +346,7 @@ const HomePage: React.FC = () => {
       <Box
         sx={{
           bgcolor: theme.palette.background.paper,
-          py: { xs: 8, md: 12 },
+          py: { xs: 10, md: 14 },
           color: theme.palette.text.primary
         }}
         id="features"
@@ -382,7 +382,7 @@ const HomePage: React.FC = () => {
                 sx={{
                   maxWidth: '800px',
                   mx: 'auto',
-                  mb: { xs: 6, md: 8 },
+                  mb: { xs: 8, md: 10 },
                   fontSize: '1.1rem'
                 }}
               >
@@ -429,10 +429,10 @@ const HomePage: React.FC = () => {
                       >
                         {feature.icon}
                       </Box>
-                      <Typography variant="h5" component="h3" fontWeight={600} gutterBottom>
+                      <Typography variant="h5" component="h3" fontWeight={600} gutterBottom sx={{ mb: 1.5 }}>
                         {feature.title}
                       </Typography>
-                      <Typography color="textSecondary">
+                      <Typography color="textSecondary" sx={{ lineHeight: 1.6 }}>
                         {feature.description}
                       </Typography>
                     </Paper>
@@ -447,7 +447,7 @@ const HomePage: React.FC = () => {
       {/* Key Benefits Section */}
       <Box
         sx={{
-          py: { xs: 8, md: 12 },
+          py: { xs: 10, md: 14 },
           background: `linear-gradient(to bottom, ${alpha(theme.palette.background.paper, 1)} 0%, ${alpha(theme.palette.background.default, 0.8)} 100%)`,
         }}
       >
@@ -507,19 +507,27 @@ const HomePage: React.FC = () => {
                       <ListItem 
                         sx={{ 
                           px: 0, 
-                          py: 1.5,
+                          py: 2,
+                          alignItems: "flex-start"
                         }}
                       >
-                        <ListItemIcon sx={{ minWidth: 40 }}>
+                        <ListItemIcon sx={{ 
+                          minWidth: 40,
+                          mt: 0.5
+                        }}>
                           <CheckCircleOutlined sx={{ color: theme.palette.primary.main }} />
                         </ListItemIcon>
                         <ListItemText 
                           primary={
-                            <Typography variant="h6" fontWeight={600} gutterBottom>
+                            <Typography variant="h6" fontWeight={600} gutterBottom sx={{ mb: 0.5 }}>
                               {item.title}
                             </Typography>
                           } 
-                          secondary={item.description}
+                          secondary={
+                            <Typography variant="body1" color="textSecondary">
+                              {item.description}
+                            </Typography>
+                          }
                         />
                       </ListItem>
                     </motion.div>
@@ -553,7 +561,7 @@ const HomePage: React.FC = () => {
       {/* Testimonials Section */}
       <Box
         sx={{
-          py: { xs: 8, md: 12 },
+          py: { xs: 10, md: 14 },
           background: theme.palette.background.default,
         }}
       >
@@ -588,7 +596,7 @@ const HomePage: React.FC = () => {
                 sx={{
                   maxWidth: '700px',
                   mx: 'auto',
-                  mb: { xs: 6, md: 8 },
+                  mb: { xs: 8, md: 10 },
                   fontSize: '1.1rem'
                 }}
               >
@@ -611,11 +619,15 @@ const HomePage: React.FC = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         borderRadius: 4,
-                        p: 2,
+                        p: 3,
                         transition: 'all 0.3s ease',
                       }}
                     >
-                      <CardContent sx={{ flexGrow: 1 }}>
+                      <CardContent sx={{ 
+                        flexGrow: 1,
+                        p: 0,
+                        "&:last-child": { pb: 0 }
+                      }}>
                         <Typography
                           variant="body1"
                           color="textSecondary"
@@ -657,12 +669,12 @@ const HomePage: React.FC = () => {
       {/* Privacy Section */}
       <Box
         sx={{
-          py: { xs: 6, md: 10 },
+          py: { xs: 10, md: 14 },
           background: alpha(theme.palette.primary.light, 0.1),
         }}
       >
         <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
+          <Grid container spacing={5} alignItems="center">
             <Grid item xs={12} md={6}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -688,7 +700,7 @@ const HomePage: React.FC = () => {
                 </Typography>
                 <Typography
                   color="textSecondary"
-                  sx={{ mb: 3, fontSize: '1.1rem', maxWidth: '500px' }}
+                  sx={{ mb: 3, fontSize: '1.1rem', maxWidth: '500px', lineHeight: 1.6 }}
                 >
                   We prioritize your privacy. All pet health data is encrypted and stored securely, ensuring your information remains confidential and protected.
                 </Typography>
@@ -738,10 +750,10 @@ const HomePage: React.FC = () => {
                       viewport={{ once: true }}
                       transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
                     >
-                      <Typography variant="h6" fontWeight={600} gutterBottom>
+                      <Typography variant="h6" fontWeight={600} gutterBottom sx={{ mb: 1 }}>
                         {item.title}
                       </Typography>
-                      <Typography color="textSecondary" variant="body2">
+                      <Typography color="textSecondary" variant="body2" sx={{ lineHeight: 1.6 }}>
                         {item.description}
                       </Typography>
                     </motion.div>
@@ -756,7 +768,7 @@ const HomePage: React.FC = () => {
       {/* Newsletter Section */}
       <Box
         sx={{
-          py: { xs: 8, md: 10 },
+          py: { xs: 10, md: 14 },
           background: theme.palette.primary.main,
           color: '#fff'
         }}
@@ -789,7 +801,8 @@ const HomePage: React.FC = () => {
                   mb: 4,
                   maxWidth: '600px',
                   mx: 'auto',
-                  color: 'rgba(255,255,255,0.9)'
+                  color: 'rgba(255,255,255,0.9)',
+                  lineHeight: 1.6
                 }}
               >
                 Subscribe to our newsletter for the latest OncoTracker updates, pet cancer care tips, and resources.
@@ -821,6 +834,9 @@ const HomePage: React.FC = () => {
                       bgcolor: 'rgba(255,255,255,0.15)',
                       borderRadius: '30px',
                       color: '#fff',
+                      '& input': {
+                        padding: '14px 14px 14px 5px',
+                      },
                       '& input::placeholder': {
                         color: 'rgba(255,255,255,0.7)',
                         opacity: 1
@@ -903,7 +919,8 @@ const HomePage: React.FC = () => {
                   maxWidth: '700px',
                   mx: 'auto',
                   mb: 5,
-                  fontSize: '1.1rem'
+                  fontSize: '1.1rem',
+                  lineHeight: 1.6
                 }}
               >
                 Join our community of veterinarians and pet parents dedicated to providing the best care possible during cancer treatment.
@@ -974,7 +991,7 @@ const HomePage: React.FC = () => {
       {/* Contact Form Section */}
       <Box
         sx={{
-          py: { xs: 8, md: 12 },
+          py: { xs: 10, md: 14 },
           background: theme.palette.background.paper,
         }}
       >
@@ -992,7 +1009,7 @@ const HomePage: React.FC = () => {
                   component="h2"
                   sx={{
                     fontWeight: 700,
-                    mb: 3,
+                    mb: 4,
                     fontSize: { xs: '2rem', md: '2.5rem' }
                   }}
                 >
