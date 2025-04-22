@@ -172,174 +172,446 @@ const HomePage: React.FC = () => {
       background: `linear-gradient(150deg, ${alpha(theme.palette.primary.dark, 0.9)} 0%, ${alpha(theme.palette.primary.main, 0.85)} 35%, ${alpha(theme.palette.secondary.light, 0.8)} 100%)`,
       color: '#fff'
     }}>
-      {/* Hero Section - Inspired by Hyperspace */}
+      {/* Hero Section - New Creative Design */}
       <Box
         sx={{
           position: 'relative',
           minHeight: '100vh',
+          overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
-          overflow: 'hidden',
-          pt: { xs: 10, md: 0 },
-          pb: { xs: 10, md: 0 },
+          pt: { xs: 12, md: 0 },
+          pb: { xs: 12, md: 0 },
         }}
       >
-        <Container maxWidth="xl">
-          <Grid container spacing={6} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
-              >
-                <motion.div variants={itemVariants}>
-                  <Typography
-                    variant="h1"
-                    component="h1"
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
-                      color: '#fff',
-                      mb: 3,
-                      textShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    }}
-                  >
-                    Track Your Pet's Cancer Symptoms with Ease
-                  </Typography>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <Typography
-                    variant="h5"
-                    component="h2"
-                    sx={{
-                      fontWeight: 400,
-                      fontSize: { xs: '1.1rem', sm: '1.3rem' },
-                      color: 'rgba(255,255,255,0.9)',
-                      mb: 4,
-                      maxWidth: '600px',
-                      lineHeight: 1.6
-                    }}
-                  >
-                    Empowering pet owners and veterinarians with compassionate tools for cancer treatment management and better care coordination.
-                  </Typography>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}>
-                    <motion.div
-                      variants={buttonVariants}
-                      whileHover="hover"
-                      whileTap="tap"
-                    >
-                      <Button
-                        component={Link}
-                        to="/signup"
-                        variant="contained"
-                        size="large"
-                        endIcon={<ArrowForwardIos />}
-                        sx={{
-                          py: 1.8,
-                          px: 4,
-                          borderRadius: '30px',
-                          textTransform: 'none',
-                          fontSize: '1.1rem',
-                          fontWeight: 600,
-                          backgroundColor: '#fff',
-                          color: theme.palette.primary.dark,
-                          boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
-                          '&:hover': {
-                            backgroundColor: '#fff',
-                            boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
-                          }
-                        }}
-                      >
-                        Get Started — It's Free
-                      </Button>
-                    </motion.div>
-                    
-                    <motion.div
-                      variants={buttonVariants}
-                      whileHover="hover"
-                      whileTap="tap"
-                    >
-                      <Button
-                        component={Link}
-                        to="/login"
-                        variant="outlined"
-                        size="large"
-                        sx={{
-                          py: 1.8,
-                          px: 4,
-                          borderRadius: '30px',
-                          textTransform: 'none',
-                          fontSize: '1.1rem',
-                          fontWeight: 600,
-                          borderColor: 'rgba(255,255,255,0.7)',
-                          color: '#fff',
-                          borderWidth: 2,
-                          '&:hover': {
-                            borderColor: '#fff',
-                            borderWidth: 2,
-                            backgroundColor: 'rgba(255,255,255,0.1)'
-                          }
-                        }}
-                      >
-                        Sign In
-                      </Button>
-                    </motion.div>
-                  </Stack>
-                </motion.div>
-              </motion.div>
-            </Grid>
-            <Grid item xs={12} md={6} sx={{ display: { xs: 'none', md: 'block' } }}>
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              >
-                <Box
-                  component="img"
-                  src="https://images.unsplash.com/photo-1536590158209-e9d615d525e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                  alt="Pet with owner"
-                  sx={{
-                    width: '100%',
-                    maxWidth: '500px',
-                    borderRadius: '20px',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-                    transform: 'perspective(1000px) rotateY(-5deg)',
-                  }}
-                />
-              </motion.div>
-            </Grid>
-          </Grid>
-        </Container>
+        {/* Animated background elements */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: -1,
+          }}
+        >
+          {/* Large floating circle */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ 
+              opacity: 0.7, 
+              scale: 1,
+              y: [0, 15, 0],
+            }}
+            transition={{ 
+              duration: 8, 
+              repeat: Infinity,
+              repeatType: "reverse" 
+            }}
+            style={{
+              position: 'absolute',
+              top: '10%',
+              right: '-5%',
+              width: '45%',
+              height: '45%',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${alpha(theme.palette.secondary.light, 0.4)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 70%)`,
+            }}
+          />
+          
+          {/* Medium floating circle */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ 
+              opacity: 0.5, 
+              scale: 1,
+              y: [0, -20, 0],
+            }}
+            transition={{ 
+              duration: 10, 
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: 1 
+            }}
+            style={{
+              position: 'absolute',
+              bottom: '15%',
+              left: '-10%',
+              width: '35%',
+              height: '35%',
+              borderRadius: '50%',
+              background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.3)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 70%)`,
+            }}
+          />
+          
+          {/* Small floating elements */}
+          {[...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ 
+                opacity: 0, 
+                x: Math.random() * 100 - 50,
+                y: Math.random() * 100 - 50,
+              }}
+              animate={{ 
+                opacity: 0.3 + (Math.random() * 0.4), 
+                x: [Math.random() * 20 - 10, Math.random() * 20 - 10],
+                y: [Math.random() * 20 - 10, Math.random() * 20 - 10],
+                rotate: [0, Math.random() * 360],
+              }}
+              transition={{ 
+                duration: 7 + Math.random() * 8, 
+                repeat: Infinity,
+                repeatType: "reverse",
+                delay: i * 0.5
+              }}
+              style={{
+                position: 'absolute',
+                top: `${20 + Math.random() * 60}%`,
+                left: `${20 + Math.random() * 60}%`,
+                width: `${20 + Math.random() * 50}px`,
+                height: `${20 + Math.random() * 50}px`,
+                borderRadius: `${(Math.random() > 0.5) ? '50%' : '30%'}`,
+                background: `${theme.palette.primary.main}`,
+                filter: 'blur(8px)',
+              }}
+            />
+          ))}
+        </Box>
         
-        {/* Background decoration circles */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: -100,
-            right: -100,
-            width: 300,
-            height: 300,
-            backgroundColor: alpha(theme.palette.primary.light, 0.15),
-            borderRadius: '50%',
-            zIndex: -1,
-          }}
-        />
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: -150,
-            left: -150,
-            width: 400,
-            height: 400,
-            backgroundColor: alpha('#fff', 0.07),
-            borderRadius: '50%',
-            zIndex: -1,
-          }}
-        />
+        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 1 }}>
+          <Box sx={{ 
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: 'center',
+            position: 'relative',
+          }}>
+            
+            {/* Main Content */}
+            <Box
+              sx={{
+                width: { xs: '100%', md: '50%' },
+                position: 'relative',
+                zIndex: 3,
+                pr: { md: 4 },
+                textAlign: { xs: 'center', md: 'left' },
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+              >
+                <Typography
+                  variant="h1"
+                  component="h1"
+                  sx={{
+                    fontWeight: 800,
+                    fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
+                    backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                    backgroundClip: 'text',
+                    textFillColor: 'transparent',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    mb: 3,
+                    position: 'relative',
+                  }}
+                >
+                  Track Your Pet's Cancer Journey
+                  <Box
+                    component="span"
+                    sx={{
+                      display: 'block',
+                      color: '#fff',
+                      textShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                      mt: 1,
+                    }}
+                  >
+                    with Compassion
+                  </Box>
+                </Typography>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <Typography
+                  variant="h5"
+                  component="h2"
+                  sx={{
+                    fontWeight: 400,
+                    fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                    color: 'rgba(255,255,255,0.9)',
+                    mb: 5,
+                    maxWidth: { xs: '100%', md: '90%' },
+                    lineHeight: 1.6
+                  }}
+                >
+                  Empowering pet owners and veterinarians with intuitive tools to monitor 
+                  symptoms, track treatments, and improve quality of life.
+                </Typography>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                <Stack 
+                  direction={{ xs: 'column', sm: 'row' }} 
+                  spacing={3}
+                  sx={{
+                    justifyContent: { xs: 'center', md: 'flex-start' },
+                    mb: { xs: 8, md: 0 }
+                  }}
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      component={Link}
+                      to="/signup"
+                      variant="contained"
+                      size="large"
+                      endIcon={<ArrowForwardIos />}
+                      sx={{
+                        py: 1.8,
+                        px: 4,
+                        borderRadius: '30px',
+                        textTransform: 'none',
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
+                        backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                        color: '#fff',
+                        boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}`,
+                        '&:hover': {
+                          boxShadow: `0 12px 30px ${alpha(theme.palette.primary.main, 0.6)}`,
+                        }
+                      }}
+                    >
+                      Get Started — It's Free
+                    </Button>
+                  </motion.div>
+                  
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
+                      component={Link}
+                      to="/login"
+                      variant="outlined"
+                      size="large"
+                      sx={{
+                        py: 1.8,
+                        px: 4,
+                        borderRadius: '30px',
+                        textTransform: 'none',
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
+                        borderColor: 'rgba(255,255,255,0.7)',
+                        color: '#fff',
+                        borderWidth: 2,
+                        backdropFilter: 'blur(8px)',
+                        backgroundColor: 'rgba(255,255,255,0.05)',
+                        '&:hover': {
+                          borderColor: '#fff',
+                          borderWidth: 2,
+                          backgroundColor: 'rgba(255,255,255,0.1)'
+                        }
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                  </motion.div>
+                </Stack>
+              </motion.div>
+            </Box>
+            
+            {/* Image and Decorative Elements */}
+            <Box
+              sx={{
+                width: { xs: '100%', md: '55%' },
+                position: 'relative',
+                mt: { xs: 0, md: -5 },
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: { xs: 'auto', md: '600px' },
+              }}
+            >
+              {/* Main image with floating animation */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
+                style={{ 
+                  position: 'relative',
+                  zIndex: 2
+                }}
+              >
+                {/* Floating animation wrapper */}
+                <motion.div
+                  animate={{ 
+                    y: [0, 15, 0],
+                  }}
+                  transition={{ 
+                    duration: 6, 
+                    repeat: Infinity,
+                    repeatType: "reverse" 
+                  }}
+                >
+                  {/* Image with frame and shadow effect */}
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 20,
+                        left: 20,
+                        right: -20,
+                        bottom: -20,
+                        borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
+                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.3)} 0%, ${alpha(theme.palette.secondary.main, 0.3)} 100%)`,
+                        filter: 'blur(15px)',
+                        zIndex: -1,
+                      }
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src="https://images.unsplash.com/photo-1536590158209-e9d615d525e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                      alt="Pet with owner"
+                      sx={{
+                        width: '100%',
+                        maxWidth: { xs: '80%', sm: '400px', md: '450px' },
+                        height: 'auto',
+                        borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
+                        boxShadow: '0 25px 50px rgba(0,0,0,0.2)',
+                        border: '5px solid rgba(255,255,255,0.2)',
+                        display: 'block',
+                        mx: 'auto',
+                      }}
+                    />
+                  </Box>
+                </motion.div>
+              </motion.div>
+              
+              {/* Decorative feature highlights */}
+              {[
+                { 
+                  icon: <MonitorHeartOutlined />, 
+                  label: 'Symptom Tracking',
+                  position: { top: '10%', right: { xs: '5%', md: '0%' } } 
+                },
+                { 
+                  icon: <CalendarMonthOutlined />, 
+                  label: 'Treatment Reminders',
+                  position: { bottom: '15%', right: { xs: '10%', md: '5%' } } 
+                },
+                { 
+                  icon: <FavoriteBorderOutlined />, 
+                  label: 'Quality of Life',
+                  position: { top: '35%', left: { xs: '5%', md: '0%' } } 
+                }
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ 
+                    duration: 0.5, 
+                    delay: 0.7 + (index * 0.2)
+                  }}
+                  style={{
+                    position: 'absolute',
+                    ...item.position,
+                    zIndex: 3,
+                    display: { xs: 'none', sm: 'flex' },
+                  }}
+                >
+                  <Paper
+                    elevation={6}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      px: 2,
+                      py: 1,
+                      borderRadius: '20px',
+                      backdropFilter: 'blur(8px)',
+                      backgroundColor: 'rgba(255,255,255,0.9)',
+                      boxShadow: `0 10px 30px ${alpha(theme.palette.primary.dark, 0.2)}`,
+                    }}
+                  >
+                    <Box sx={{ 
+                      color: theme.palette.primary.main,
+                      display: 'flex',
+                      mr: 1,
+                      fontSize: '1.2rem'
+                    }}>
+                      {item.icon}
+                    </Box>
+                    <Typography 
+                      variant="body2" 
+                      fontWeight={600}
+                      sx={{ color: theme.palette.text.primary }}
+                    >
+                      {item.label}
+                    </Typography>
+                  </Paper>
+                </motion.div>
+              ))}
+            </Box>
+          </Box>
+          
+          {/* Stats or trust indicators */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            style={{
+              marginTop: { xs: '2rem', md: '-1rem' },
+              position: 'relative',
+              zIndex: 4,
+              display: { xs: 'none', md: 'block' }
+            }}
+          >
+            <Box sx={{ 
+              mt: { xs: 6, md: 0 },
+              py: 3,
+              px: 4,
+              mx: 'auto',
+              width: 'fit-content',
+              borderRadius: '20px',
+              backdropFilter: 'blur(8px)',
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              display: 'flex',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              gap: 5,
+            }}>
+              {[
+                { value: '10,000+', label: 'Pet Owners' },
+                { value: '500+', label: 'Veterinarians' },
+                { value: '98%', label: 'Satisfaction' }
+              ].map((stat, index) => (
+                <Box key={index} sx={{ textAlign: 'center', px: 2 }}>
+                  <Typography variant="h4" fontWeight={700} color="white" gutterBottom>
+                    {stat.value}
+                  </Typography>
+                  <Typography variant="body2" color="rgba(255,255,255,0.8)">
+                    {stat.label}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </motion.div>
+        </Container>
       </Box>
 
       {/* Feature Section */}
