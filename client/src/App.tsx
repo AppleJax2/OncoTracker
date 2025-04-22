@@ -70,18 +70,21 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
   const userRole = user.role || 'pet-parent';
   console.log('Current user role for route check:', userRole);
 
-  // Check if user role is allowed
-  const isAllowed = allowedRoles.includes(userRole);
-  const isVerifiedVet = userRole !== 'vet' || user.isVerified === true;
+  // Normalize owner role to pet-parent for routing purposes
+  const normalizedRole = userRole === 'owner' ? 'pet-parent' : userRole;
+  
+  // Check if normalized user role is allowed
+  const isAllowed = allowedRoles.includes(normalizedRole);
+  const isVerifiedVet = normalizedRole !== 'vet' || user.isVerified === true;
 
   if (isAllowed && isVerifiedVet) {
     return <Outlet />;
-  } else if (userRole === 'vet' && !user.isVerified) {
+  } else if (normalizedRole === 'vet' && !user.isVerified) {
     // Redirect unverified vets to a specific page
     return <Navigate to="/vet-verification-pending" replace />;
   } else {
     // Redirect to the appropriate dashboard based on role
-    const fallbackPath = userRole === 'vet' ? '/vet/dashboard' : '/pet-parent/dashboard';
+    const fallbackPath = normalizedRole === 'vet' ? '/vet/dashboard' : '/pet-parent/dashboard';
     console.log('Redirecting to fallback path:', fallbackPath);
     return <Navigate to={fallbackPath} replace />;
   }
@@ -90,7 +93,9 @@ const RoleBasedRoute = ({ allowedRoles }: { allowedRoles: string[] }) => {
 // Custom redirect component to handle role-based redirects
 const RoleBasedRedirect = () => {
   const { user } = useAuth();
-  const redirectPath = user?.role === 'vet' ? '/vet/dashboard' : '/pet-parent/dashboard';
+  const userRole = user?.role || 'pet-parent';
+  const normalizedRole = userRole === 'owner' ? 'pet-parent' : userRole;
+  const redirectPath = normalizedRole === 'vet' ? '/vet/dashboard' : '/pet-parent/dashboard';
   return <Navigate to={redirectPath} replace />;
 };
 
