@@ -1,7 +1,7 @@
 // Redesigned HomePage Component inspired by Hyperspace template
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { 
   Box, 
   Button, 
@@ -49,13 +49,129 @@ import {
   DataSaverOn,
   BarChart,
   Share,
-  PhoneIphone
+  PhoneIphone,
+  KeyboardArrowDown
 } from '@mui/icons-material';
+
+// New ElegantShape component inspired by HeroGeometric
+function ElegantShape({
+  className,
+  delay = 0,
+  width = 400,
+  height = 100,
+  rotate = 0,
+  gradient = "from-primary",
+}: {
+  className?: string;
+  delay?: number;
+  width?: number;
+  height?: number;
+  rotate?: number;
+  gradient?: string;
+}) {
+  const theme = useTheme();
+  
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: -150,
+        rotate: rotate - 15,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        rotate: rotate,
+      }}
+      transition={{
+        duration: 2.4,
+        delay,
+        ease: [0.23, 0.86, 0.39, 0.96],
+        opacity: { duration: 1.2 },
+      }}
+      className={className}
+      style={{ position: 'absolute' }}
+    >
+      <motion.div
+        animate={{
+          y: [0, 15, 0],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        style={{
+          width,
+          height,
+        }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: '50%', 
+            background: `radial-gradient(circle, ${alpha(theme.palette[gradient.split('-')[1]].light, 0.4)} 0%, ${alpha(theme.palette[gradient.split('-')[1]].main, 0.1)} 70%)`,
+            backdropFilter: 'blur(2px)',
+            border: '2px solid rgba(255,255,255,0.15)',
+            boxShadow: '0 8px 32px 0 rgba(255,255,255,0.1)',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '50%',
+              background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2), transparent 70%)',
+            }
+          }}
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Typing effect component
+function TypingEffect({ text, delay = 0, className }: { text: string; delay?: number; className?: string }) {
+  const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      const textAnimation = async () => {
+        for (let i = 0; i <= text.length; i++) {
+          setDisplayedText(text.substring(0, i));
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+      };
+      
+      textAnimation();
+    }, delay);
+    
+    return () => clearTimeout(timeout);
+  }, [text, delay]);
+  
+  return <span className={className}>{displayedText}</span>;
+}
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isMedium = useMediaQuery(theme.breakpoints.down('md'));
+  
+  // Mouse movement for 3D tilt effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  const rotateX = useTransform(mouseY, [-300, 300], [5, -5]);
+  const rotateY = useTransform(mouseX, [-300, 300], [-5, 5]);
+
+  // Handle mouse move for 3D effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    mouseX.set(x);
+    mouseY.set(y);
+  };
 
   // Animation variants
   const containerVariants = {
@@ -103,6 +219,36 @@ const HomePage: React.FC = () => {
   const buttonVariants = {
     hover: { scale: 1.03, transition: { duration: 0.2 } },
     tap: { scale: 0.98 }
+  };
+
+  // New text reveal variants
+  const textRevealVariants = {
+    hidden: { clipPath: "inset(0 100% 0 0)" },
+    visible: { 
+      clipPath: "inset(0 0% 0 0)",
+      transition: { 
+        duration: 0.8,
+        ease: [0.23, 0.86, 0.39, 0.96]
+      }
+    }
+  };
+
+  // Pulse animation for primary CTA
+  const pulseVariants = {
+    initial: { scale: 1, boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}` },
+    pulse: {
+      scale: [1, 1.03, 1],
+      boxShadow: [
+        `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}`,
+        `0 12px 30px ${alpha(theme.palette.primary.main, 0.6)}`,
+        `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}`
+      ],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        repeatType: "loop" as const
+      }
+    }
   };
 
   // Testimonials data
@@ -172,7 +318,7 @@ const HomePage: React.FC = () => {
       background: `linear-gradient(150deg, ${alpha(theme.palette.primary.dark, 0.9)} 0%, ${alpha(theme.palette.primary.main, 0.85)} 35%, ${alpha(theme.palette.secondary.light, 0.8)} 100%)`,
       color: '#fff'
     }}>
-      {/* Hero Section - New Creative Design */}
+      {/* Enhanced Hero Section with Modern Design */}
       <Box
         sx={{
           position: 'relative',
@@ -184,7 +330,7 @@ const HomePage: React.FC = () => {
           pb: { xs: 12, md: 0 },
         }}
       >
-        {/* Animated background elements */}
+        {/* Enhanced animated background elements */}
         <Box
           sx={{
             position: 'absolute',
@@ -195,57 +341,64 @@ const HomePage: React.FC = () => {
             zIndex: -1,
           }}
         >
-          {/* Large floating circle */}
-              <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: 0.7, 
-              scale: 1,
-              y: [0, 15, 0],
-            }}
-            transition={{ 
-              duration: 8, 
-              repeat: Infinity,
-              repeatType: "reverse" 
-            }}
-            style={{
-              position: 'absolute',
-              top: '10%',
-              right: '-5%',
-              width: '45%',
-              height: '45%',
-              borderRadius: '50%',
-              background: `radial-gradient(circle, ${alpha(theme.palette.secondary.light, 0.4)} 0%, ${alpha(theme.palette.secondary.main, 0.1)} 70%)`,
-            }}
-          />
-          
-          {/* Medium floating circle */}
+          {/* Main glow effects */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
-              opacity: 0.5, 
-              scale: 1,
-              y: [0, -20, 0],
-            }}
-            transition={{ 
-              duration: 10, 
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: 1 
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            transition={{ duration: 1.5 }}
             style={{
               position: 'absolute',
-              bottom: '15%',
-              left: '-10%',
-              width: '35%',
-              height: '35%',
+              top: '30%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '80%',
+              height: '300px',
               borderRadius: '50%',
-              background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.3)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 70%)`,
+              background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.3)} 0%, rgba(0,0,0,0) 70%)`,
+              filter: 'blur(60px)',
+              zIndex: -1,
             }}
           />
+
+          {/* Elegant shapes instead of simple circles */}
+          <ElegantShape
+            delay={0.3}
+            width={600}
+            height={140}
+            rotate={12}
+            gradient="from-primary"
+            className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
+          />
           
-          {/* Small floating elements */}
-          {[...Array(5)].map((_, i) => (
+          <ElegantShape
+            delay={0.5}
+            width={500}
+            height={120}
+            rotate={-15}
+            gradient="from-secondary"
+            className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
+          />
+          
+          <ElegantShape
+            delay={0.4}
+            width={300}
+            height={80}
+            rotate={-8}
+            gradient="from-primary"
+            className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
+          />
+          
+          <ElegantShape
+            delay={0.6}
+            width={200}
+            height={60}
+            rotate={20}
+            gradient="from-secondary"
+            className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]"
+          />
+          
+          {/* Animated particle effect */}
+          {[...Array(8)].map((_, i) => (
             <motion.div
               key={i}
               initial={{ 
@@ -255,8 +408,8 @@ const HomePage: React.FC = () => {
               }}
               animate={{ 
                 opacity: 0.3 + (Math.random() * 0.4), 
-                x: [Math.random() * 20 - 10, Math.random() * 20 - 10],
-                y: [Math.random() * 20 - 10, Math.random() * 20 - 10],
+                x: [Math.random() * 40 - 20, Math.random() * 40 - 20],
+                y: [Math.random() * 40 - 20, Math.random() * 40 - 20],
                 rotate: [0, Math.random() * 360],
               }}
               transition={{ 
@@ -269,9 +422,9 @@ const HomePage: React.FC = () => {
                 position: 'absolute',
                 top: `${20 + Math.random() * 60}%`,
                 left: `${20 + Math.random() * 60}%`,
-                width: `${20 + Math.random() * 50}px`,
-                height: `${20 + Math.random() * 50}px`,
-                borderRadius: `${(Math.random() > 0.5) ? '50%' : '30%'}`,
+                width: `${10 + Math.random() * 30}px`,
+                height: `${10 + Math.random() * 30}px`,
+                borderRadius: '50%',
                 background: `${theme.palette.primary.main}`,
                 filter: 'blur(8px)',
               }}
@@ -287,7 +440,7 @@ const HomePage: React.FC = () => {
             position: 'relative',
           }}>
             
-            {/* Main Content */}
+            {/* Enhanced Main Content */}
             <Box
               sx={{
                 width: { xs: '100%', md: '50%' },
@@ -298,78 +451,125 @@ const HomePage: React.FC = () => {
               }}
             >
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 transition={{ duration: 0.8 }}
               >
-                  <Typography
-                    variant="h1"
-                    component="h1"
-                    sx={{
-                      fontWeight: 800,
-                      fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
-                    backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                    backgroundClip: 'text',
-                    textFillColor: 'transparent',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                      mb: 3,
-                    position: 'relative',
-                  }}
-                >
-                  Track Your Pet's Cancer Journey
-                  <Box
-                    component="span"
-                    sx={{
-                      display: 'block',
-                      color: '#fff',
-                      textShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                      mt: 1,
-                    }}
+                {/* Enhanced headline with better gradient and animation */}
+                <Box sx={{ position: 'relative', mb: 3, overflow: 'hidden' }}>
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={textRevealVariants}
                   >
-                    with Compassion
-                  </Box>
-                  </Typography>
-                </motion.div>
+                    <Typography
+                      variant="h1"
+                      component="h1"
+                      sx={{
+                        fontWeight: 800,
+                        fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
+                        backgroundImage: `linear-gradient(135deg, 
+                          ${theme.palette.common.white} 0%, 
+                          ${theme.palette.primary.light} 50%, 
+                          ${theme.palette.secondary.light} 100%)`,
+                        backgroundClip: 'text',
+                        textFillColor: 'transparent',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        position: 'relative',
+                        display: 'inline-block',
+                      }}
+                    >
+                      Track Your Pet's
+                    </Typography>
+                  </motion.div>
+                </Box>
+                
+                <Box sx={{ position: 'relative', mb: 3, overflow: 'hidden' }}>
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={textRevealVariants}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <Typography
+                      variant="h1"
+                      component="h1"
+                      sx={{
+                        fontWeight: 800,
+                        fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
+                        backgroundImage: `linear-gradient(135deg, 
+                          ${theme.palette.secondary.light} 0%, 
+                          ${theme.palette.primary.main} 100%)`,
+                        backgroundClip: 'text',
+                        textFillColor: 'transparent',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        position: 'relative',
+                        display: 'inline-block',
+                      }}
+                    >
+                      Cancer Journey
+                    </Typography>
+                  </motion.div>
+                </Box>
 
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.8 }}
+                >
                   <Typography
                     variant="h5"
                     component="h2"
                     sx={{
                       fontWeight: 400,
                       fontSize: { xs: '1.1rem', sm: '1.3rem' },
-                      color: 'rgba(255,255,255,0.9)',
-                    mb: 5,
-                    maxWidth: { xs: '100%', md: '90%' },
-                      lineHeight: 1.6
+                      color: 'rgba(255,255,255,0.95)',
+                      mb: 5,
+                      maxWidth: { xs: '100%', md: '90%' },
+                      lineHeight: 1.7,
+                      position: 'relative',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: -16,
+                        left: 0,
+                        right: { xs: 0, md: '10%' },
+                        height: 1,
+                        background: `linear-gradient(90deg, 
+                          ${alpha(theme.palette.primary.light, 0.7)} 0%, 
+                          ${alpha(theme.palette.primary.light, 0)} 100%)`,
+                        mx: { xs: 'auto', md: 0 },
+                        width: { xs: '80%', md: '90%' },
+                      }
                     }}
                   >
-                  Empowering pet owners and veterinarians with intuitive tools to monitor 
-                  symptoms, track treatments, and improve quality of life.
+                    <TypingEffect 
+                      text="Empowering pet owners and veterinarians with intuitive tools to monitor symptoms, track treatments, and improve quality of life." 
+                      delay={1000}
+                    />
                   </Typography>
                 </motion.div>
 
-                    <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                <Stack 
-                  direction={{ xs: 'column', sm: 'row' }} 
-                  spacing={3}
-                  sx={{
-                    justifyContent: { xs: 'center', md: 'flex-start' },
-                    mb: { xs: 8, md: 0 }
-                  }}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 1.2 }}
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
+                  <Stack 
+                    direction={{ xs: 'column', sm: 'row' }} 
+                    spacing={3}
+                    sx={{
+                      justifyContent: { xs: 'center', md: 'flex-start' },
+                      mb: { xs: 8, md: 0 }
+                    }}
+                  >
+                    {/* Enhanced primary CTA with pulse animation */}
+                    <motion.div
+                      variants={pulseVariants}
+                      initial="initial"
+                      animate="pulse"
                     >
                       <Button
                         component={Link}
@@ -384,11 +584,11 @@ const HomePage: React.FC = () => {
                           textTransform: 'none',
                           fontSize: '1.1rem',
                           fontWeight: 600,
-                        backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                        color: '#fff',
-                        boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}`,
+                          backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                          color: '#fff',
+                          boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}`,
                           '&:hover': {
-                          boxShadow: `0 12px 30px ${alpha(theme.palette.primary.main, 0.6)}`,
+                            boxShadow: `0 12px 30px ${alpha(theme.palette.primary.main, 0.6)}`,
                           }
                         }}
                       >
@@ -396,9 +596,13 @@ const HomePage: React.FC = () => {
                       </Button>
                     </motion.div>
                     
+                    {/* Enhanced secondary CTA with hover effect */}
                     <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.98 }}
+                      whileHover={{ 
+                        scale: 1.05, 
+                        backgroundColor: 'rgba(255,255,255,0.1)'
+                      }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       <Button
                         component={Link}
@@ -415,8 +619,9 @@ const HomePage: React.FC = () => {
                           borderColor: 'rgba(255,255,255,0.7)',
                           color: '#fff',
                           borderWidth: 2,
-                        backdropFilter: 'blur(8px)',
-                        backgroundColor: 'rgba(255,255,255,0.05)',
+                          backdropFilter: 'blur(8px)',
+                          backgroundColor: 'rgba(255,255,255,0.05)',
+                          transition: 'all 0.3s ease',
                           '&:hover': {
                             borderColor: '#fff',
                             borderWidth: 2,
@@ -429,9 +634,10 @@ const HomePage: React.FC = () => {
                     </motion.div>
                   </Stack>
                 </motion.div>
+              </motion.div>
             </Box>
             
-            {/* Image and Decorative Elements */}
+            {/* Enhanced Image Area with 3D Tilt Effect */}
             <Box
               sx={{
                 width: { xs: '100%', md: '55%' },
@@ -442,66 +648,141 @@ const HomePage: React.FC = () => {
                 alignItems: 'center',
                 height: { xs: 'auto', md: '600px' },
               }}
+              onMouseMove={handleMouseMove}
             >
-              {/* Main image with floating animation */}
+              {/* Enhanced main image with 3D tilt effect */}
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.3 }}
+                transition={{ duration: 1, delay: 0.5 }}
                 style={{ 
                   position: 'relative',
-                  zIndex: 2
+                  zIndex: 2,
+                  perspective: 1000
                 }}
               >
-                {/* Floating animation wrapper */}
+                {/* 3D rotation container */}
                 <motion.div
-                  animate={{ 
-                    y: [0, 15, 0],
+                  style={{
+                    rotateX,
+                    rotateY,
+                    perspective: 1000,
                   }}
-                  transition={{ 
-                    duration: 6, 
-                    repeat: Infinity,
-                    repeatType: "reverse" 
-                  }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 >
-                  {/* Image with frame and shadow effect */}
-                  <Box
-                    sx={{
-                      position: 'relative',
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 20,
-                        left: 20,
-                        right: -20,
-                        bottom: -20,
-                        borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
-                        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.3)} 0%, ${alpha(theme.palette.secondary.main, 0.3)} 100%)`,
-                        filter: 'blur(15px)',
-                        zIndex: -1,
-                      }
+                  {/* Floating animation wrapper */}
+                  <motion.div
+                    animate={{ 
+                      y: [0, 15, 0],
                     }}
-              >
-                <Box
-                  component="img"
-                  src="https://images.unsplash.com/photo-1536590158209-e9d615d525e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                  alt="Pet with owner"
-                  sx={{
-                    width: '100%',
-                        maxWidth: { xs: '80%', sm: '400px', md: '450px' },
-                        height: 'auto',
-                        borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
-                        boxShadow: '0 25px 50px rgba(0,0,0,0.2)',
-                        border: '5px solid rgba(255,255,255,0.2)',
-                        display: 'block',
-                        mx: 'auto',
+                    transition={{ 
+                      duration: 6, 
+                      repeat: Infinity,
+                      repeatType: "reverse" 
+                    }}
+                  >
+                    {/* Image with enhanced frame and shadow effect */}
+                    <Box
+                      sx={{
+                        position: 'relative',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 20,
+                          left: 20,
+                          right: -20,
+                          bottom: -20,
+                          borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
+                          background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.4)} 0%, ${alpha(theme.palette.secondary.main, 0.4)} 100%)`,
+                          filter: 'blur(20px)',
+                          zIndex: -1,
+                        }
                       }}
-                    />
-                  </Box>
-              </motion.div>
+                    >
+                      <Box
+                        component="img"
+                        src="https://images.unsplash.com/photo-1536590158209-e9d615d525e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        alt="Pet with owner"
+                        sx={{
+                          width: '100%',
+                          maxWidth: { xs: '80%', sm: '400px', md: '450px' },
+                          height: 'auto',
+                          borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
+                          boxShadow: '0 25px 50px rgba(0,0,0,0.2)',
+                          border: '5px solid rgba(255,255,255,0.2)',
+                          display: 'block',
+                          mx: 'auto',
+                          transition: 'all 0.3s ease',
+                        }}
+                      />
+                      
+                      {/* Particle effects around image */}
+                      {[...Array(5)].map((_, i) => (
+                        <motion.div
+                          key={`particle-${i}`}
+                          animate={{
+                            x: [0, Math.random() * 30 - 15],
+                            y: [0, Math.random() * 30 - 15],
+                            opacity: [0.7, 0.3, 0.7],
+                            scale: [1, 1.2, 1],
+                          }}
+                          transition={{
+                            duration: 3 + Math.random() * 2,
+                            repeat: Infinity,
+                            repeatType: "reverse",
+                            ease: "easeInOut",
+                            delay: i * 0.2,
+                          }}
+                          style={{
+                            position: 'absolute',
+                            width: 8 + Math.random() * 12,
+                            height: 8 + Math.random() * 12,
+                            borderRadius: '50%',
+                            backgroundColor: theme.palette.primary.main,
+                            filter: 'blur(2px)',
+                            top: `${30 + Math.random() * 40}%`,
+                            left: `${Math.random() * 20}%`,
+                            zIndex: 3,
+                          }}
+                        />
+                      ))}
+                      
+                      {/* Right side particles */}
+                      {[...Array(5)].map((_, i) => (
+                        <motion.div
+                          key={`particle-right-${i}`}
+                          animate={{
+                            x: [0, Math.random() * 30 - 15],
+                            y: [0, Math.random() * 30 - 15],
+                            opacity: [0.7, 0.3, 0.7],
+                            scale: [1, 1.2, 1],
+                          }}
+                          transition={{
+                            duration: 3 + Math.random() * 2,
+                            repeat: Infinity,
+                            repeatType: "reverse",
+                            ease: "easeInOut",
+                            delay: i * 0.3,
+                          }}
+                          style={{
+                            position: 'absolute',
+                            width: 8 + Math.random() * 12,
+                            height: 8 + Math.random() * 12,
+                            borderRadius: '50%',
+                            backgroundColor: theme.palette.secondary.main,
+                            filter: 'blur(2px)',
+                            top: `${30 + Math.random() * 40}%`,
+                            right: `${Math.random() * 20}%`,
+                            zIndex: 3,
+                          }}
+                        />
+                      ))}
+                    </Box>
+                  </motion.div>
+                </motion.div>
               </motion.div>
               
-              {/* Decorative feature highlights */}
+              {/* Enhanced decorative feature highlights */}
               {[
                 { 
                   icon: <MonitorHeartOutlined />, 
@@ -525,33 +806,38 @@ const HomePage: React.FC = () => {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ 
                     duration: 0.5, 
-                    delay: 0.7 + (index * 0.2)
+                    delay: 1.2 + (index * 0.2)
                   }}
                   style={{
-            position: 'absolute',
+                    position: 'absolute',
                     ...item.position,
                     zIndex: 3,
-                    display: { xs: 'none', sm: 'flex' },
+                  }}
+                  whileHover={{ 
+                    scale: 1.1, 
+                    boxShadow: '0 15px 40px rgba(0,0,0,0.15)',
+                    transition: { duration: 0.2 }
                   }}
                 >
                   <Paper
                     elevation={6}
-          sx={{
+                    sx={{
                       display: 'flex',
                       alignItems: 'center',
                       px: 2,
-                      py: 1,
+                      py: 1.5,
                       borderRadius: '20px',
                       backdropFilter: 'blur(8px)',
-                      backgroundColor: 'rgba(255,255,255,0.9)',
+                      backgroundColor: 'rgba(255,255,255,0.95)',
                       boxShadow: `0 10px 30px ${alpha(theme.palette.primary.dark, 0.2)}`,
+                      transition: 'all 0.3s ease',
                     }}
                   >
                     <Box sx={{ 
                       color: theme.palette.primary.main,
                       display: 'flex',
-                      mr: 1,
-                      fontSize: '1.2rem'
+                      mr: 1.5,
+                      fontSize: '1.3rem'
                     }}>
                       {item.icon}
                     </Box>
@@ -568,48 +854,97 @@ const HomePage: React.FC = () => {
             </Box>
           </Box>
           
-          {/* Stats or trust indicators */}
+          {/* Enhanced stats or trust indicators */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            style={{
-              marginTop: { xs: '2rem', md: '-1rem' },
-              position: 'relative',
-              zIndex: 4,
-              display: { xs: 'none', md: 'block' }
-            }}
+            transition={{ duration: 0.8, delay: 1.5 }}
           >
             <Box sx={{ 
-              mt: { xs: 6, md: 0 },
+              mt: { xs: 8, md: 4 },
               py: 3,
               px: 4,
               mx: 'auto',
               width: 'fit-content',
               borderRadius: '20px',
               backdropFilter: 'blur(8px)',
-              backgroundColor: 'rgba(255,255,255,0.1)',
+              backgroundColor: 'rgba(255,255,255,0.08)',
               border: '1px solid rgba(255,255,255,0.1)',
               display: 'flex',
               justifyContent: 'center',
               flexWrap: 'wrap',
               gap: 5,
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              position: 'relative',
+              zIndex: 10,
             }}>
               {[
                 { value: '10,000+', label: 'Pet Owners' },
                 { value: '500+', label: 'Veterinarians' },
                 { value: '98%', label: 'Satisfaction' }
               ].map((stat, index) => (
-                <Box key={index} sx={{ textAlign: 'center', px: 2 }}>
-                  <Typography variant="h4" fontWeight={700} color="white" gutterBottom>
-                    {stat.value}
-                  </Typography>
-                  <Typography variant="body2" color="rgba(255,255,255,0.8)">
-                    {stat.label}
-                  </Typography>
-                </Box>
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.8 + index * 0.2, duration: 0.5 }}
+                >
+                  <Box sx={{ textAlign: 'center', px: 2 }}>
+                    <Typography 
+                      variant="h4" 
+                      fontWeight={700} 
+                      color="white" 
+                      gutterBottom
+                      sx={{
+                        backgroundImage: `linear-gradient(135deg, #fff 30%, ${theme.palette.primary.light} 100%)`,
+                        backgroundClip: 'text',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      }}
+                    >
+                      {stat.value}
+                    </Typography>
+                    <Typography variant="body2" color="rgba(255,255,255,0.9)">
+                      {stat.label}
+                    </Typography>
+                  </Box>
+                </motion.div>
               ))}
             </Box>
+          </motion.div>
+          
+          {/* Scroll indicator */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: [0, 10, 0] }}
+            transition={{ 
+              delay: 2, 
+              duration: 2, 
+              repeat: Infinity,
+              repeatType: "loop" 
+            }}
+            style={{
+              position: 'absolute',
+              bottom: 40,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            <Typography 
+              variant="body2" 
+              color="rgba(255,255,255,0.7)"
+              sx={{ mb: 1 }}
+            >
+              Discover More
+            </Typography>
+            <KeyboardArrowDown sx={{ color: 'rgba(255,255,255,0.7)', fontSize: 24 }} />
           </motion.div>
         </Container>
       </Box>
