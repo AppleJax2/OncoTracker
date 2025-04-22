@@ -196,7 +196,7 @@ const HomePage: React.FC = () => {
           }}
         >
           {/* Large floating circle */}
-          <motion.div
+              <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ 
               opacity: 0.7, 
@@ -302,18 +302,18 @@ const HomePage: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
               >
-                <Typography
-                  variant="h1"
-                  component="h1"
-                  sx={{
-                    fontWeight: 800,
-                    fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
+                  <Typography
+                    variant="h1"
+                    component="h1"
+                    sx={{
+                      fontWeight: 800,
+                      fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem' },
                     backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                     backgroundClip: 'text',
                     textFillColor: 'transparent',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
-                    mb: 3,
+                      mb: 3,
                     position: 'relative',
                   }}
                 >
@@ -329,32 +329,32 @@ const HomePage: React.FC = () => {
                   >
                     with Compassion
                   </Box>
-                </Typography>
-              </motion.div>
+                  </Typography>
+                </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <Typography
-                  variant="h5"
-                  component="h2"
-                  sx={{
-                    fontWeight: 400,
-                    fontSize: { xs: '1.1rem', sm: '1.3rem' },
-                    color: 'rgba(255,255,255,0.9)',
+                  <Typography
+                    variant="h5"
+                    component="h2"
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                      color: 'rgba(255,255,255,0.9)',
                     mb: 5,
                     maxWidth: { xs: '100%', md: '90%' },
-                    lineHeight: 1.6
-                  }}
-                >
+                      lineHeight: 1.6
+                    }}
+                  >
                   Empowering pet owners and veterinarians with intuitive tools to monitor 
                   symptoms, track treatments, and improve quality of life.
-                </Typography>
-              </motion.div>
+                  </Typography>
+                </motion.div>
 
-              <motion.div
+                    <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -370,65 +370,65 @@ const HomePage: React.FC = () => {
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      component={Link}
-                      to="/signup"
-                      variant="contained"
-                      size="large"
-                      endIcon={<ArrowForwardIos />}
-                      sx={{
-                        py: 1.8,
-                        px: 4,
-                        borderRadius: '30px',
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
+                    >
+                      <Button
+                        component={Link}
+                        to="/signup"
+                        variant="contained"
+                        size="large"
+                        endIcon={<ArrowForwardIos />}
+                        sx={{
+                          py: 1.8,
+                          px: 4,
+                          borderRadius: '30px',
+                          textTransform: 'none',
+                          fontSize: '1.1rem',
+                          fontWeight: 600,
                         backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                         color: '#fff',
                         boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.4)}`,
-                        '&:hover': {
+                          '&:hover': {
                           boxShadow: `0 12px 30px ${alpha(theme.palette.primary.main, 0.6)}`,
-                        }
-                      }}
-                    >
-                      Get Started — It's Free
-                    </Button>
-                  </motion.div>
-                  
-                  <motion.div
+                          }
+                        }}
+                      >
+                        Get Started — It's Free
+                      </Button>
+                    </motion.div>
+                    
+                    <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.98 }}
-                  >
-                    <Button
-                      component={Link}
-                      to="/login"
-                      variant="outlined"
-                      size="large"
-                      sx={{
-                        py: 1.8,
-                        px: 4,
-                        borderRadius: '30px',
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        borderColor: 'rgba(255,255,255,0.7)',
-                        color: '#fff',
-                        borderWidth: 2,
+                    >
+                      <Button
+                        component={Link}
+                        to="/login"
+                        variant="outlined"
+                        size="large"
+                        sx={{
+                          py: 1.8,
+                          px: 4,
+                          borderRadius: '30px',
+                          textTransform: 'none',
+                          fontSize: '1.1rem',
+                          fontWeight: 600,
+                          borderColor: 'rgba(255,255,255,0.7)',
+                          color: '#fff',
+                          borderWidth: 2,
                         backdropFilter: 'blur(8px)',
                         backgroundColor: 'rgba(255,255,255,0.05)',
-                        '&:hover': {
-                          borderColor: '#fff',
-                          borderWidth: 2,
-                          backgroundColor: 'rgba(255,255,255,0.1)'
-                        }
-                      }}
-                    >
-                      Sign In
-                    </Button>
-                  </motion.div>
-                </Stack>
-              </motion.div>
+                          '&:hover': {
+                            borderColor: '#fff',
+                            borderWidth: 2,
+                            backgroundColor: 'rgba(255,255,255,0.1)'
+                          }
+                        }}
+                      >
+                        Sign In
+                      </Button>
+                    </motion.div>
+                  </Stack>
+                </motion.div>
             </Box>
             
             {/* Image and Decorative Elements */}
@@ -481,13 +481,13 @@ const HomePage: React.FC = () => {
                         zIndex: -1,
                       }
                     }}
-                  >
-                    <Box
-                      component="img"
-                      src="https://images.unsplash.com/photo-1536590158209-e9d615d525e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                      alt="Pet with owner"
-                      sx={{
-                        width: '100%',
+              >
+                <Box
+                  component="img"
+                  src="https://images.unsplash.com/photo-1536590158209-e9d615d525e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                  alt="Pet with owner"
+                  sx={{
+                    width: '100%',
                         maxWidth: { xs: '80%', sm: '400px', md: '450px' },
                         height: 'auto',
                         borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
@@ -498,7 +498,7 @@ const HomePage: React.FC = () => {
                       }}
                     />
                   </Box>
-                </motion.div>
+              </motion.div>
               </motion.div>
               
               {/* Decorative feature highlights */}
@@ -528,7 +528,7 @@ const HomePage: React.FC = () => {
                     delay: 0.7 + (index * 0.2)
                   }}
                   style={{
-                    position: 'absolute',
+            position: 'absolute',
                     ...item.position,
                     zIndex: 3,
                     display: { xs: 'none', sm: 'flex' },
@@ -536,7 +536,7 @@ const HomePage: React.FC = () => {
                 >
                   <Paper
                     elevation={6}
-                    sx={{
+          sx={{
                       display: 'flex',
                       alignItems: 'center',
                       px: 2,
@@ -614,12 +614,14 @@ const HomePage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* Feature Section */}
+      {/* Feature Section - Redesigned */}
       <Box
         sx={{
-          bgcolor: theme.palette.background.paper,
-          py: { xs: 8, sm: 10, md: 12, lg: 14 },
-          color: theme.palette.text.primary
+          // Subtle gradient background
+          background: `linear-gradient(180deg, ${theme.palette.background.paper} 0%, ${alpha(theme.palette.primary.light, 0.05)} 100%)`,
+          py: { xs: 8, sm: 10, md: 12, lg: 16 }, // Adjusted padding
+          color: theme.palette.text.primary,
+          overflow: 'hidden', // Prevent animation overflow
         }}
         id="features"
       >
@@ -627,9 +629,10 @@ const HomePage: React.FC = () => {
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.1 }}
             variants={containerVariants}
           >
+            {/* Section Header */}
             <motion.div variants={itemVariants}>
               <Typography
                 variant="h2"
@@ -638,10 +641,10 @@ const HomePage: React.FC = () => {
                 sx={{
                   fontWeight: 700,
                   mb: 2,
-                  fontSize: { xs: '2rem', md: '2.5rem' }
+                  fontSize: { xs: '2.2rem', md: '2.8rem' }
                 }}
               >
-                Essential Features for Cancer Care
+                Everything You Need
               </Typography>
             </motion.div>
 
@@ -654,60 +657,87 @@ const HomePage: React.FC = () => {
                 sx={{
                   maxWidth: '800px',
                   mx: 'auto',
-                  mb: { xs: 8, md: 10 },
-                  fontSize: '1.1rem'
+                  mb: { xs: 8, md: 12 },
+                  fontSize: '1.1rem',
+                  lineHeight: 1.7
                 }}
               >
-                Our comprehensive set of tools help you navigate pet cancer treatment with confidence and clarity.
+                OncoTracker provides a suite of tools designed for clarity and confidence 
+                throughout your pet's cancer treatment journey.
               </Typography>
             </motion.div>
 
-            <Grid container spacing={4}>
+            {/* Redesigned Feature Grid */}
+            <Grid container spacing={5} alignItems="stretch">
               {featureList.map((feature, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
                   <motion.div
-                    variants={cardVariants}
-                    custom={index}
-                    whileHover="hover"
+                    variants={cardVariants} // Reuse existing card variants for consistency
+                    custom={index} // Stagger animation
+                    whileHover="hover" // Reuse hover effect
+                    style={{ height: '100%' }} // Ensure motion div fills grid item height
                   >
-                    <Paper
-                      elevation={2}
+                    <Box
                       sx={{
-                        p: 4,
+                        p: { xs: 3, md: 4 },
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
+                        alignItems: 'flex-start',
                         borderRadius: 4,
+                        border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+                        background: alpha(theme.palette.background.paper, 0.8),
+                        backdropFilter: 'blur(5px)', // Subtle glass effect
                         transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
                         '&:hover': {
-                          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                          transform: 'translateY(-5px)'
-                        }
+                          borderColor: alpha(theme.palette.primary.main, 0.4),
+                          background: alpha(theme.palette.background.paper, 0.95),
+                          boxShadow: '0 10px 30px rgba(0,0,0,0.07)',
+                          // Icon color change on hover is handled below
+                        },
                       }}
                     >
+                      {/* Icon with background */}
                       <Box
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          width: 70,
-                          height: 70,
+                          width: 64,
+                          height: 64,
                           backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                          borderRadius: '20px',
+                          borderRadius: '18px', // Squircle shape
                           color: theme.palette.primary.main,
                           mb: 3,
-                          fontSize: '2rem'
+                          transition: 'all 0.3s ease',
+                          fontSize: '2rem',
+                          [`.MuiGrid-item:hover &`]: { // Target icon color on parent hover
+                            backgroundColor: theme.palette.primary.main,
+                            color: '#fff',
+                          },
                         }}
                       >
                         {feature.icon}
                       </Box>
-                      <Typography variant="h5" component="h3" fontWeight={600} gutterBottom sx={{ mb: 1.5 }}>
+                      {/* Title */}
+                      <Typography 
+                        variant="h5" 
+                        component="h3" 
+                        fontWeight={600} 
+                        gutterBottom 
+                        sx={{ mb: 1.5 }}
+                      >
                         {feature.title}
                       </Typography>
-                      <Typography color="textSecondary" sx={{ lineHeight: 1.6 }}>
+                      {/* Description */}
+                      <Typography 
+                        color="textSecondary" 
+                        sx={{ lineHeight: 1.6, flexGrow: 1 }}
+                      >
                         {feature.description}
                       </Typography>
-                    </Paper>
+                    </Box>
                   </motion.div>
                 </Grid>
               ))}
