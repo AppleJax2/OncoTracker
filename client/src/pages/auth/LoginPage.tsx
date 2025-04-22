@@ -209,8 +209,8 @@ const LoginPage: React.FC = () => {
                       >
                         <Box 
                           sx={{ 
-                            width: 70, 
-                            height: 70, 
+                            width: 80, 
+                            height: 80, 
                             borderRadius: '50%', 
                             backgroundColor: 'rgba(101, 168, 166, 0.1)', // Updated to match theme teal
                             display: 'flex', 
@@ -219,7 +219,7 @@ const LoginPage: React.FC = () => {
                             boxShadow: '0 4px 14px rgba(101, 168, 166, 0.15)' // Updated to match theme teal
                           }}
                         >
-                          <Pets sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                          <Pets sx={{ fontSize: 38, color: theme.palette.primary.main }} />
                         </Box>
                       </motion.div>
                     </Box>
@@ -228,7 +228,7 @@ const LoginPage: React.FC = () => {
                     variants={itemVariants}
                   >
                     <Typography 
-                      variant="h4" 
+                      variant="h3" 
                       component="h1" 
                       fontWeight={700}
                       color="primary.dark"
@@ -335,6 +335,10 @@ const LoginPage: React.FC = () => {
                           transition: 'all 0.2s ease',
                           '&.Mui-focused': {
                             boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                          },
+                          '&:-webkit-autofill': {
+                            WebkitBoxShadow: '0 0 0 1000px white inset',
+                            WebkitTextFillColor: theme.palette.text.primary,
                           }
                         }
                       }}
@@ -385,6 +389,10 @@ const LoginPage: React.FC = () => {
                           transition: 'all 0.2s ease',
                           '&.Mui-focused': {
                             boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
+                          },
+                          '&:-webkit-autofill': {
+                            WebkitBoxShadow: '0 0 0 1000px white inset',
+                            WebkitTextFillColor: theme.palette.text.primary,
                           }
                         }
                       }}
@@ -433,11 +441,11 @@ const LoginPage: React.FC = () => {
                       variant="contained"
                       disabled={loading}
                       sx={{ 
-                        py: 1.5,
+                        py: 1.8,
                         mt: 2,
                         borderRadius: 6,
                         textTransform: 'none',
-                        fontSize: '1rem',
+                        fontSize: '1.1rem',
                         fontWeight: 600,
                         color: 'white',
                         background: 'linear-gradient(90deg, #4a8a88 0%, #65a8a6 100%)', // Updated to match theme teal
@@ -495,10 +503,10 @@ const LoginPage: React.FC = () => {
                       fullWidth
                       disabled={loading}
                       sx={{ 
-                        py: 1.2,
+                        py: 1.6,
                         borderRadius: 6,
                         textTransform: 'none',
-                        fontSize: '0.95rem',
+                        fontSize: '1rem',
                         fontWeight: 500,
                         borderColor: theme.palette.primary.main,
                         color: theme.palette.primary.main,
