@@ -55,7 +55,7 @@ const AddPetForm: React.FC = () => {
     try {
       const response = await api.post('/api/pets', payload);
       console.log('Pet added:', response.data);
-      navigate('/owner/dashboard');
+      navigate('/pet-parent/dashboard');
     } catch (err: any) {
       console.error('Error adding pet:', err);
       const message = err?.response?.data?.message || err.message || 'Could not add pet. Please try again.';
@@ -137,7 +137,7 @@ const AddPetForm: React.FC = () => {
 
         {/* Submit Button */}
         <div className="flex justify-end pt-4">
-          <button type="button" onClick={() => navigate('/owner/dashboard')} disabled={loading} className="mr-4 inline-flex justify-center py-2 px-4 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
+          <button type="button" onClick={() => navigate('/pet-parent/dashboard')} disabled={loading} className="mr-4 inline-flex justify-center py-2 px-4 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
             Cancel
           </button>
           <button type="submit" disabled={loading} className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed">

@@ -143,7 +143,7 @@ const OwnerDashboardNew: React.FC = () => {
             >
               <Box 
                 component="a" 
-                href="/owner/pets/new"
+                href="/pet-parent/pets/new"
                 sx={{ 
                   display: 'inline-block',
                   py: 1.5,
@@ -235,7 +235,7 @@ const OwnerDashboardNew: React.FC = () => {
               >
                 <Box
                   component="a"
-                  href="/owner/pets/new"
+                  href="/pet-parent/pets/new"
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',

@@ -5,6 +5,10 @@ import { Fade } from '@mui/material';
 // Import our enhanced dashboard components
 import PetParentDashboard from '../pages/dashboard/OwnerDashboardNew';
 import PetDetailNew from '../pages/dashboard/PetDetailNew';
+import AddPetForm from '../pages/dashboard/AddPetForm';
+import ReportForm from '../pages/dashboard/ReportForm';
+import FindVetPage from '../pages/dashboard/FindVetPage';
+import ResourcesPage from '../pages/dashboard/ResourcesPage';
 
 // Helper component for pet detail route redirection
 const PetDetailRedirect: React.FC = () => {
@@ -29,7 +33,7 @@ const EnhancedRoutes: React.FC = () => {
         } 
       />
       
-      {/* Enhanced Pet Detail Page */}
+      {/* Pet Management Routes */}
       <Route 
         path="pets/:petId/enhanced" 
         element={
@@ -39,6 +43,26 @@ const EnhancedRoutes: React.FC = () => {
             </div>
           </Fade>
         } 
+      />
+      
+      <Route 
+        path="pets/:petId/report/new" 
+        element={<ReportForm />} 
+      />
+      
+      <Route 
+        path="pets/new" 
+        element={<AddPetForm />} 
+      />
+      
+      <Route 
+        path="find-vets" 
+        element={<FindVetPage />} 
+      />
+      
+      <Route 
+        path="resources" 
+        element={<ResourcesPage />} 
       />
 
       {/* Redirect legacy URLs to enhanced versions */}

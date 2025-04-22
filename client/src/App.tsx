@@ -112,15 +112,11 @@ const App = () => {
           {/* Routes accessible by both authenticated pet parents and verified vets */}
           <Route element={<RoleBasedRoute allowedRoles={['pet-parent', 'vet']} />}>
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/resources" element={<ResourcesPage />} />
           </Route>
 
           {/* Pet Parent Routes - using EnhancedRoutes for improved UX */}
           <Route element={<RoleBasedRoute allowedRoles={['pet-parent']} />}>
             <Route path="/pet-parent/*" element={<EnhancedRoutes />} />
-            <Route path="/pet-parent/pets/new" element={<AddPetForm />} />
-            <Route path="/pet-parent/pets/:petId/report/new" element={<ReportForm />} />
-            <Route path="/pet-parent/find-vets" element={<FindVetPage />} />
           </Route>
 
           {/* Vet Routes */}

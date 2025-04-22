@@ -86,7 +86,7 @@ const ReportForm: React.FC = () => {
         try {
             const response = await api.post(`/api/pets/${petId}/reports`, reportPayload);
             if (response.data?.status === 'success') {
-                navigate(`/dashboard/owner/pets/${petId}`); // Navigate back to pet detail on success
+                navigate(`/pet-parent/pets/${petId}/enhanced`); // Navigate back to pet detail on success
             } else {
                 throw new Error(response.data?.message || 'Failed to submit report');
             }
@@ -219,7 +219,7 @@ const ReportForm: React.FC = () => {
                 
                 {/* Submit Button */}
                 <div className="flex justify-end pt-4">
-                  <button type="button" onClick={() => navigate(`/owner/pets/${petId}`)} disabled={submitting} className="mr-4 inline-flex justify-center py-2 px-4 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
+                  <button type="button" onClick={() => navigate(`/pet-parent/pets/${petId}/enhanced`)} disabled={submitting} className="mr-4 inline-flex justify-center py-2 px-4 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">
                     Cancel
                   </button>
                   <button type="submit" disabled={submitting} className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed">

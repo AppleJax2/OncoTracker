@@ -89,15 +89,15 @@ const PetDetailNew: React.FC = () => {
 
   // Handlers
   const handleSubmitReport = () => {
-    navigate(`/owner/pets/${petId}/report/new`);
+    navigate(`/pet-parent/pets/${petId}/report/new`);
   };
 
   const handleLinkToVet = () => {
-    navigate(`/owner/find-vets?petId=${petId}`);
+    navigate(`/pet-parent/find-vets?petId=${petId}`);
   };
 
   const handleBackToDashboard = () => {
-    navigate('/owner/dashboard');
+    navigate('/pet-parent/dashboard');
   };
 
   // Format date helper
