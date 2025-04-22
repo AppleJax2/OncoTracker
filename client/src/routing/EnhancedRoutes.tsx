@@ -19,7 +19,7 @@ const EnhancedRoutes: React.FC = () => {
     <Routes>
       {/* Enhanced Pet Parent Dashboard */}
       <Route 
-        path="/pet-parent/dashboard/enhanced" 
+        path="dashboard/enhanced" 
         element={
           <Fade in={true} timeout={500}>
             <div>
@@ -31,7 +31,7 @@ const EnhancedRoutes: React.FC = () => {
       
       {/* Enhanced Pet Detail Page */}
       <Route 
-        path="/pet-parent/pets/:petId/enhanced" 
+        path="pets/:petId/enhanced" 
         element={
           <Fade in={true} timeout={500}>
             <div>
@@ -43,12 +43,12 @@ const EnhancedRoutes: React.FC = () => {
 
       {/* Redirect legacy URLs to enhanced versions */}
       <Route 
-        path="/pet-parent/dashboard" 
+        path="dashboard" 
         element={<Navigate to="/pet-parent/dashboard/enhanced" replace />} 
       />
       
       <Route 
-        path="/pet-parent/pets/:petId" 
+        path="pets/:petId" 
         element={<PetDetailRedirect />} 
       />
     </Routes>

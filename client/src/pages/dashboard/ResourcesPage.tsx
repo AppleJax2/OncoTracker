@@ -4,12 +4,9 @@ import {
   Container, 
   Typography, 
   Box, 
-  Grid, 
   Card, 
   CardContent, 
-  CardMedia, 
   Button, 
-  Divider, 
   Link, 
   useTheme, 
   alpha,
@@ -167,9 +164,22 @@ const ResourcesPage: React.FC = () => {
 
         {/* Resource Categories */}
         <Box sx={{ mb: 8 }}>
-          <Grid container spacing={3}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: 3
+          }}>
             {resourceCategories.map((category, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
+              <Box 
+                key={index} 
+                sx={{ 
+                  flex: { 
+                    xs: '1 1 100%', 
+                    sm: '1 1 calc(50% - 12px)', 
+                    md: '1 1 calc(25% - 18px)' 
+                  }
+                }}
+              >
                 <motion.div
                   variants={itemVariants}
                   whileHover="hover"
@@ -219,9 +229,9 @@ const ResourcesPage: React.FC = () => {
                     </CardContent>
                   </Card>
                 </motion.div>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         </Box>
 
         {/* Featured Resources */}
@@ -247,9 +257,22 @@ const ResourcesPage: React.FC = () => {
             Featured Resources
           </Typography>
           
-          <Grid container spacing={3}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: 3
+          }}>
             {featuredResources.map((resource, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
+              <Box 
+                key={index} 
+                sx={{ 
+                  flex: { 
+                    xs: '1 1 100%', 
+                    sm: '1 1 calc(50% - 12px)', 
+                    md: '1 1 calc(33.333% - 16px)' 
+                  }
+                }}
+              >
                 <motion.div
                   variants={itemVariants}
                   whileHover="hover"
@@ -323,9 +346,9 @@ const ResourcesPage: React.FC = () => {
                     </CardContent>
                   </Card>
                 </motion.div>
-              </Grid>
+              </Box>
             ))}
-          </Grid>
+          </Box>
         </Box>
 
         {/* Additional Resources */}

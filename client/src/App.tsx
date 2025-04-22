@@ -7,7 +7,6 @@ import AppLayout from './components/layout/AppLayout'; // Assume a main layout c
 
 // Common Components
 import LoadingSpinner from './components/common/LoadingSpinner'; // Assume a loading spinner exists
-import NotificationBanner from './components/common/NotificationBanner';
 
 // Enhanced Routes
 import EnhancedRoutes from './routing/EnhancedRoutes';
@@ -25,6 +24,7 @@ import PetDetail from './pages/dashboard/PetDetail'; // Create this
 import ReportForm from './pages/dashboard/ReportForm'; // Create this
 import AddPetForm from './pages/dashboard/AddPetForm'; // Create this
 import FindVetPage from './pages/dashboard/FindVetPage'; // Create this
+import ResourcesPage from './pages/dashboard/ResourcesPage'; // New Resources Page
 
 // Vet Pages
 import VetDashboard from './pages/dashboard/VetDashboard'; // Create this
@@ -36,20 +36,6 @@ import SettingsPage from './pages/dashboard/SettingsPage'; // Create this
 import NotFoundPage from './pages/public/NotFoundPage'; // Create this
 
 // --- Protected Route Components ---
-
-// Component to show welcome banner
-const WelcomeBanner = () => {
-  return (
-    <NotificationBanner 
-      message="Welcome to the newly redesigned OncoTracker with a refreshed green theme!"
-      variant="success"
-      action={{
-        label: "Learn More",
-        onClick: () => console.log("Learn more clicked")
-      }}
-    />
-  );
-};
 
 // Component to handle redirects based on auth status
 const ProtectedRoute = () => {
@@ -109,60 +95,51 @@ const RoleBasedRedirect = () => {
 };
 
 const App = () => {
-  // const { isLoading } = useAuth(); // Removed unused variable
-
-  // Optional: Show a global loading state while checking auth initially
-  // if (isLoading) { // isLoading check removed as variable is unused
-  //   return <div className="flex justify-center items-center h-screen"><LoadingSpinner /></div>;
-  // }
-
   return (
-    // <NetworkProvider> // Keep if needed
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
 
-        {/* Verification Pending Route (Example) */}
-        <Route path="/vet-verification-pending" element={<div><h1>Verification Pending</h1><p>Your veterinarian account is awaiting verification.</p></div>} />
+      {/* Verification Pending Route (Example) */}
+      <Route path="/vet-verification-pending" element={<div><h1>Verification Pending</h1><p>Your veterinarian account is awaiting verification.</p></div>} />
 
-        {/* --- Protected Routes --- */}
-        <Route element={<ProtectedRoute />}> { /* Checks if logged in */}
-          <Route element={<AppLayout />}> { /* Wraps protected pages with common layout */}
+      {/* --- Protected Routes --- */}
+      <Route element={<ProtectedRoute />}> { /* Checks if logged in */}
+        <Route element={<AppLayout />}> { /* Wraps protected pages with common layout */}
 
-            {/* Pet Parent Routes - using EnhancedRoutes for improved UX */}
-            <Route element={<RoleBasedRoute allowedRoles={['pet-parent']} />}>
-              <Route path="/pet-parent/*" element={<EnhancedRoutes />} />
-              <Route path="/pet-parent/pets/new" element={<AddPetForm />} />
-              <Route path="/pet-parent/pets/:petId/report/new" element={<ReportForm />} />
-              <Route path="/pet-parent/find-vets" element={<FindVetPage />} />
-            </Route>
+          {/* Routes accessible by both authenticated pet parents and verified vets */}
+          <Route element={<RoleBasedRoute allowedRoles={['pet-parent', 'vet']} />}>
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+          </Route>
 
-            {/* Vet Routes */}
-            <Route element={<RoleBasedRoute allowedRoles={['vet']} />}>
-              <Route path="/vet/dashboard" element={<VetDashboard />} />
-              <Route path="/vet/patients/:petId" element={<VetPatientDetail />} />
-              <Route path="/vet/link-requests" element={<LinkRequestsPage />} />
-            </Route>
+          {/* Pet Parent Routes - using EnhancedRoutes for improved UX */}
+          <Route element={<RoleBasedRoute allowedRoles={['pet-parent']} />}>
+            <Route path="/pet-parent/*" element={<EnhancedRoutes />} />
+            <Route path="/pet-parent/pets/new" element={<AddPetForm />} />
+            <Route path="/pet-parent/pets/:petId/report/new" element={<ReportForm />} />
+            <Route path="/pet-parent/find-vets" element={<FindVetPage />} />
+          </Route>
 
-            {/* Routes accessible by both authenticated pet parents and verified vets */}
-            <Route element={<RoleBasedRoute allowedRoles={['pet-parent', 'vet']} />}>
-               <Route path="/settings" element={<SettingsPage />} />
-               {/* Add other shared authenticated routes here */}
-            </Route>
+          {/* Vet Routes */}
+          <Route element={<RoleBasedRoute allowedRoles={['vet']} />}>
+            <Route path="/vet/dashboard" element={<VetDashboard />} />
+            <Route path="/vet/patients/:petId" element={<VetPatientDetail />} />
+            <Route path="/vet/link-requests" element={<LinkRequestsPage />} />
+          </Route>
 
-            {/* Catch-all redirect for authenticated users */}
-            <Route path="*" element={<RoleBasedRedirect />} />
+          {/* Catch-all redirect for authenticated users */}
+          <Route path="*" element={<RoleBasedRedirect />} />
 
-          </Route> { /* End AppLayout */}
-        </Route> { /* End ProtectedRoute */}
+        </Route> { /* End AppLayout */}
+      </Route> { /* End ProtectedRoute */}
 
-        {/* Not Found Route */}
-        <Route path="*" element={<NotFoundPage />} />
+      {/* Not Found Route */}
+      <Route path="*" element={<NotFoundPage />} />
 
-      </Routes>
-    // </NetworkProvider>
+    </Routes>
   );
 };
 
