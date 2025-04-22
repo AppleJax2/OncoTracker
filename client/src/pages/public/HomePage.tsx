@@ -151,6 +151,248 @@ function TypingEffect({ text, delay = 0, className }: { text: string; delay?: nu
   return <span className={className}>{displayedText}</span>;
 }
 
+// Add this new FeatureCard component
+const FeatureCard = ({ icon, title, description, index }: { 
+  icon: React.ReactNode; 
+  title: string; 
+  description: string;
+  index: number;
+}) => {
+  const theme = useTheme();
+  
+  // Mouse movement for 3D tilt effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  
+  const rotateX = useTransform(mouseY, [-100, 100], [2, -2]);
+  const rotateY = useTransform(mouseX, [-100, 100], [-2, 2]);
+
+  // Handle mouse move for 3D effect
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+  
+  return (
+    <motion.div
+      variants={{
+        hidden: { y: 20, opacity: 0 },
+        visible: { 
+          y: 0, 
+          opacity: 1,
+          transition: { 
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+            delay: 0.1 * index 
+          }
+        }
+      }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      whileHover={{ y: -10 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      style={{ height: '100%' }}
+    >
+      <motion.div
+        onMouseMove={handleMouseMove}
+        style={{ 
+          rotateX, 
+          rotateY,
+          transformStyle: "preserve-3d",
+          height: '100%'
+        }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      >
+        <Box
+          sx={{
+            p: { xs: 3, md: 4 },
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            borderRadius: 4,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+            background: alpha(theme.palette.background.paper, 0.8),
+            backdropFilter: 'blur(5px)',
+            transition: 'all 0.3s ease',
+            position: 'relative',
+            overflow: 'hidden',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+            '&:hover': {
+              borderColor: alpha(theme.palette.primary.main, 0.4),
+              background: alpha(theme.palette.background.paper, 0.95),
+              boxShadow: '0 15px 40px rgba(0,0,0,0.1)',
+            },
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: `linear-gradient(90deg, ${alpha(theme.palette.primary.main, 0)}, ${alpha(theme.palette.primary.main, 0.8)}, ${alpha(theme.palette.secondary.main, 0.8)}, ${alpha(theme.palette.secondary.main, 0)})`,
+              opacity: 0,
+              transition: 'opacity 0.3s ease',
+            },
+            '&:hover::before': {
+              opacity: 1,
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: `radial-gradient(circle at 50% 20%, ${alpha(theme.palette.background.paper, 0)}, ${alpha(theme.palette.background.paper, 0.8)} 70%)`,
+              zIndex: -1,
+            }
+          }}
+        >
+          <Box
+            sx={{
+              position: 'relative',
+              zIndex: 1,
+            }}
+          >
+            {/* Icon with animated background */}
+            <motion.div
+              animate={{ 
+                y: [0, -5, 0],
+                transition: { 
+                  duration: 3, 
+                  repeat: Infinity, 
+                  ease: "easeInOut" 
+                }
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 64,
+                  height: 64,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                  borderRadius: '18px',
+                  color: theme.palette.primary.main,
+                  mb: 3,
+                  position: 'relative',
+                  transition: 'all 0.3s ease',
+                  fontSize: '2rem',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0)}, ${alpha(theme.palette.primary.main, 0.2)})`,
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                    zIndex: -1,
+                  },
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    width: 70,
+                    height: 70,
+                    background: alpha(theme.palette.primary.main, 0.15),
+                    borderRadius: '50%',
+                    filter: 'blur(15px)',
+                    zIndex: -1,
+                  },
+                  [`.MuiGrid-item:hover &`]: {
+                    backgroundColor: theme.palette.primary.main,
+                    color: '#fff',
+                    transform: 'scale(1.05)',
+                  },
+                }}
+              >
+                {icon}
+              </Box>
+            </motion.div>
+
+            {/* Title with animated underline effect */}
+            <Typography 
+              variant="h5" 
+              component="h3" 
+              fontWeight={600} 
+              gutterBottom 
+              sx={{ 
+                mb: 1.5,
+                position: 'relative',
+                display: 'inline-block',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  width: '0%',
+                  height: '2px',
+                  background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  transition: 'width 0.3s ease',
+                },
+                '$:hover::after': {
+                  width: '100%',
+                },
+                [`.MuiGrid-item:hover &::after`]: {
+                  width: '100%',
+                },
+              }}
+            >
+              {title}
+            </Typography>
+
+            {/* Description text */}
+            <Typography 
+              color="textSecondary" 
+              sx={{ lineHeight: 1.6, flexGrow: 1 }}
+            >
+              {description}
+            </Typography>
+          </Box>
+
+          {/* Particles around the icon */}
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={`particle-${i}`}
+              animate={{
+                x: [0, Math.random() * 20 - 10],
+                y: [0, Math.random() * 20 - 10],
+                opacity: [0.7, 0.3, 0.7],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 3 + Math.random() * 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut",
+                delay: i * 0.3,
+              }}
+              style={{
+                position: 'absolute',
+                width: 4 + Math.random() * 6,
+                height: 4 + Math.random() * 6,
+                borderRadius: '50%',
+                backgroundColor: theme.palette.primary.main,
+                filter: 'blur(1px)',
+                top: `${Math.random() * 30 + 10}%`,
+                left: `${Math.random() * 20 + 5}%`,
+                zIndex: 0,
+              }}
+            />
+          ))}
+        </Box>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const HomePage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -957,123 +1199,170 @@ const HomePage: React.FC = () => {
           py: { xs: 8, sm: 10, md: 12, lg: 16 }, // Adjusted padding
           color: theme.palette.text.primary,
           overflow: 'hidden', // Prevent animation overflow
+          position: 'relative',
         }}
         id="features"
       >
+        {/* Background animated shapes */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 0,
+            opacity: 0.7,
+            overflow: 'hidden',
+          }}
+        >
+          <ElegantShape
+            delay={0.3}
+            width={400}
+            height={100}
+            rotate={15}
+            gradient="from-primary"
+            className="right-[-10%] top-[10%]"
+          />
+          
+          <ElegantShape
+            delay={0.5}
+            width={300}
+            height={80}
+            rotate={-10}
+            gradient="from-secondary"
+            className="left-[-5%] bottom-[10%]"
+          />
+          
+          {/* Grid pattern */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '5%',
+              left: '5%',
+              right: '5%',
+              bottom: '5%',
+              opacity: 0.3,
+              backgroundImage: `
+                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '40px 40px',
+              backgroundPosition: 'center center',
+              zIndex: 0,
+            }}
+          />
+        </Box>
+
         <Container maxWidth="xl">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
-            variants={containerVariants}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  when: "beforeChildren",
+                  staggerChildren: 0.2,
+                  duration: 0.5
+                }
+              }
+            }}
           >
-            {/* Section Header */}
-            <motion.div variants={itemVariants}>
-              <Typography
-                variant="h2"
-                component="h2"
-                align="center"
-                sx={{
-                  fontWeight: 700,
-                  mb: 2,
-                  fontSize: { xs: '2.2rem', md: '2.8rem' }
+            {/* Enhanced Section Header */}
+            <Box sx={{ position: 'relative', mb: 8, textAlign: 'center' }}>
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: -20 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30
+                    }
+                  }
                 }}
               >
-                Everything You Need
-              </Typography>
-            </motion.div>
+                <Typography
+                  variant="h2"
+                  component="h2"
+                  align="center"
+                  sx={{
+                    fontWeight: 700,
+                    mb: 2,
+                    fontSize: { xs: '2.2rem', md: '2.8rem' },
+                    backgroundImage: `linear-gradient(135deg, ${theme.palette.text.primary} 0%, ${theme.palette.primary.main} 50%, ${theme.palette.secondary.main} 100%)`,
+                    backgroundClip: 'text',
+                    textFillColor: 'transparent',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    position: 'relative',
+                    display: 'inline-block',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: -8,
+                      left: '25%',
+                      width: '50%',
+                      height: 3,
+                      borderRadius: '2px',
+                      background: `linear-gradient(90deg, ${alpha(theme.palette.primary.main, 0)}, ${theme.palette.primary.main}, ${theme.palette.secondary.main}, ${alpha(theme.palette.secondary.main, 0)})`,
+                    }
+                  }}
+                >
+                  Everything You Need
+                </Typography>
+              </motion.div>
 
-            <motion.div variants={itemVariants}>
-              <Typography
-                variant="h6"
-                component="p"
-                align="center"
-                color="textSecondary"
-                sx={{
-                  maxWidth: '800px',
-                  mx: 'auto',
-                  mb: { xs: 8, md: 12 },
-                  fontSize: '1.1rem',
-                  lineHeight: 1.7
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      delay: 0.2,
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 30
+                    }
+                  }
                 }}
               >
-                OncoTracker provides a suite of tools designed for clarity and confidence 
-                throughout your pet's cancer treatment journey.
-              </Typography>
-            </motion.div>
+                <Typography
+                  variant="h6"
+                  component="p"
+                  align="center"
+                  color="textSecondary"
+                  sx={{
+                    maxWidth: '800px',
+                    mx: 'auto',
+                    mb: { xs: 8, md: 10 },
+                    fontSize: '1.1rem',
+                    lineHeight: 1.7,
+                    position: 'relative',
+                  }}
+                >
+                  OncoTracker provides a suite of tools designed for clarity and confidence 
+                  throughout your pet's cancer treatment journey.
+                </Typography>
+              </motion.div>
+            </Box>
 
-            {/* Redesigned Feature Grid */}
+            {/* Enhanced Feature Cards Grid */}
             <Grid container spacing={5} alignItems="stretch">
               {featureList.map((feature, index) => (
                 <Grid item xs={12} sm={6} md={4} key={index}>
-                  <motion.div
-                    variants={cardVariants} // Reuse existing card variants for consistency
-                    custom={index} // Stagger animation
-                    whileHover="hover" // Reuse hover effect
-                    style={{ height: '100%' }} // Ensure motion div fills grid item height
-                  >
-                    <Box
-                      sx={{
-                        p: { xs: 3, md: 4 },
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        borderRadius: 4,
-                        border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
-                        background: alpha(theme.palette.background.paper, 0.8),
-                        backdropFilter: 'blur(5px)', // Subtle glass effect
-                        transition: 'all 0.3s ease',
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
-                        '&:hover': {
-                          borderColor: alpha(theme.palette.primary.main, 0.4),
-                          background: alpha(theme.palette.background.paper, 0.95),
-                          boxShadow: '0 10px 30px rgba(0,0,0,0.07)',
-                          // Icon color change on hover is handled below
-                        },
-                      }}
-                    >
-                      {/* Icon with background */}
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: 64,
-                          height: 64,
-                          backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                          borderRadius: '18px', // Squircle shape
-                          color: theme.palette.primary.main,
-                          mb: 3,
-                          transition: 'all 0.3s ease',
-                          fontSize: '2rem',
-                          [`.MuiGrid-item:hover &`]: { // Target icon color on parent hover
-                            backgroundColor: theme.palette.primary.main,
-                            color: '#fff',
-                          },
-                        }}
-                      >
-                        {feature.icon}
-                      </Box>
-                      {/* Title */}
-                      <Typography 
-                        variant="h5" 
-                        component="h3" 
-                        fontWeight={600} 
-                        gutterBottom 
-                        sx={{ mb: 1.5 }}
-                      >
-                        {feature.title}
-                      </Typography>
-                      {/* Description */}
-                      <Typography 
-                        color="textSecondary" 
-                        sx={{ lineHeight: 1.6, flexGrow: 1 }}
-                      >
-                        {feature.description}
-                      </Typography>
-                    </Box>
-                  </motion.div>
+                  <FeatureCard 
+                    icon={feature.icon} 
+                    title={feature.title} 
+                    description={feature.description} 
+                    index={index}
+                  />
                 </Grid>
               ))}
             </Grid>
