@@ -171,7 +171,7 @@ const HomePage: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: alpha(theme.palette.primary.dark, 0.5),
+            backgroundColor: alpha(theme.palette.primary.dark, 0.55),
             zIndex: 2,
           }
         }}
@@ -187,12 +187,12 @@ const HomePage: React.FC = () => {
               component="h1"
               sx={{
                 fontWeight: 800,
-                fontSize: { xs: '2.8rem', sm: '3.5rem', md: '4.5rem' },
+                fontSize: { xs: '2.8rem', sm: '3.5rem', md: '4.2rem' },
                 mb: 2,
-                textShadow: '0 3px 8px rgba(0,0,0,0.3)'
+                textShadow: '0 3px 8px rgba(0,0,0,0.4)'
               }}
             >
-              Support Your Pet Through Cancer Care
+              Navigate Your Pet's Cancer Journey with Confidence
             </Typography>
           </motion.div>
 
@@ -204,19 +204,19 @@ const HomePage: React.FC = () => {
           >
             <Typography
               variant="h5"
-              component="h2"
+              component="p"
               sx={{
                 fontWeight: 400,
                 fontSize: { xs: '1.1rem', sm: '1.3rem' },
-                color: 'rgba(255,255,255,0.9)',
+                color: 'rgba(255,255,255,0.95)',
                 mb: 5,
-                maxWidth: '700px',
+                maxWidth: '750px',
                 mx: 'auto',
                 lineHeight: 1.7,
                 textShadow: '0 2px 5px rgba(0,0,0,0.2)'
               }}
             >
-              OncoTracker provides intuitive tools for pet owners and vets to monitor symptoms, track treatments, and enhance quality of life together.
+              Managing cancer care can feel overwhelming. OncoTracker simplifies symptom tracking, streamlines vet communication, and empowers you to focus on your pet's comfort and quality of life.
             </Typography>
           </motion.div>
 
