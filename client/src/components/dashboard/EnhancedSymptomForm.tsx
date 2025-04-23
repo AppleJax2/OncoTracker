@@ -122,14 +122,15 @@ const EnhancedSymptomForm: React.FC<SymptomFormProps> = ({
       initial="hidden"
       animate="visible"
     >
-      <Paper 
-        elevation={0}
-        sx={{ 
-          p: 4, 
-          borderRadius: 3,
-          border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-          backgroundImage: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.9)} 0%, ${alpha(theme.palette.background.paper, 1)} 100%)`
+      <Box
+        component={Paper}
+        elevation={2}
+        sx={{
+          p: 4,
+          borderRadius: 4,
+          backgroundColor: theme.palette.background.paper,
+          boxShadow: '0 8px 30px rgba(0,0,0,0.07)',
+          mb: 4,
         }}
       >
         <motion.div variants={itemVariants}>
@@ -468,7 +469,7 @@ const EnhancedSymptomForm: React.FC<SymptomFormProps> = ({
             </Button>
           </motion.div>
         </motion.div>
-      </Paper>
+      </Box>
     </motion.div>
   );
 };

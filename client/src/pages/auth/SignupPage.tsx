@@ -478,8 +478,9 @@ const SignupPage: React.FC = () => {
     return true; // Should not happen
   }, [activeStep, role, clinicName, firstName, lastName, email, password, passwordConfirm, agreeToTerms, formErrors, loading]);
 
-  // Modern gradient background matching theme.ts colors
-  const backgroundGradient = 'linear-gradient(135deg, #4a8a88 0%, #65a8a6 100%)';
+  // Replace gradient variable with a solid color or theme color
+  const backgroundColor = theme.palette.background.default; // Was backgroundGradient
+  const buttonTextColor = '#ffffff';
 
   // Custom Grid component that works with 'item' prop
   const Grid = MuiGrid;
@@ -491,7 +492,7 @@ const SignupPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: backgroundGradient,
+        background: backgroundColor,
         backgroundAttachment: 'fixed',
         py: { xs: 4, sm: 6, md: 8 },
         px: 2,
@@ -530,11 +531,13 @@ const SignupPage: React.FC = () => {
                             width: 80, 
                             height: 80, 
                             borderRadius: '50%', 
-                            backgroundColor: 'rgba(101, 168, 166, 0.1)', // Updated to match theme teal
+                            // Replace backgroundImage gradient with solid background color
+                            // backgroundImage: 'linear-gradient(90deg, #4a8a88, #65a8a6)',
+                            backgroundColor: theme.palette.primary.main, // Use theme color
+                            boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`,
                             display: 'flex', 
                             alignItems: 'center', 
                             justifyContent: 'center',
-                            boxShadow: '0 4px 14px rgba(101, 168, 166, 0.15)' // Updated to match theme teal
                           }}
                         >
                           <Pets sx={{ fontSize: 38, color: theme.palette.primary.main }} />

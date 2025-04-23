@@ -36,6 +36,7 @@ import {
   CheckCircleOutline
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { alpha } from '@mui/material/styles';
 
 // Animation component wrapper
 const MotionBox = motion(Box);
@@ -56,6 +57,10 @@ const LoginPage: React.FC = () => {
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // Replace gradient variable with solid color
+  const backgroundColor = theme.palette.background.default; // Was backgroundGradient
+  const buttonTextColor = '#ffffff';
 
   // Check for success message from signup
   useEffect(() => {
@@ -163,9 +168,6 @@ const LoginPage: React.FC = () => {
     tap: { scale: 0.98 }
   };
 
-  // Updated warm gradient background matching theme.ts colors
-  const backgroundGradient = 'linear-gradient(135deg, #4a8a88 0%, #65a8a6 100%)';
-
   return (
     <Box
       sx={{
@@ -173,7 +175,7 @@ const LoginPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: backgroundGradient,
+        background: backgroundColor,
         backgroundAttachment: 'fixed',
         py: { xs: 4, sm: 6, md: 8 },
         px: 2,
@@ -232,11 +234,8 @@ const LoginPage: React.FC = () => {
                       component="h1" 
                       fontWeight={700}
                       color="primary.dark"
-                      sx={{ 
-                        backgroundImage: 'linear-gradient(90deg, #4a8a88, #65a8a6)', // Updated to match theme teal
-                        backgroundClip: 'text',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
+                      sx={{
+                        color: theme.palette.primary.dark, // Use solid color
                         textShadow: '0 2px 5px rgba(0,0,0,0.05)'
                       }}
                     >
@@ -440,26 +439,26 @@ const LoginPage: React.FC = () => {
                       fullWidth
                       variant="contained"
                       disabled={loading}
-                      sx={{ 
+                      sx={{
                         py: 1.8,
-                        mt: 2,
+                        px: 3,
                         borderRadius: 6,
                         textTransform: 'none',
                         fontSize: '1.1rem',
                         fontWeight: 600,
-                        color: 'white',
-                        background: 'linear-gradient(90deg, #4a8a88 0%, #65a8a6 100%)', // Updated to match theme teal
+                        color: buttonTextColor,
+                        backgroundColor: theme.palette.primary.main, // Use solid color
                         position: 'relative',
                         overflow: 'hidden',
                         transition: 'all 0.25s ease-in-out',
                         '&:hover': {
                           transform: 'translateY(-2px)',
-                          boxShadow: `0 6px 20px rgba(101, 168, 166, 0.3)`, // Updated to match theme teal
-                          background: 'linear-gradient(90deg, #4a8a88 10%, #65a8a6 90%)', // Updated to match theme teal
+                          boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+                          backgroundColor: theme.palette.primary.dark, // Darken on hover
                         },
                         '&:active': {
                           transform: 'translateY(0)',
-                          boxShadow: `0 2px 10px rgba(101, 168, 166, 0.2)`, // Updated to match theme teal
+                          boxShadow: `0 2px 10px ${alpha(theme.palette.primary.main, 0.2)}`,
                         },
                         '&:disabled': {
                           background: theme.palette.grey[400],

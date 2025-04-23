@@ -76,9 +76,9 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ userName }) => {
       initial="hidden"
       animate="visible"
       style={{
-        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.15)} 0%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
-        borderRadius: '16px',
-        padding: isMobile ? '24px 20px' : '32px',
+        borderRadius: 4,
+        backgroundColor: alpha(theme.palette.primary.light, 0.08),
+        p: { xs: 3, md: 4 },
         position: 'relative',
         overflow: 'hidden',
         boxShadow: '0 8px 30px rgba(0, 0, 0, 0.06)',
@@ -89,12 +89,12 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ userName }) => {
       <Box
         sx={{
           position: 'absolute',
-          top: '-10%',
-          right: '-5%',
-          width: '250px',
-          height: '250px',
+          top: '10%',
+          right: '5%',
+          backgroundColor: alpha(theme.palette.primary.light, 0.15),
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.15)} 0%, transparent 70%)`,
+          width: '150px',
+          height: '150px',
           zIndex: 0
         }}
       />
@@ -102,12 +102,12 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ userName }) => {
       <Box
         sx={{
           position: 'absolute',
-          bottom: '-5%',
-          left: '5%',
-          width: '180px',
-          height: '180px',
+          bottom: '10%',
+          left: '10%',
+          backgroundColor: alpha(theme.palette.secondary.light, 0.1),
           borderRadius: '50%',
-          background: `radial-gradient(circle, ${alpha(theme.palette.secondary.light, 0.1)} 0%, transparent 70%)`,
+          width: '100px',
+          height: '100px',
           zIndex: 0
         }}
       />
@@ -130,7 +130,7 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ userName }) => {
                   variant="h4"
                   sx={{
                     fontWeight: 700,
-                    background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                    backgroundColor: theme.palette.primary.main,
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
@@ -205,9 +205,12 @@ const WelcomeSection: React.FC<WelcomeSectionProps> = ({ userName }) => {
                 color="primary"
                 startIcon={<AddCircleRounded />}
                 sx={{
-                  borderRadius: '12px',
-                  padding: '10px 20px',
-                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.15)',
+                  py: 1.5,
+                  px: 4,
+                  borderRadius: '30px',
+                  backgroundColor: theme.palette.primary.main,
+                  color: '#fff',
+                  boxShadow: `0 4px 15px ${alpha(theme.palette.primary.main, 0.3)}`,
                   fontWeight: 600,
                   fontSize: '0.95rem',
                   textTransform: 'none',
