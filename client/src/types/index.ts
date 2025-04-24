@@ -184,6 +184,8 @@ export interface Pet {
   createdAt: string;
   updatedAt: string;
   age?: string; // Virtual property from backend
+  photoUrl?: string; // URL to pet's photo
+  treatmentStatus?: 'active' | 'completed' | 'pending'; // Status of treatment
 }
 
 // Based on the Report model and sub-schema

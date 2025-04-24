@@ -1,26 +1,5 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import {
-  Box,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  Divider,
-  Avatar,
-  Button
-} from '@mui/material';
-import {
-  Home as HomeIcon,
-  AddCircle as PlusCircleIcon,
-  Group as UserGroupIcon,
-  Settings as SettingsIcon,
-  AssignmentTurnedIn as ClipboardIcon,
-  Favorite as HeartIcon,
-  Person as UserIcon
-} from '@mui/icons-material';
 
 interface SidebarProps {
   closeSidebar?: () => void;
@@ -33,16 +12,16 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
   
   // Define navigation based on user role
   const petParentNavigation = [
-    { name: 'Dashboard', href: '/pet-parent/dashboard', icon: HomeIcon },
-    { name: 'Add New Pet', href: '/pet-parent/pets/new', icon: PlusCircleIcon },
-    { name: 'Find Veterinarian', href: '/pet-parent/find-vets', icon: UserGroupIcon },
-    { name: 'Settings', href: '/settings', icon: SettingsIcon },
+    { name: 'Dashboard', href: '/pet-parent/dashboard', icon: 'bi-house' },
+    { name: 'Add New Pet', href: '/pet-parent/pets/new', icon: 'bi-plus-circle' },
+    { name: 'Find Veterinarian', href: '/pet-parent/find-vets', icon: 'bi-people' },
+    { name: 'Settings', href: '/settings', icon: 'bi-gear' },
   ];
   
   const vetNavigation = [
-    { name: 'Dashboard', href: '/vet/dashboard', icon: HomeIcon },
-    { name: 'Link Requests', href: '/vet/link-requests', icon: UserGroupIcon },
-    { name: 'Settings', href: '/settings', icon: SettingsIcon },
+    { name: 'Dashboard', href: '/vet/dashboard', icon: 'bi-house' },
+    { name: 'Link Requests', href: '/vet/link-requests', icon: 'bi-people' },
+    { name: 'Settings', href: '/settings', icon: 'bi-gear' },
   ];
   
   const navigation = user?.role === 'vet' ? vetNavigation : petParentNavigation;
@@ -55,165 +34,99 @@ const Sidebar = ({ closeSidebar }: SidebarProps) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', pt: 2, pb: 2, overflow: 'auto' }}>
+    <div className="d-flex flex-column h-100 pt-2 pb-2 overflow-auto">
       {/* Logo */}
-      <Box sx={{ display: 'flex', alignItems: 'center', px: 2, mb: 3 }}>
-        <Box sx={{ bgcolor: 'rgba(5, 150, 105, 0.1)', p: 1, borderRadius: 1 }}>
-          <HeartIcon sx={{ color: 'primary.main', fontSize: 32 }} />
-        </Box>
-        <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 700 }}>
-          <span style={{ color: '#059669' }}>Onco</span>Tracker
-        </Typography>
-      </Box>
+      <div className="d-flex align-items-center px-3 mb-3">
+        <div className="bg-primary bg-opacity-10 p-2 rounded">
+          <i className="bi bi-heart text-primary fs-4"></i>
+        </div>
+        <h5 className="ms-2 fw-bold mb-0">
+          <span className="text-primary">Onco</span>Tracker
+        </h5>
+      </div>
       
       {/* User info at top for mobile view */}
       {user && (
-        <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', px: 2, mb: 3 }}>
-          <Avatar sx={{ bgcolor: 'rgba(5, 150, 105, 0.1)', color: 'primary.dark', width: 40, height: 40 }}>
+        <div className="d-flex d-md-none align-items-center px-3 mb-3">
+          <div className="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
             {user.firstName ? user.firstName.charAt(0) : 'U'}
-          </Avatar>
-          <Box sx={{ ml: 1.5 }}>
-            <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-              {user.firstName || 'User'} {user.lastName || ''}
-            </Typography>
-            <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-              {user.role === 'pet-parent' ? 'Pet Parent' : user.role || 'Unknown'}
-            </Typography>
-          </Box>
-        </Box>
+          </div>
+          <div className="ms-2">
+            <div className="fw-medium text-dark">{user.firstName || 'User'} {user.lastName || ''}</div>
+            <small className="text-muted text-capitalize">{user.role === 'pet-parent' ? 'Pet Parent' : user.role || 'Unknown'}</small>
+          </div>
+        </div>
       )}
       
       {/* Navigation */}
-      <Box sx={{ flexGrow: 1 }}>
-        <Box sx={{ px: 2, mb: 1 }}>
-          <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-            Main
-          </Typography>
-        </Box>
+      <div className="flex-grow-1">
+        <div className="px-3 mb-1">
+          <small className="fw-semibold text-uppercase text-muted letter-spacing-1">Main</small>
+        </div>
         
-        <List sx={{ px: 1 }} component="nav">
+        <nav className="nav flex-column px-2">
           {navigation.map((item) => {
             const isActive = location.pathname.startsWith(item.href);
             return (
-              <ListItem key={item.name} disablePadding sx={{ mb: 0.5 }}>
-                <ListItemButton
-                  component={NavLink}
-                  to={item.href}
-                  onClick={closeSidebar}
-                  sx={{
-                    borderRadius: 1.5,
-                    py: 1,
-                    bgcolor: isActive ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
-                    color: isActive ? 'primary.main' : 'text.primary',
-                    '&:hover': {
-                      bgcolor: 'rgba(5, 150, 105, 0.05)',
-                      color: 'primary.main',
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ 
-                    color: isActive ? 'primary.main' : 'text.secondary',
-                    minWidth: 36
-                  }}>
-                    <item.icon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary={item.name} 
-                    primaryTypographyProps={{ 
-                      fontSize: '0.875rem',
-                      fontWeight: 500
-                    }} 
-                  />
-                </ListItemButton>
-              </ListItem>
+              <NavLink
+                key={item.name}
+                to={item.href}
+                onClick={closeSidebar}
+                className={`nav-link py-2 px-3 mb-1 rounded ${isActive ? 'active bg-primary bg-opacity-10 text-primary' : 'text-dark'}`}
+              >
+                <div className="d-flex align-items-center">
+                  <i className={`${item.icon} ${isActive ? 'text-primary' : 'text-muted'} me-3`}></i>
+                  <span className="fw-medium fs-6">{item.name}</span>
+                </div>
+              </NavLink>
             );
           })}
-        </List>
+        </nav>
         
         {user?.role === 'pet-parent' && (
           <>
-            <Divider sx={{ my: 2 }} />
-            <Box sx={{ px: 2, mb: 1 }}>
-              <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                Resources
-              </Typography>
-            </Box>
-            <List sx={{ px: 1 }}>
-              <ListItem disablePadding>
-                <ListItemButton
-                  component={NavLink}
-                  to="/resources"
-                  onClick={closeSidebar}
-                  sx={{
-                    borderRadius: 1.5,
-                    py: 1,
-                    bgcolor: location.pathname === '/resources' ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
-                    color: location.pathname === '/resources' ? 'primary.main' : 'text.primary',
-                    '&:hover': {
-                      bgcolor: 'rgba(5, 150, 105, 0.05)',
-                      color: 'primary.main',
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ 
-                    color: location.pathname === '/resources' ? 'primary.main' : 'text.secondary',
-                    minWidth: 36
-                  }}>
-                    <ClipboardIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText 
-                    primary="Cancer Resources" 
-                    primaryTypographyProps={{ 
-                      fontSize: '0.875rem',
-                      fontWeight: 500
-                    }} 
-                  />
-                </ListItemButton>
-              </ListItem>
-            </List>
+            <hr className="my-3" />
+            <div className="px-3 mb-1">
+              <small className="fw-semibold text-uppercase text-muted letter-spacing-1">Resources</small>
+            </div>
+            <nav className="nav flex-column px-2">
+              <NavLink
+                to="/resources"
+                onClick={closeSidebar}
+                className={({ isActive }) => `nav-link py-2 px-3 rounded ${isActive ? 'active bg-primary bg-opacity-10 text-primary' : 'text-dark'}`}
+              >
+                <div className="d-flex align-items-center">
+                  <i className={`bi-clipboard ${location.pathname === '/resources' ? 'text-primary' : 'text-muted'} me-3`}></i>
+                  <span className="fw-medium fs-6">Cancer Resources</span>
+                </div>
+              </NavLink>
+            </nav>
           </>
         )}
-      </Box>
+      </div>
       
       {/* User info at bottom for desktop view */}
       {user && (
-        <Box sx={{ 
-          display: { xs: 'none', md: 'flex' }, 
-          flexDirection: 'column',
-          borderTop: 1, 
-          borderColor: 'divider',
-          pt: 2,
-          px: 2
-        }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Avatar sx={{ bgcolor: 'rgba(5, 150, 105, 0.1)', color: 'primary.dark', width: 36, height: 36 }}>
-              <UserIcon fontSize="small" />
-            </Avatar>
-            <Box sx={{ ml: 1.5 }}>
-              <Typography variant="body2" sx={{ fontWeight: 500, color: 'text.primary' }}>
-                {user.firstName || 'User'} {user.lastName || ''}
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-                {user.role === 'pet-parent' ? 'Pet Parent' : user.role || 'Unknown'}
-              </Typography>
-            </Box>
-          </Box>
-          <Button 
+        <div className="d-none d-md-block border-top pt-3 px-3 mt-auto">
+          <div className="d-flex align-items-center">
+            <div className="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px' }}>
+              <i className="bi bi-person"></i>
+            </div>
+            <div className="ms-2">
+              <div className="fw-medium text-dark">{user.firstName || 'User'} {user.lastName || ''}</div>
+              <small className="text-muted text-capitalize">{user.role === 'pet-parent' ? 'Pet Parent' : user.role || 'Unknown'}</small>
+            </div>
+          </div>
+          <button 
             onClick={handleViewProfile}
-            sx={{ 
-              mt: 1, 
-              justifyContent: 'flex-start', 
-              color: 'primary.main',
-              fontSize: '0.75rem',
-              fontWeight: 500,
-              '&:hover': { bgcolor: 'transparent', color: 'primary.dark' }
-            }}
+            className="btn btn-link text-primary p-0 mt-1 text-decoration-none fw-medium"
+            style={{ fontSize: '0.75rem' }}
           >
             View Profile
-          </Button>
-        </Box>
+          </button>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 

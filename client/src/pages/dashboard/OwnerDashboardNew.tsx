@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, useTheme, CircularProgress, Alert, Typography, useMediaQuery } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Pet } from '../../types';
 import api from '../../services/api';
-import { motion } from 'framer-motion';
 
-// Import our new enhanced components
+// Import our components
 import WelcomeSection from '../../components/dashboard/WelcomeSection';
-import AnimatedPetCard from '../../components/dashboard/AnimatedPetCard';
 import ResourcesSection from '../../components/dashboard/ResourcesSection';
 
 const OwnerDashboardNew: React.FC = () => {
@@ -15,9 +13,6 @@ const OwnerDashboardNew: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
-  const theme = useTheme();
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up('xl'));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -42,289 +37,159 @@ const OwnerDashboardNew: React.FC = () => {
     fetchPets();
   }, []);
 
-  // Animation variants
-  const pageVariants = {
-    initial: { opacity: 0 },
-    animate: { 
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        when: "beforeChildren",
-        staggerChildren: 0.2
-      }
-    },
-    exit: { opacity: 0 }
-  };
-
-  const sectionVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.7,
-        ease: "easeOut" 
-      }
-    }
-  };
-
   // Content to render based on loading and error states
   const renderContent = () => {
     if (loading) {
       return (
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            py: 8,
-            flexDirection: 'column'
-          }}
-        >
-          <CircularProgress size={60} thickness={4} sx={{ mb: 3, color: theme.palette.primary.main }} />
-          <Typography variant="body1" color="text.secondary">
-            Loading your pet's information...
-          </Typography>
-        </Box>
+        <div className="d-flex justify-content-center align-items-center flex-column py-5">
+          <div className="spinner-border text-primary mb-3" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="text-muted">Loading your pet's information...</p>
+        </div>
       );
     }
 
     if (error) {
       return (
-        <Alert 
-          severity="error" 
-          sx={{ 
-            my: 2, 
-            borderRadius: 2, 
-            py: 2,
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-          }}
-        >
+        <div className="alert alert-danger my-3 rounded-3 shadow-sm py-3" role="alert">
           {error}
-        </Alert>
+        </div>
       );
     }
 
     if (pets.length === 0) {
       return (
-        <motion.div variants={sectionVariants}>
-          <Box 
-            sx={{ 
-              textAlign: 'center', 
-              py: 8, 
-              px: 3,
-              bgcolor: 'background.paper',
-              borderRadius: 3,
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-              maxWidth: 700,
-              mx: 'auto'
-            }}
+        <div className="text-center py-5 px-3 bg-white rounded-4 shadow-sm mx-auto" style={{ maxWidth: '700px' }}>
+          <img src="/placeholder-pet.svg" alt="No pets" className="mb-3 opacity-75" width="180" height="180" />
+          <h4 className="mb-2 fw-semibold">No pets found</h4>
+          <p className="mb-4 text-muted mx-auto" style={{ maxWidth: '500px' }}>
+            Get started by adding your pet's information. This will help us track their cancer treatment and symptoms effectively.
+          </p>
+          
+          <Link 
+            to="/pet-parent/pets/new"
+            className="btn btn-primary px-4 py-2 rounded-pill shadow-sm"
           >
-            <Box 
-              component="img" 
-              src="/placeholder-pet.svg" 
-              alt="No pets" 
-              sx={{ 
-                width: 180, 
-                height: 180, 
-                mb: 3,
-                opacity: 0.8 
-              }} 
-            />
-            <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, color: theme.palette.text.primary }}>
-              No pets found
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 4, color: theme.palette.text.secondary, maxWidth: 500, mx: 'auto' }}>
-              Get started by adding your pet's information. This will help us track their cancer treatment and symptoms effectively.
-            </Typography>
-            
-            <motion.div
-              whileHover={{ y: -3 }}
-              whileTap={{ y: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Box 
-                component="a" 
-                href="/pet-parent/pets/new"
-                sx={{ 
-                  display: 'inline-block',
-                  py: 1.5,
-                  px: 4,
-                  bgcolor: theme.palette.primary.main,
-                  color: '#fff',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  textDecoration: 'none',
-                  boxShadow: `0 4px 14px ${theme.palette.primary.main}40`,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    bgcolor: theme.palette.primary.dark,
-                    boxShadow: `0 6px 20px ${theme.palette.primary.main}60`,
-                  }
-                }}
-              >
-                Add Your First Pet
-              </Box>
-            </motion.div>
-          </Box>
-        </motion.div>
+            Add Your First Pet
+          </Link>
+        </div>
       );
     }
 
     return (
       <>
         {/* Pet Cards Section */}
-        <motion.div variants={sectionVariants}>
-          <Box sx={{ mb: 6 }}>
-            <Typography 
-              variant="h5" 
-              sx={{ 
-                mb: 3, 
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                '&::before': {
-                  content: '""',
-                  display: 'block',
-                  width: 3,
-                  height: 24,
-                  bgcolor: theme.palette.primary.main,
-                  mr: 2,
-                  borderRadius: 1
-                }
-              }}
-            >
-              Your Pets
-            </Typography>
+        <div className="mb-5">
+          <h4 className="mb-3 fw-bold d-flex align-items-center">
+            <span className="bg-primary d-inline-block me-2" style={{ width: '3px', height: '24px', borderRadius: '4px' }}></span>
+            Your Pets
+          </h4>
+          
+          <div className="row g-4">
+            {/* Render pet cards */}
+            {pets.map((pet, index) => (
+              <div key={pet._id} className="col-12 col-sm-6 col-md-4 col-xl-3">
+                <div 
+                  className="card h-100 border-0 shadow-sm rounded-4 overflow-hidden" 
+                  style={{ transition: 'all 0.3s ease' }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-8px)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                >
+                  {pet.photoUrl && (
+                    <img 
+                      src={pet.photoUrl} 
+                      alt={pet.name} 
+                      className="card-img-top object-fit-cover" 
+                      height="160"
+                      style={{ objectPosition: 'center' }}
+                    />
+                  )}
+                  <div className="card-body">
+                    <div className="d-flex justify-content-between align-items-start">
+                      <h5 className="card-title fw-bold mb-1">{pet.name}</h5>
+                      {pet.treatmentStatus === 'active' && (
+                        <span className="badge bg-success rounded-pill px-2 fs-7">Active Treatment</span>
+                      )}
+                    </div>
+                    <p className="card-text text-muted small text-capitalize mb-3">
+                      {pet.species} • {pet.breed} • {pet.age} years old
+                    </p>
+                    <Link 
+                      to={`/pet-parent/pets/${pet._id}`} 
+                      className="btn btn-primary rounded-pill w-100"
+                    >
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
             
-            <Box 
-              sx={{ 
-                display: 'grid', 
-                gridTemplateColumns: {
-                  xs: '1fr',
-                  sm: 'repeat(2, 1fr)',
-                  md: 'repeat(3, 1fr)',
-                  lg: 'repeat(3, 1fr)',
-                  xl: 'repeat(4, 1fr)'
-                },
-                gap: { xs: 3, md: 4 }
-              }}
-            >
-              {/* Render pet cards */}
-              {pets.map((pet, index) => (
-                <AnimatedPetCard 
-                  key={pet._id} 
-                  pet={pet} 
-                  index={index} 
-                />
-              ))}
-              
-              {/* Add pet card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ 
-                  opacity: 1, 
-                  y: 0, 
-                  transition: { 
-                    delay: 0.1 + pets.length * 0.05, 
-                    duration: 0.5 
-                  } 
+            {/* Add pet card */}
+            <div className="col-12 col-sm-6 col-md-4 col-xl-3">
+              <Link 
+                to="/pet-parent/pets/new"
+                className="card h-100 border-2 border-dashed rounded-4 bg-white text-center d-flex flex-column align-items-center justify-content-center p-4 text-decoration-none text-dark"
+                style={{ 
+                  minHeight: '200px', 
+                  transition: 'all 0.3s ease'
                 }}
-                whileHover={{ 
-                  y: -8,
-                  boxShadow: '0 12px 24px rgba(0,0,0,0.1)',
-                  transition: { duration: 0.3 }
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px)';
+                  e.currentTarget.style.borderColor = 'var(--bs-primary)';
+                  const icon = e.currentTarget.querySelector('.add-icon') as HTMLElement;
+                  if (icon) {
+                    icon.style.backgroundColor = 'var(--bs-primary)';
+                    icon.style.color = 'white';
+                    icon.style.transform = 'scale(1.1)';
+                  }
                 }}
-                style={{ height: '100%' }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.borderColor = '';
+                  const icon = e.currentTarget.querySelector('.add-icon') as HTMLElement;
+                  if (icon) {
+                    icon.style.backgroundColor = '';
+                    icon.style.color = '';
+                    icon.style.transform = '';
+                  }
+                }}
               >
-                <Box
-                  component="a"
-                  href="/pet-parent/pets/new"
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 3,
-                    border: '2px dashed',
-                    borderColor: 'divider',
-                    bgcolor: 'background.paper',
-                    p: 4,
-                    height: '100%',
-                    minHeight: 200,
-                    textDecoration: 'none',
-                    color: 'text.primary',
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      borderColor: theme.palette.primary.main,
-                      '& .add-icon': {
-                        bgcolor: theme.palette.primary.main,
-                        color: 'white',
-                        transform: 'scale(1.1)'
-                      }
-                    }
+                <div 
+                  className="add-icon rounded-circle d-flex align-items-center justify-content-center mb-3 bg-primary bg-opacity-10 text-primary fs-3"
+                  style={{ 
+                    width: '60px', 
+                    height: '60px',
+                    transition: 'all 0.3s ease'
                   }}
                 >
-                  <Box 
-                    className="add-icon"
-                    sx={{ 
-                      width: 60,
-                      height: 60,
-                      borderRadius: '50%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      bgcolor: theme.palette.primary.light + '30',
-                      color: theme.palette.primary.main,
-                      fontSize: 30,
-                      mb: 2,
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    +
-                  </Box>
-                  <Typography variant="body1" fontWeight={500}>
-                    Add another pet
-                  </Typography>
-                </Box>
-              </motion.div>
-            </Box>
-          </Box>
-        </motion.div>
+                  +
+                </div>
+                <div className="fw-medium">Add another pet</div>
+              </Link>
+            </div>
+          </div>
+        </div>
 
         {/* Resources Section */}
-        <motion.div variants={sectionVariants}>
-          <Box sx={{ mb: 6 }}>
-            <ResourcesSection />
-          </Box>
-        </motion.div>
+        <div className="mb-5">
+          <ResourcesSection />
+        </div>
       </>
     );
   };
 
   return (
-    <motion.div
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      style={{ width: '100%' }}
-    >
-      <Container 
-        maxWidth={false}
-        sx={{ 
-          py: { xs: 3, md: 4 },
-          maxWidth: isLargeScreen ? '1600px' : isMediumScreen ? '1200px' : 'lg',
-          px: { xs: 2, sm: 3, md: 4 }
-        }}
-      >
-        <Box sx={{ mb: { xs: 4, md: 5 } }}>
+    <div className="w-100 fade-in">
+      <div className="container-fluid py-3 py-md-4 px-3 px-md-4">
+        <div className="mb-4 mb-md-5">
           <WelcomeSection userName={user?.firstName || ''} />
-        </Box>
+        </div>
         
         {renderContent()}
-      </Container>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

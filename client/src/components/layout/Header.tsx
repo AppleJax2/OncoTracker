@@ -1,18 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  AppBar,
-  Toolbar,
-  Box,
-  Typography,
-  Button,
-  IconButton,
-  Container
-} from '@mui/material';
-import {
-  LogoutOutlined as LogoutIcon,
-  SettingsOutlined as SettingsIcon
-} from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Header: React.FC = () => {
@@ -24,102 +11,73 @@ const Header: React.FC = () => {
   };
 
   return (
-    <AppBar 
-      position="sticky" 
-      elevation={0} 
-      color="inherit" 
-      sx={{ 
-        borderBottom: '1px solid', 
-        borderColor: 'rgba(5, 150, 105, 0.1)',
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
-      }}
-    >
-      <Container maxWidth="lg">
-        <Toolbar sx={{ py: 0.5, px: { xs: 1, sm: 2 } }}>
-          {/* Logo/Brand */}
-          <Box
-            component={Link}
-            to="/"
-            sx={{
-              typography: 'h6',
-              fontWeight: 'bold',
-              color: 'primary.main',
-              textDecoration: 'none',
-              '&:hover': { color: 'primary.dark' },
-              flexGrow: 1,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
-            }}
-          >
-            <span style={{ color: '#059669' }}>Onco</span>Tracker
-          </Box>
+    <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top py-2">
+      <div className="container">
+        {/* Logo/Brand */}
+        <Link to="/" className="navbar-brand fw-bold d-flex align-items-center">
+          <span className="text-primary">Onco</span>Tracker
+        </Link>
 
-          {/* Navigation/User Actions */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+        {/* Mobile Toggle */}
+        <button 
+          className="navbar-toggler" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#navbarContent"
+          aria-controls="navbarContent" 
+          aria-expanded="false" 
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        {/* Navigation/User Actions */}
+        <div className="collapse navbar-collapse" id="navbarContent">
+          <div className="ms-auto d-flex align-items-center">
             {isAuthenticated && user ? (
               <>
-                <Typography 
-                  variant="body2" 
-                  color="text.secondary" 
-                  sx={{ display: { xs: 'none', sm: 'block' } }}
-                >
+                <span className="text-muted d-none d-sm-block me-3">
                   Welcome, {user.firstName} ({user.role === 'vet' ? 'Veterinarian' : 'Pet Owner'})
-                </Typography>
+                </span>
                 
                 {/* Settings Link */}
-                <IconButton
-                  component={Link}
-                  to="/settings"
-                  color="inherit"
+                <Link 
+                  to="/settings" 
+                  className="btn btn-link text-muted p-1 me-2"
                   aria-label="settings"
-                  edge="end"
-                  size="medium"
-                  sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
                 >
-                  <SettingsIcon />
-                </IconButton>
+                  <i className="bi bi-gear fs-5"></i>
+                </Link>
                 
                 {/* Logout Button */}
-                <IconButton
+                <button
                   onClick={handleLogout}
-                  color="inherit"
+                  className="btn btn-link text-muted p-1"
                   aria-label="logout"
-                  edge="end"
-                  size="medium"
-                  sx={{ color: 'text.secondary', '&:hover': { color: 'error.main' } }}
                 >
-                  <LogoutIcon />
-                </IconButton>
+                  <i className="bi bi-box-arrow-right fs-5"></i>
+                </button>
               </>
             ) : (
               <>
-                <Button 
-                  component={Link} 
+                <Link 
                   to="/login" 
-                  color="inherit"
-                  sx={{ 
-                    color: 'text.secondary',
-                    '&:hover': { color: 'primary.main' }
-                  }}
+                  className="btn btn-link text-muted text-decoration-none me-2"
                 >
                   Login
-                </Button>
-                <Button
-                  component={Link}
+                </Link>
+                <Link
                   to="/signup"
-                  variant="contained"
-                  color="primary"
-                  disableElevation
+                  className="btn btn-primary"
                 >
                   Sign Up
-                </Button>
+                </Link>
               </>
             )}
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 };
 
