@@ -17,6 +17,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Sidebar from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
+import PWAInstallButton from '../common/PWAInstallButton';
 
 const drawerWidth = 280;
 
@@ -147,6 +148,7 @@ const AppLayout: React.FC = () => {
             >
               <Outlet />
             </Box>
+            <PWAInstallButton />
           </Main>
         </>
       ) : (
