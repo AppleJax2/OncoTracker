@@ -42,7 +42,8 @@ import {
   Fade,
   Grow,
   Zoom,
-  useMediaQuery
+  useMediaQuery,
+  Avatar
 } from '@mui/material';
 import { 
   Visibility, 
@@ -63,6 +64,7 @@ import {
   Check
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import PWAInstallButton from '../../components/common/PWAInstallButton';
 
 // Define the MotionBox component
 const MotionBox = motion(Box);
@@ -478,10 +480,9 @@ const SignupPage: React.FC = () => {
     return true; // Should not happen
   }, [activeStep, role, clinicName, firstName, lastName, email, password, passwordConfirm, agreeToTerms, formErrors, loading]);
 
-  // Replace gradient variable with a solid color or theme color
-  const backgroundColor = theme.palette.background.default; // Was backgroundGradient
-  const buttonTextColor = '#ffffff';
-
+  // Use theme colors
+  const backgroundColor = theme.palette.background.default;
+  
   // Custom Grid component that works with 'item' prop
   const Grid = MuiGrid;
 
@@ -493,7 +494,6 @@ const SignupPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         background: backgroundColor,
-        backgroundAttachment: 'fixed',
         py: { xs: 4, sm: 6, md: 8 },
         px: 2,
       }}
@@ -507,71 +507,53 @@ const SignupPage: React.FC = () => {
           <Card 
             elevation={6} 
             sx={{ 
-              borderRadius: 4, 
-              overflow: 'hidden',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-              transition: 'box-shadow 0.3s ease',
-              '&:hover': {
-                boxShadow: '0 15px 35px rgba(0, 0, 0, 0.15)'
-              }
+              borderRadius: theme.shape.borderRadius,
+              overflow: 'visible', 
+              boxShadow: theme.shadows[6],
+              bgcolor: 'background.paper',
+              border: `1px solid ${theme.palette.divider}`,
             }}
           >
             <CardHeader
               title={
-                <Box sx={{ textAlign: 'center', mb: 1 }}>
-                  <Fade in={true} timeout={800}>
+                <Box sx={{ textAlign: 'center', mt: 2, mb: 1 }}>
+                   <Fade in={true} timeout={800}>
                     <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
                       <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
                       >
-                        <Box 
+                        <Avatar 
                           sx={{ 
-                            width: 80, 
-                            height: 80, 
-                            borderRadius: '50%', 
-                            // Replace backgroundImage gradient with solid background color
-                            // backgroundImage: 'linear-gradient(90deg, #4a8a88, #65a8a6)',
-                            backgroundColor: theme.palette.primary.main, // Use theme color
-                            boxShadow: `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`,
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center',
+                            width: 72, 
+                            height: 72, 
+                            bgcolor: alpha(theme.palette.primary.main, 0.1), 
+                            border: `2px solid ${theme.palette.primary.light}`,
                           }}
                         >
-                          <Pets sx={{ fontSize: 38, color: theme.palette.primary.main }} />
-                        </Box>
+                          <Person sx={{ fontSize: 38, color: theme.palette.primary.main }} />
+                        </Avatar>
                       </motion.div>
                     </Box>
                   </Fade>
                   <motion.div variants={itemVariants}>
                     <Typography 
-                      variant="h3" 
+                      variant="h4"
                       component="h1" 
                       fontWeight={700}
-                      color="primary.dark"
-                      sx={{ 
-                        backgroundImage: 'linear-gradient(90deg, #4a8a88, #65a8a6)', // Updated to match theme teal
-                        backgroundClip: 'text',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        textShadow: '0 2px 5px rgba(0,0,0,0.05)'
-                      }}
+                      color="text.primary"
                     >
                       Create Account
                     </Typography>
                   </motion.div>
                   <motion.div variants={itemVariants}>
                     <Typography 
-                      variant="body2" 
+                      variant="body1"
                       color="text.secondary" 
-                      sx={{ 
-                        mt: 1,
-                        fontWeight: 500
-                      }}
+                      sx={{ mt: 0.5 }}
                     >
-                      Join OncoTracker to access pet cancer care tools
+                      Join OncoTracker today
                     </Typography>
                   </motion.div>
                 </Box>
@@ -579,14 +561,10 @@ const SignupPage: React.FC = () => {
               sx={{ pb: 2 }}
             />
 
-            {/* Stepper */}
             <Stepper 
               activeStep={activeStep} 
               connector={<QontoConnector />}
-              sx={{ 
-                px: { xs: 2, sm: 4 }, 
-                pb: 2 
-              }}
+              sx={{ px: { xs: 2, sm: 4 }, pb: 2 }}
               alternativeLabel={!isMobile}
             >
               {steps.map((label, index) => (
@@ -596,8 +574,7 @@ const SignupPage: React.FC = () => {
               ))}
             </Stepper>
 
-            <CardContent>
-              {/* Error Display */}
+            <CardContent sx={{ pt: 2 }}>
               {apiError && (
                 <Grow in={true} timeout={800}>
                   <Alert
@@ -618,98 +595,33 @@ const SignupPage: React.FC = () => {
                 </Grow>
               )}
 
-              {/* Form Content */}
               <form onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
                 <Box sx={{ minHeight: 280, position: 'relative' }}>
-                  {/* Step 0: Account Type */}
                   <Collapse in={activeStep === 0} timeout={500} unmountOnExit>
                     <Stack spacing={3} sx={{ width: '100%' }}>
                       <Zoom in={true} timeout={500}>
                         <FormControl component="fieldset" error={!!formErrors.role}>
                           <FormLabel component="legend" sx={{ mb: 1.5, fontWeight: 500, color: 'text.primary' }}>
-                            Select Account Type:
+                            I am a:
                           </FormLabel>
                           <RadioGroup
                             name="role"
                             value={role}
                             onChange={handleRoleChange}
-                            sx={{
-                              display: 'flex',
-                              flexDirection: { xs: 'column', sm: 'row' },
-                              gap: 2
-                            }}
+                            sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}
                           >
-                            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, width: '100%' }}>
-                              <Box 
-                                className={role === 'owner' ? 'Mui-checked' : ''} 
-                                sx={{ 
-                                  width: '100%',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  p: 2.5,
-                                  borderRadius: 3,
-                                  border: `2px solid ${role === 'owner' ? theme.palette.primary.main : theme.palette.divider}`,
-                                  bgcolor: role === 'owner' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
-                                  cursor: 'pointer',
-                                  transition: 'all 0.3s ease',
-                                  '&:hover': {
-                                    bgcolor: alpha(theme.palette.primary.main, 0.05),
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: role === 'owner' ? `0 6px 15px ${alpha(theme.palette.primary.main, 0.2)}` : `0 4px 10px ${alpha(theme.palette.grey[500], 0.1)}`,
-                                  }
-                                }}
-                                onClick={() => handleRoleChange({ target: { value: 'owner' } } as any)}
-                              >
-                                <Radio 
-                                  value="owner"
-                                  checked={role === 'owner'}
-                                  sx={{ mr: 1 }}
-                                />
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                  <Pets sx={{ 
-                                    mr: 1.5, 
-                                    color: 'primary.main',
-                                    fontSize: 26
-                                  }} />
-                                  <Typography sx={{ fontWeight: 500 }}>Pet Owner</Typography>
-                                </Box>
-                              </Box>
-                              
-                              <Box 
-                                className={role === 'vet' ? 'Mui-checked' : ''} 
-                                sx={{ 
-                                  width: '100%',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  p: 2.5,
-                                  borderRadius: 3,
-                                  border: `2px solid ${role === 'vet' ? theme.palette.primary.main : theme.palette.divider}`,
-                                  bgcolor: role === 'vet' ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
-                                  cursor: 'pointer',
-                                  transition: 'all 0.3s ease',
-                                  '&:hover': {
-                                    bgcolor: alpha(theme.palette.primary.main, 0.05),
-                                    transform: 'translateY(-2px)',
-                                    boxShadow: role === 'vet' ? `0 6px 15px ${alpha(theme.palette.primary.main, 0.2)}` : `0 4px 10px ${alpha(theme.palette.grey[500], 0.1)}`,
-                                  }
-                                }}
-                                onClick={() => handleRoleChange({ target: { value: 'vet' } } as any)}
-                              >
-                                <Radio 
-                                  value="vet"
-                                  checked={role === 'vet'}
-                                  sx={{ mr: 1 }}
-                                />
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                  <MedicalServices sx={{ 
-                                    mr: 1.5, 
-                                    color: 'primary.main',
-                                    fontSize: 26
-                                  }} />
-                                  <Typography sx={{ fontWeight: 500 }}>Veterinarian</Typography>
-                                </Box>
-                              </Box>
-                            </Box>
+                            <RoleRadioOption
+                              value="owner"
+                              control={<StyledRadio />} 
+                              label={<Box sx={{display: 'flex', alignItems: 'center'}}><Pets sx={{ mr: 1.5, color: role === 'owner' ? 'primary.main' : 'action' }} /> Pet Owner</Box>}
+                              checked={role === 'owner'}
+                            />
+                            <RoleRadioOption
+                              value="vet"
+                              control={<StyledRadio />} 
+                              label={<Box sx={{display: 'flex', alignItems: 'center'}}><MedicalServices sx={{ mr: 1.5, color: role === 'vet' ? 'primary.main' : 'action' }} /> Veterinarian</Box>}
+                              checked={role === 'vet'}
+                            />
                           </RadioGroup>
                           {formErrors.role && (
                             <FormHelperText error sx={{ mt: 1, ml: 1, fontWeight: 500 }}>
@@ -738,30 +650,10 @@ const SignupPage: React.FC = () => {
                             onBlur={() => handleBlur('clinicName')}
                             InputProps={{
                               startAdornment: (
-                                <InputAdornment position="start">
-                                  <Business 
-                                    color={fieldFocus.clinicName ? "primary" : "action"} 
-                                    sx={{ mr: 1 }} 
-                                  />
+                                <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                                  <Business color={fieldFocus.clinicName ? "primary" : "action"} />
                                 </InputAdornment>
                               ),
-                              sx: { 
-                                borderRadius: 2,
-                                transition: 'all 0.2s ease',
-                                '&.Mui-focused': {
-                                  boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                                },
-                                '&:-webkit-autofill': {
-                                  WebkitBoxShadow: '0 0 0 1000px white inset',
-                                  WebkitTextFillColor: theme.palette.text.primary,
-                                }
-                              }
-                            }}
-                            InputLabelProps={{ 
-                              shrink: true,
-                              sx: {
-                                color: fieldFocus.clinicName ? theme.palette.primary.main : undefined
-                              }
                             }}
                             sx={{ mt: 1 }}
                           />
@@ -772,7 +664,7 @@ const SignupPage: React.FC = () => {
 
                   {/* Step 1: Personal Details */}
                   <Collapse in={activeStep === 1} timeout={500} unmountOnExit>
-                    <Stack spacing={3} sx={{ width: '100%' }}>
+                    <Stack spacing={2.5} sx={{ width: '100%' }}>
                       <Zoom in={true} timeout={500}>
                         <Grid container spacing={2}>
                           <Grid item xs={12} sm={6}>
@@ -792,30 +684,10 @@ const SignupPage: React.FC = () => {
                               onBlur={() => handleBlur('firstName')}
                               InputProps={{
                                 startAdornment: (
-                                  <InputAdornment position="start">
-                                    <Person 
-                                      color={fieldFocus.firstName ? "primary" : "action"} 
-                                      sx={{ mr: 1 }} 
-                                    />
+                                  <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                                    <Person color={fieldFocus.firstName ? "primary" : "action"} />
                                   </InputAdornment>
                                 ),
-                                sx: { 
-                                  borderRadius: 2,
-                                  transition: 'all 0.2s ease',
-                                  '&.Mui-focused': {
-                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                                  },
-                                  '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 1000px white inset',
-                                    WebkitTextFillColor: theme.palette.text.primary,
-                                  }
-                                }
-                              }}
-                              InputLabelProps={{ 
-                                shrink: true,
-                                sx: {
-                                  color: fieldFocus.firstName ? theme.palette.primary.main : undefined
-                                }
                               }}
                             />
                           </Grid>
@@ -836,30 +708,10 @@ const SignupPage: React.FC = () => {
                               onBlur={() => handleBlur('lastName')}
                               InputProps={{
                                 startAdornment: (
-                                  <InputAdornment position="start">
-                                    <Person 
-                                      color={fieldFocus.lastName ? "primary" : "action"} 
-                                      sx={{ mr: 1 }} 
-                                    />
+                                  <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                                    <Person color={fieldFocus.lastName ? "primary" : "action"} />
                                   </InputAdornment>
                                 ),
-                                sx: { 
-                                  borderRadius: 2,
-                                  transition: 'all 0.2s ease',
-                                  '&.Mui-focused': {
-                                    boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                                  },
-                                  '&:-webkit-autofill': {
-                                    WebkitBoxShadow: '0 0 0 1000px white inset',
-                                    WebkitTextFillColor: theme.palette.text.primary,
-                                  }
-                                }
-                              }}
-                              InputLabelProps={{ 
-                                shrink: true,
-                                sx: {
-                                  color: fieldFocus.lastName ? theme.palette.primary.main : undefined
-                                }
                               }}
                             />
                           </Grid>
@@ -885,30 +737,10 @@ const SignupPage: React.FC = () => {
                           onBlur={() => handleBlur('email')}
                           InputProps={{
                             startAdornment: (
-                              <InputAdornment position="start">
-                                <Email 
-                                  color={fieldFocus.email ? "primary" : "action"} 
-                                  sx={{ mr: 1 }} 
-                                />
+                              <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                                <Email color={fieldFocus.email ? "primary" : "action"} />
                               </InputAdornment>
                             ),
-                            sx: { 
-                              borderRadius: 2,
-                              transition: 'all 0.2s ease',
-                              '&.Mui-focused': {
-                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                              },
-                              '&:-webkit-autofill': {
-                                WebkitBoxShadow: '0 0 0 1000px white inset',
-                                WebkitTextFillColor: theme.palette.text.primary,
-                              }
-                            }
-                          }}
-                          InputLabelProps={{ 
-                            shrink: true,
-                            sx: {
-                              color: fieldFocus.email ? theme.palette.primary.main : undefined
-                            }
                           }}
                         />
                       </Zoom>
@@ -917,7 +749,7 @@ const SignupPage: React.FC = () => {
 
                   {/* Step 2: Set Password */}
                   <Collapse in={activeStep === 2} timeout={500} unmountOnExit>
-                    <Stack spacing={3} sx={{ width: '100%' }}>
+                    <Stack spacing={2.5} sx={{ width: '100%' }}>
                       <Zoom in={true} timeout={500}>
                         <TextField
                           fullWidth
@@ -937,11 +769,8 @@ const SignupPage: React.FC = () => {
                           onBlur={() => handleBlur('password')}
                           InputProps={{
                             startAdornment: (
-                              <InputAdornment position="start">
-                                <Lock 
-                                  color={fieldFocus.password ? "primary" : "action"} 
-                                  sx={{ mr: 1 }} 
-                                />
+                              <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                                <Lock color={fieldFocus.password ? "primary" : "action"} />
                               </InputAdornment>
                             ),
                             endAdornment: (
@@ -956,23 +785,6 @@ const SignupPage: React.FC = () => {
                                 </IconButton>
                               </InputAdornment>
                             ),
-                            sx: { 
-                              borderRadius: 2,
-                              transition: 'all 0.2s ease',
-                              '&.Mui-focused': {
-                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                              },
-                              '&:-webkit-autofill': {
-                                WebkitBoxShadow: '0 0 0 1000px white inset',
-                                WebkitTextFillColor: theme.palette.text.primary,
-                              }
-                            }
-                          }}
-                          InputLabelProps={{ 
-                            shrink: true,
-                            sx: {
-                              color: fieldFocus.password ? theme.palette.primary.main : undefined
-                            }
                           }}
                         />
                       </Zoom>
@@ -1003,36 +815,16 @@ const SignupPage: React.FC = () => {
                           onBlur={() => handleBlur('passwordConfirm')}
                           InputProps={{
                             startAdornment: (
-                              <InputAdornment position="start">
-                                <Lock 
-                                  color={fieldFocus.passwordConfirm ? "primary" : "action"} 
-                                  sx={{ mr: 1 }} 
-                                />
+                              <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                                <Lock color={fieldFocus.passwordConfirm ? "primary" : "action"} />
                               </InputAdornment>
                             ),
-                            sx: { 
-                              borderRadius: 2,
-                              transition: 'all 0.2s ease',
-                              '&.Mui-focused': {
-                                boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                              },
-                              '&:-webkit-autofill': {
-                                WebkitBoxShadow: '0 0 0 1000px white inset',
-                                WebkitTextFillColor: theme.palette.text.primary,
-                              }
-                            }
-                          }}
-                          InputLabelProps={{ 
-                            shrink: true,
-                            sx: {
-                              color: fieldFocus.passwordConfirm ? theme.palette.primary.main : undefined
-                            }
                           }}
                         />
                       </Zoom>
 
                       <Zoom in={true} timeout={700}>
-                        <FormControl error={!!formErrors.agreeToTerms}>
+                        <FormControl error={!!formErrors.agreeToTerms} sx={{ mt: -1 }}>
                           <FormControlLabel
                             control={
                               <Checkbox
@@ -1040,26 +832,32 @@ const SignupPage: React.FC = () => {
                                 onChange={handleCheckboxChange}
                                 name="agreeToTerms"
                                 color="primary"
+                                size="small" 
                               />
                             }
                             label={
                               <Typography variant="body2">
                                 I agree to the{' '}
-                                <Link 
+                                <Button 
+                                  component={Link} 
                                   to="/terms" 
-                                  style={{ 
-                                    textDecoration: 'none', 
-                                    color: theme.palette.primary.main,
+                                  variant="text" 
+                                  size="small" 
+                                  sx={{ 
+                                    p: 0, 
+                                    minWidth: 0, 
+                                    textTransform: 'none', 
+                                    verticalAlign: 'baseline',
                                     fontWeight: 500
                                   }}
                                 >
                                   Terms and Conditions
-                                </Link>
+                                </Button>
                               </Typography>
                             }
                           />
                           {formErrors.agreeToTerms && (
-                            <FormHelperText error sx={{ ml: 1, fontWeight: 500 }}>
+                            <FormHelperText error sx={{ ml: 4, fontWeight: 500 }}>
                               {formErrors.agreeToTerms}
                             </FormHelperText>
                           )}
@@ -1099,17 +897,7 @@ const SignupPage: React.FC = () => {
                       onClick={handleBack}
                       disabled={activeStep === 0 || loading}
                       startIcon={<ArrowBack />}
-                      sx={{ 
-                        color: 'text.secondary',
-                        transition: 'all 0.2s ease',
-                        borderRadius: 6,
-                        px: 2,
-                        py: 1,
-                        '&:hover': {
-                          backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                          transform: 'translateX(-2px)'
-                        }
-                      }}
+                      size="large"
                     >
                       Back
                     </Button>
@@ -1122,41 +910,14 @@ const SignupPage: React.FC = () => {
                     <Button
                       type="submit"
                       variant="contained"
+                      color="primary"
+                      size="large"
                       disabled={isNextDisabled}
                       endIcon={activeStep === steps.length - 1 ? undefined : <ChevronRight />}
-                      sx={{
-                        py: 1.8,
-                        px: 3,
-                        borderRadius: 6,
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        color: 'white',
-                        background: 'linear-gradient(90deg, #4a8a88 0%, #65a8a6 100%)', // Updated to match theme teal
-                        position: 'relative',
-                        overflow: 'hidden',
-                        transition: 'all 0.25s ease-in-out',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: `0 6px 20px rgba(101, 168, 166, 0.3)`, // Updated to match theme teal
-                          background: 'linear-gradient(90deg, #4a8a88 10%, #65a8a6 90%)', // Updated to match theme teal
-                        },
-                        '&:active': {
-                          transform: 'translateY(0)',
-                          boxShadow: `0 2px 10px rgba(101, 168, 166, 0.2)`, // Updated to match theme teal
-                        },
-                        '&:disabled': {
-                          background: theme.palette.grey[400],
-                          cursor: 'not-allowed',
-                        }
-                      }}
                     >
                       {loading && activeStep === steps.length - 1 ? (
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                           <LoadingSpinner size="small" color="inherit" />
-                          <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
-                            <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
-                          </Box>
                         </Box>
                       ) : activeStep === steps.length - 1 ? (
                         'Create Account'
@@ -1170,8 +931,8 @@ const SignupPage: React.FC = () => {
 
               {/* Link to Login */}
               <Fade in={true} timeout={1000}>
-                <Box sx={{ textAlign: 'center', mt: 4 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                <Box sx={{ textAlign: 'center', mt: 3 }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                     Already have an account?
                   </Typography>
                   <motion.div
@@ -1183,26 +944,10 @@ const SignupPage: React.FC = () => {
                       component={Link}
                       to="/login"
                       variant="outlined"
+                      color="primary"
+                      size="large"
                       fullWidth
                       disabled={loading}
-                      sx={{
-                        py: 1.6,
-                        borderRadius: 6,
-                        textTransform: 'none',
-                        fontSize: '1rem',
-                        fontWeight: 500,
-                        borderColor: theme.palette.primary.main,
-                        color: theme.palette.primary.main,
-                        borderWidth: 1.5,
-                        transition: 'all 0.25s ease',
-                        '&:hover': {
-                          backgroundColor: `${theme.palette.primary.main}10`,
-                          borderColor: theme.palette.primary.dark,
-                          color: theme.palette.primary.dark,
-                          transform: 'translateY(-2px)',
-                          boxShadow: `0 4px 12px rgba(101, 168, 166, 0.15)`, // Updated to match theme teal
-                        }
-                      }}
                     >
                       Sign In Instead
                     </Button>
@@ -1213,6 +958,7 @@ const SignupPage: React.FC = () => {
           </Card>
         </MotionBox>
       </Container>
+      <PWAInstallButton />
     </Box>
   );
 };

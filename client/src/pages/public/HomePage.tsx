@@ -10,7 +10,6 @@ import {
   Grid, 
   Card, 
   CardContent,
-  CardMedia,
   useTheme, 
   alpha,
   useMediaQuery,
@@ -28,6 +27,7 @@ import {
   Groups2Outlined, 
   Pets, 
   HealthAndSafetyOutlined,
+  PsychologyOutlined,
   FavoriteBorderOutlined,
   EmojiObjectsOutlined,
   ArrowForwardIos,
@@ -48,14 +48,22 @@ import {
   TrackChanges,
   Send,
   Phone,
-  LocationOn,
-  AccessTime
+  AccessTime,
+  Download
 } from '@mui/icons-material';
+
+// Import PWA install button component
+import PWAInstallButton from '../../components/common/PWAInstallButton';
+
+// Placeholder image URLs
+const heroImageUrlLight = '/images/hero-placeholder-light.svg';
+const heroImageUrlDark = '/images/hero-placeholder-dark.svg';
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isMedium = useMediaQuery(theme.breakpoints.down('md'));
+  const heroImageSrc = theme.palette.mode === 'dark' ? heroImageUrlDark : heroImageUrlLight;
 
   // Animation variants
   const fadeInUp = {
@@ -83,6 +91,15 @@ const HomePage: React.FC = () => {
         staggerChildren: 0.2
       }
     }
+  };
+
+  const fadeInUpVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: (i = 1) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: i * 0.15, ease: "easeOut" }
+    })
   };
 
   // Testimonials data
@@ -113,32 +130,32 @@ const HomePage: React.FC = () => {
   // Feature list data
   const featureList = [
     {
-      icon: <MonitorHeartOutlined />,
+      icon: <MonitorHeartOutlined sx={{ fontSize: 'inherit' }} />,
       title: "Daily Symptom Tracking",
       description: "Log and monitor your pet's symptoms with our easy-to-use tracking system."
     },
     {
-      icon: <BarChart />,
+      icon: <BarChart sx={{ fontSize: 'inherit' }} />,
       title: "Progress Charts",
       description: "Visualize your pet's health journey with comprehensive charts and analytics."
     },
     {
-      icon: <CalendarMonthOutlined />,
+      icon: <CalendarMonthOutlined sx={{ fontSize: 'inherit' }} />,
       title: "Treatment Reminders",
       description: "Never miss a medication or appointment with our smart reminder system."
     },
     {
-      icon: <Share />,
+      icon: <Share sx={{ fontSize: 'inherit' }} />,
       title: "Vet Communication",
       description: "Share reports directly with your veterinarian for better coordinated care."
     },
     {
-      icon: <DataSaverOn />,
+      icon: <DataSaverOn sx={{ fontSize: 'inherit' }} />,
       title: "Custom Health Logs",
       description: "Customize tracking parameters based on your pet's specific condition."
     },
     {
-      icon: <PhoneIphone />,
+      icon: <PhoneIphone sx={{ fontSize: 'inherit' }} />,
       title: "Mobile Friendly",
       description: "Access your pet's health information anytime, anywhere on any device."
     }
@@ -147,22 +164,22 @@ const HomePage: React.FC = () => {
   // Benefits data
   const benefits = [
     { 
-      icon: <FavoriteBorderOutlined />, 
+      icon: <FavoriteBorderOutlined color="primary" />, 
       title: "Enhanced Quality of Life", 
       description: "Monitor trends and adjust care plans proactively to maximize your pet's comfort and well-being." 
     },
     { 
-      icon: <Groups2Outlined />, 
+      icon: <Groups2Outlined color="primary" />, 
       title: "Improved Vet Collaboration", 
       description: "Provide your veterinarian with clear, concise data for more informed decision-making." 
     },
     { 
-      icon: <HealthAndSafetyOutlined />, 
+      icon: <PsychologyOutlined color="primary" />, 
       title: "Reduced Caregiver Stress", 
       description: "Stay organized and feel more in control with reminders and centralized health records." 
     },
     { 
-      icon: <EmojiObjectsOutlined />, 
+      icon: <EmojiObjectsOutlined color="primary" />, 
       title: "Empowered Pet Advocacy", 
       description: "Gain insights into your pet's condition, enabling better communication and advocacy for their needs." 
     }
@@ -193,62 +210,75 @@ const HomePage: React.FC = () => {
   return (
     <Box sx={{ overflow: 'hidden' }}>
       {/* Hero Section */}
-      <Box 
+      <Box
+        component={motion.section}
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
         sx={{
           position: 'relative',
           bgcolor: 'background.paper',
-          pt: { xs: 8, sm: 12, md: 16 },
+          pt: { xs: 12, sm: 16, md: 20 },
           pb: { xs: 8, sm: 12, md: 16 },
+          overflow: 'hidden',
         }}
       >
-        <Container maxWidth="lg">
+        {/* Optional Background Glow Effect */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '-10%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '150%',
+            height: '600px',
+            borderRadius: '50%',
+            background: `radial-gradient(ellipse at center, ${alpha(theme.palette.primary.main, 0.15)} 0%, transparent 60%)`,
+            filter: 'blur(100px)',
+            opacity: 0.6,
+            zIndex: 0,
+            pointerEvents: 'none',
+          }}
+        />
+        
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={6}>
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={fadeInUp}
-              >
+              <motion.div variants={fadeInUpVariants}>
                 <Typography
                   component="h1"
                   variant="h2"
-                  color="primary.main"
-                  fontWeight="700"
-                  sx={{ 
+                  sx={{
+                    fontWeight: 800,
                     mb: 2,
-                    fontSize: { xs: '2.5rem', sm: '3rem', md: '3.5rem' },
-                    lineHeight: 1.2
+                    fontSize: { xs: '3rem', sm: '3.5rem', md: '4rem' },
+                    lineHeight: 1.2,
+                    background: `linear-gradient(120deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    letterSpacing: '-0.02em',
                   }}
                 >
                   Navigate Your Pet's Cancer Journey with Confidence
                 </Typography>
               </motion.div>
               
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={fadeInUp}
-                transition={{ delay: 0.2 }}
-              >
+              <motion.div variants={fadeInUpVariants}>
                 <Typography 
                   variant="h6" 
                   color="text.secondary"
                   sx={{ 
                     mb: 4,
                     lineHeight: 1.6,
-                    fontWeight: 400
+                    fontWeight: 400,
+                    fontSize: { xs: '1.1rem', md: '1.25rem' },
                   }}
                 >
                   Managing cancer care can feel overwhelming. OncoTracker simplifies symptom tracking, streamlines vet communication, and empowers you to focus on your pet's comfort and quality of life.
                 </Typography>
               </motion.div>
 
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={fadeInUp}
-                transition={{ delay: 0.4 }}
-              >
+              <motion.div variants={fadeInUpVariants}>
                 <Stack 
                   direction={{ xs: 'column', sm: 'row' }} 
                   spacing={2}
@@ -293,10 +323,18 @@ const HomePage: React.FC = () => {
               </motion.div>
             </Grid>
             <Grid item xs={12} md={6}>
-              <motion.div
+              <motion.div 
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
+                style={{ 
+                  maxWidth: '900px', 
+                  margin: '0 auto',
+                  borderRadius: theme.shape.borderRadius * 1.5, 
+                  overflow: 'hidden',
+                  boxShadow: theme.shadows[10], 
+                  border: `1px solid ${alpha(theme.palette.divider, 0.1)}`
+                }}
               >
                 <Box
                   component="img"
@@ -305,43 +343,32 @@ const HomePage: React.FC = () => {
                   sx={{
                     width: '100%',
                     height: 'auto',
-                    borderRadius: 4,
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                    transform: 'perspective(1000px) rotateY(-5deg)',
+                    display: 'block',
                   }}
                 />
               </motion.div>
             </Grid>
           </Grid>
+          
+          {/* Scroll Down Indicator */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1 }}
+            style={{ 
+              textAlign: 'center',
+              marginTop: theme.spacing(8) 
+            }}
+          >
+            <IconButton 
+              size="large"
+              onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+              sx={{ color: 'text.secondary' }}
+            >
+              <KeyboardArrowDown fontSize="large" />
+            </IconButton>
+          </motion.div>
         </Container>
-
-        {/* Decorative elements */}
-        <Box 
-          sx={{
-            position: 'absolute',
-            top: '15%',
-            left: '5%',
-            width: '150px',
-            height: '150px',
-            borderRadius: '50%',
-            background: `linear-gradient(45deg, ${alpha(theme.palette.primary.light, 0.2)}, ${alpha(theme.palette.primary.main, 0.1)})`,
-            filter: 'blur(40px)',
-            zIndex: -1,
-          }}
-        />
-        <Box 
-          sx={{
-            position: 'absolute',
-            bottom: '10%',
-            right: '8%',
-            width: '200px',
-            height: '200px',
-            borderRadius: '50%',
-            background: `linear-gradient(45deg, ${alpha(theme.palette.secondary.light, 0.2)}, ${alpha(theme.palette.secondary.main, 0.1)})`,
-            filter: 'blur(50px)',
-            zIndex: -1,
-          }}
-        />
       </Box>
 
       {/* Trusted by Section */}
@@ -405,7 +432,7 @@ const HomePage: React.FC = () => {
               fontWeight={700}
               sx={{ mb: 2 }}
             >
-              Key Features
+              Powerful Tools for Pet Parents
             </Typography>
             <Typography 
               variant="h6" 
@@ -414,165 +441,48 @@ const HomePage: React.FC = () => {
               fontWeight={400}
               sx={{ mb: 8, maxWidth: 800, mx: 'auto' }}
             >
-              Our comprehensive suite of tools designed specifically for pet cancer management
+              Everything you need to manage care effectively and collaborate with your vet
             </Typography>
           </motion.div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-            variants={staggerContainer}
-          >
-            <Grid container spacing={4}>
-              {featureList.map((feature, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <motion.div variants={fadeInUp}>
-                    <Card 
-                      elevation={0} 
-                      sx={{ 
-                        height: '100%',
-                        p: 3,
-                        borderRadius: 4,
-                        transition: 'all 0.3s ease',
-                        backgroundColor: alpha(theme.palette.background.paper, 0.6),
-                        border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-                        '&:hover': {
-                          boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-                          transform: 'translateY(-5px)',
-                        }
-                      }}
-                    >
-                      <Box 
-                        sx={{ 
-                          mb: 2, 
-                          color: 'primary.main',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: 70,
-                          height: 70,
-                          borderRadius: '20px',
-                          backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                        }}
-                      >
-                        <Box sx={{ fontSize: 32 }}>
-                          {feature.icon}
-                        </Box>
-                      </Box>
-                      <CardContent sx={{ p: 0 }}>
-                        <Typography variant="h6" component="h3" fontWeight={600} gutterBottom>
-                          {feature.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {feature.description}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                </Grid>
-              ))}
-            </Grid>
-          </motion.div>
+          <Grid container spacing={4} component={motion.div} variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            {featureList.map((feature, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index} component={motion.div} variants={fadeInUpVariants}>
+                <Card 
+                  elevation={0} 
+                  sx={{ 
+                    height: '100%',
+                    p: 3,
+                    borderRadius: 4,
+                    transition: 'all 0.3s ease',
+                    border: `1px solid ${theme.palette.divider}`,
+                    bgcolor: 'transparent',
+                    '&:hover': { 
+                      borderColor: theme.palette.primary.main,
+                      transform: 'translateY(-4px)',
+                    } 
+                  }}
+                >
+                  <Box sx={{ fontSize: 40, color: theme.palette.primary.main, mb: 2, alignSelf: 'flex-start' }}>
+                    {feature.icon}
+                  </Box>
+                  <CardContent sx={{ p: 0, flexGrow: 1, textAlign: 'left' }}>
+                    <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
+                      {feature.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {feature.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         </Container>
       </Box>
 
-      {/* How It Works Section */}
-      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
-        <Container>
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeInUp}
-          >
-            <Typography 
-              variant="h3" 
-              component="h2" 
-              align="center"
-              fontWeight={700}
-              sx={{ mb: 2 }}
-            >
-              Simple Steps to Better Care
-            </Typography>
-            <Typography 
-              variant="h6" 
-              color="text.secondary" 
-              align="center"
-              fontWeight={400}
-              sx={{ mb: 8, maxWidth: 800, mx: 'auto' }}
-            >
-              Getting started with OncoTracker is quick and easy
-            </Typography>
-          </motion.div>
-
-          <Box sx={{ position: 'relative' }}>
-            {/* Progress Line */}
-            {!isMobile && (
-              <Box sx={{
-                position: 'absolute',
-                top: '35%',
-                left: '15%',
-                right: '15%',
-                height: 4,
-                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                zIndex: 0,
-              }} />
-            )}
-
-            <Grid container spacing={6} justifyContent="center">
-              {steps.map((step, index) => (
-                <Grid item xs={12} md={4} key={index}>
-                  <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.3 }}
-                    variants={fadeInUp}
-                    transition={{ delay: index * 0.2 }}
-                  >
-                    <Box sx={{ 
-                      textAlign: 'center',
-                      position: 'relative',
-                      zIndex: 1,
-                      py: 2,
-                    }}>
-                      <Box sx={{ 
-                        width: 80,
-                        height: 80,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: '50%',
-                        bgcolor: step.color,
-                        color: 'white',
-                        fontSize: 32,
-                        mx: 'auto',
-                        mb: 2,
-                        boxShadow: `0 10px 20px ${alpha(step.color, 0.3)}`,
-                      }}>
-                        <Typography variant="h5" component="span" fontWeight={700}>
-                          {index + 1}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ mt: 2 }}>
-                        <Typography variant="h5" component="h3" fontWeight={600} gutterBottom>
-                          {step.title}
-                        </Typography>
-                        <Typography color="text.secondary">
-                          {step.description}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </motion.div>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        </Container>
-      </Box>
-
-      {/* Benefits/Why Choose Us Section with Image */}
-      <Box sx={{ py: { xs: 8, md: 12 } }}>
+      {/* Benefits Section */}
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'background.default' }}>
         <Container>
           <Grid container spacing={6} alignItems="center">
             <Grid item xs={12} md={6}>
@@ -602,30 +512,12 @@ const HomePage: React.FC = () => {
                       transition={{ delay: index * 0.1 }}
                     >
                       <Stack direction="row" spacing={3} alignItems="flex-start">
-                        <Box 
-                          sx={{ 
-                            color: 'primary.main',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 48,
-                            height: 48,
-                            borderRadius: '12px',
-                            backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                            flexShrink: 0,
-                          }}
-                        >
-                          <Box sx={{ fontSize: 24 }}>
-                            {benefit.icon}
-                          </Box>
-                        </Box>
+                        <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main, mt: 0.5 }}>
+                          {benefit.icon}
+                        </Avatar>
                         <Box>
-                          <Typography variant="h6" component="h3" fontWeight={600} gutterBottom>
-                            {benefit.title}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {benefit.description}
-                          </Typography>
+                          <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>{benefit.title}</Typography>
+                          <Typography variant="body1" color="text.secondary">{benefit.description}</Typography>
                         </Box>
                       </Stack>
                     </motion.div>
@@ -648,11 +540,75 @@ const HomePage: React.FC = () => {
                     width: '100%',
                     height: 'auto',
                     borderRadius: 4,
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                    boxShadow: theme.shadows[6],
                   }}
                 />
               </motion.div>
             </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* How It Works Section */}
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'background.paper' }}>
+        <Container>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUp}
+          >
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              align="center"
+              fontWeight={700}
+              sx={{ mb: 2 }}
+            >
+              Simple Steps to Better Care
+            </Typography>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              align="center"
+              fontWeight={400}
+              sx={{ mb: 8, maxWidth: 800, mx: 'auto' }}
+            >
+              Getting started with OncoTracker is quick and easy
+            </Typography>
+          </motion.div>
+
+          <Grid container spacing={5} textAlign="center">
+            {steps.map((step, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <motion.div
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={fadeInUp}
+                  transition={{ delay: index * 0.2 }}
+                >
+                  <Stack spacing={2} alignItems="center">
+                    <Avatar 
+                      sx={{ 
+                        bgcolor: step.color, 
+                        color: theme.palette.primary.contrastText, 
+                        width: 80, 
+                        height: 80, 
+                        mb: 2,
+                        fontSize: 28,
+                        fontWeight: 700,
+                        boxShadow: `0 10px 20px ${alpha(step.color, 0.3)}`,
+                      }}
+                    >
+                      {index + 1}
+                    </Avatar>
+                    <Typography variant="h5" component="h3" sx={{ fontWeight: 600 }}>{step.title}</Typography>
+                    <Typography variant="body1" color="text.secondary">{step.description}</Typography>
+                  </Stack>
+                </motion.div>
+              </Grid>
+            ))}
           </Grid>
         </Container>
       </Box>
@@ -688,7 +644,7 @@ const HomePage: React.FC = () => {
 
           <Grid container spacing={4}>
             {testimonials.map((testimonial, index) => (
-              <Grid item xs={12} md={4} key={testimonial.id}>
+              <Grid item xs={12} sm={6} md={4} key={testimonial.id}>
                 <motion.div
                   initial="hidden"
                   whileInView="visible"
@@ -1130,6 +1086,9 @@ const HomePage: React.FC = () => {
           </Stack>
         </Container>
       </Box>
+
+      {/* PWA Install Button */}
+      <PWAInstallButton />
     </Box>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, useTheme, CircularProgress, Alert, Typography } from '@mui/material';
+import { Container, Box, useTheme, CircularProgress, Alert, Typography, useMediaQuery } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { Pet } from '../../types';
 import api from '../../services/api';
@@ -16,6 +16,8 @@ const OwnerDashboardNew: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('xl'));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   useEffect(() => {
     const fetchPets = async () => {
@@ -201,9 +203,11 @@ const OwnerDashboardNew: React.FC = () => {
                 gridTemplateColumns: {
                   xs: '1fr',
                   sm: 'repeat(2, 1fr)',
-                  md: 'repeat(3, 1fr)'
+                  md: 'repeat(3, 1fr)',
+                  lg: 'repeat(3, 1fr)',
+                  xl: 'repeat(4, 1fr)'
                 },
-                gap: 3
+                gap: { xs: 3, md: 4 }
               }}
             >
               {/* Render pet cards */}
@@ -304,9 +308,17 @@ const OwnerDashboardNew: React.FC = () => {
       initial="initial"
       animate="animate"
       exit="exit"
+      style={{ width: '100%' }}
     >
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ mb: 5 }}>
+      <Container 
+        maxWidth={false}
+        sx={{ 
+          py: { xs: 3, md: 4 },
+          maxWidth: isLargeScreen ? '1600px' : isMediumScreen ? '1200px' : 'lg',
+          px: { xs: 2, sm: 3, md: 4 }
+        }}
+      >
+        <Box sx={{ mb: { xs: 4, md: 5 } }}>
           <WelcomeSection userName={user?.firstName || ''} />
         </Box>
         

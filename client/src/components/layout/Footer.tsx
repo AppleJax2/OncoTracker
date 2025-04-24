@@ -1,9 +1,12 @@
 import React from 'react';
-import { Box, Container, Typography, Link, Divider } from '@mui/material';
+import { Box, Container, Typography, Link, Divider, useTheme, useMediaQuery } from '@mui/material';
 import SocialIcons from '../common/SocialIcons';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('xl'));
 
   return (
     <Box 
@@ -11,19 +14,26 @@ const Footer: React.FC = () => {
       sx={{ 
         bgcolor: 'rgba(5, 150, 105, 0.05)', 
         color: 'text.secondary',
-        py: 3, 
-        mt: 6,
+        py: { xs: 3, md: 4 }, 
+        mt: { xs: 4, md: 6 },
         borderTop: '1px solid',
-        borderColor: 'rgba(5, 150, 105, 0.1)'
+        borderColor: 'rgba(5, 150, 105, 0.1)',
+        width: '100%'
       }}
     >
-      <Container maxWidth="lg">
+      <Container 
+        maxWidth={false}
+        sx={{ 
+          maxWidth: isMobile ? null : isLargeScreen ? '1600px' : '1200px',
+          px: { xs: 2, sm: 3, md: 4 }
+        }}
+      >
         <Box sx={{ 
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           justifyContent: 'space-between',
           alignItems: { xs: 'center', md: 'flex-start' },
-          gap: 2
+          gap: 3
         }}>
           {/* Copyright and links */}
           <Box>
@@ -45,9 +55,10 @@ const Footer: React.FC = () => {
 
             <Box sx={{ 
               display: 'flex', 
-              gap: 3, 
+              gap: { xs: 2, sm: 3 }, 
               justifyContent: { xs: 'center', md: 'flex-start' },
-              mt: 1
+              mt: 1,
+              flexWrap: 'wrap'
             }}>
               <Link href="/privacy" sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>Privacy Policy</Link>
               <Link href="/terms" sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>Terms of Service</Link>

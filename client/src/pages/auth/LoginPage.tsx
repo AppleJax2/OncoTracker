@@ -24,7 +24,8 @@ import {
   Grow,
   Slide,
   useMediaQuery,
-  LinearProgress
+  LinearProgress,
+  Avatar
 } from '@mui/material';
 import { 
   Visibility, 
@@ -37,6 +38,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { alpha } from '@mui/material/styles';
+import PWAInstallButton from '../../components/common/PWAInstallButton';
 
 // Animation component wrapper
 const MotionBox = motion(Box);
@@ -58,9 +60,8 @@ const LoginPage: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Replace gradient variable with solid color
-  const backgroundColor = theme.palette.background.default; // Was backgroundGradient
-  const buttonTextColor = '#ffffff';
+  // Use theme colors and styles
+  const backgroundColor = theme.palette.background.default;
 
   // Check for success message from signup
   useEffect(() => {
@@ -176,7 +177,6 @@ const LoginPage: React.FC = () => {
         alignItems: 'center',
         justifyContent: 'center',
         background: backgroundColor,
-        backgroundAttachment: 'fixed',
         py: { xs: 4, sm: 6, md: 8 },
         px: 2,
       }}
@@ -190,18 +190,16 @@ const LoginPage: React.FC = () => {
           <Card 
             elevation={6} 
             sx={{ 
-              borderRadius: 4, 
-              overflow: 'hidden',
-              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-              transition: 'box-shadow 0.3s ease',
-              '&:hover': {
-                boxShadow: '0 15px 35px rgba(0, 0, 0, 0.15)'
-              }
+              borderRadius: theme.shape.borderRadius,
+              overflow: 'visible',
+              boxShadow: theme.shadows[6],
+              bgcolor: 'background.paper',
+              border: `1px solid ${theme.palette.divider}`,
             }}
           >
             <CardHeader
               title={
-                <Box sx={{ textAlign: 'center', mb: 1 }}>
+                <Box sx={{ textAlign: 'center', mt: 2, mb: 1 }}>
                   <Fade in={true} timeout={800}>
                     <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
                       <motion.div
@@ -209,51 +207,36 @@ const LoginPage: React.FC = () => {
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
                       >
-                        <Box 
+                        <Avatar 
                           sx={{ 
-                            width: 80, 
-                            height: 80, 
-                            borderRadius: '50%', 
-                            backgroundColor: 'rgba(101, 168, 166, 0.1)', // Updated to match theme teal
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center',
-                            boxShadow: '0 4px 14px rgba(101, 168, 166, 0.15)' // Updated to match theme teal
+                            width: 72, 
+                            height: 72, 
+                            bgcolor: alpha(theme.palette.primary.main, 0.1), 
+                            border: `2px solid ${theme.palette.primary.light}`,
                           }}
                         >
                           <Pets sx={{ fontSize: 38, color: theme.palette.primary.main }} />
-                        </Box>
+                        </Avatar>
                       </motion.div>
                     </Box>
                   </Fade>
-                  <motion.div 
-                    variants={itemVariants}
-                  >
+                  <motion.div variants={itemVariants}>
                     <Typography 
-                      variant="h3" 
+                      variant="h4"
                       component="h1" 
                       fontWeight={700}
-                      color="primary.dark"
-                      sx={{
-                        color: theme.palette.primary.dark, // Use solid color
-                        textShadow: '0 2px 5px rgba(0,0,0,0.05)'
-                      }}
+                      color="text.primary"
                     >
-                      OncoTracker
+                      Welcome Back
                     </Typography>
                   </motion.div>
-                  <motion.div 
-                    variants={itemVariants}
-                  >
+                  <motion.div variants={itemVariants}>
                     <Typography 
-                      variant="body2" 
+                      variant="body1"
                       color="text.secondary" 
-                      sx={{ 
-                        mt: 1,
-                        fontWeight: 500
-                      }}
+                      sx={{ mt: 0.5 }}
                     >
-                      Veterinary oncology management system
+                      Sign in to access OncoTracker
                     </Typography>
                   </motion.div>
                 </Box>
@@ -261,7 +244,7 @@ const LoginPage: React.FC = () => {
               sx={{ pb: 0 }}
             />
             
-            <CardContent>
+            <CardContent sx={{ pt: 2 }}>
               {success && (
                 <Grow in={true} timeout={800}>
                   <Alert 
@@ -302,7 +285,7 @@ const LoginPage: React.FC = () => {
               )}
 
               <form onSubmit={handleSubmit}>
-                <Stack spacing={3}>
+                <Stack spacing={2.5}>
                   <motion.div variants={itemVariants}>
                     <TextField
                       fullWidth
@@ -325,27 +308,10 @@ const LoginPage: React.FC = () => {
                       }}
                       InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">
-                            <Email color={emailFocused ? "primary" : "action"} sx={{ mr: 1 }} />
+                          <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                            <Email color={emailFocused ? "primary" : "action"} />
                           </InputAdornment>
                         ),
-                        sx: { 
-                          borderRadius: 2,
-                          transition: 'all 0.2s ease',
-                          '&.Mui-focused': {
-                            boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                          },
-                          '&:-webkit-autofill': {
-                            WebkitBoxShadow: '0 0 0 1000px white inset',
-                            WebkitTextFillColor: theme.palette.text.primary,
-                          }
-                        }
-                      }}
-                      InputLabelProps={{ 
-                        shrink: true,
-                        sx: {
-                          color: emailFocused ? theme.palette.primary.main : undefined
-                        }
                       }}
                     />
                   </motion.div>
@@ -367,8 +333,8 @@ const LoginPage: React.FC = () => {
                       onBlur={() => setPasswordFocused(false)}
                       InputProps={{
                         startAdornment: (
-                          <InputAdornment position="start">
-                            <Lock color={passwordFocused ? "primary" : "action"} sx={{ mr: 1 }} />
+                          <InputAdornment position="start" sx={{ ml: 0.5 }}>
+                            <Lock color={passwordFocused ? "primary" : "action"} />
                           </InputAdornment>
                         ),
                         endAdornment: (
@@ -383,29 +349,12 @@ const LoginPage: React.FC = () => {
                             </IconButton>
                           </InputAdornment>
                         ),
-                        sx: { 
-                          borderRadius: 2,
-                          transition: 'all 0.2s ease',
-                          '&.Mui-focused': {
-                            boxShadow: `0 0 0 2px ${theme.palette.primary.main}30`,
-                          },
-                          '&:-webkit-autofill': {
-                            WebkitBoxShadow: '0 0 0 1000px white inset',
-                            WebkitTextFillColor: theme.palette.text.primary,
-                          }
-                        }
-                      }}
-                      InputLabelProps={{ 
-                        shrink: true,
-                        sx: {
-                          color: passwordFocused ? theme.palette.primary.main : undefined
-                        }
                       }}
                     />
                   </motion.div>
                   
                   <motion.div variants={itemVariants}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -415,17 +364,20 @@ const LoginPage: React.FC = () => {
                             size="small"
                           />
                         }
-                        label={<Typography variant="body2">Remember me</Typography>}
+                        label="Remember me"
                       />
-                      <Link to="/forgot-password" style={{ 
-                        textDecoration: 'none', 
-                        color: theme.palette.primary.main,
-                        fontSize: '0.875rem',
-                        fontWeight: 500,
-                        transition: 'color 0.2s ease'
-                      }}>
+                      <Button 
+                        component={Link} 
+                        to="/forgot-password" 
+                        size="small" 
+                        sx={{ 
+                          textTransform: 'none', 
+                          fontWeight: 500,
+                          p: 0.5
+                        }}
+                      >
                         Forgot password?
-                      </Link>
+                      </Button>
                     </Box>
                   </motion.div>
 
@@ -438,40 +390,16 @@ const LoginPage: React.FC = () => {
                       type="submit"
                       fullWidth
                       variant="contained"
+                      color="primary"
+                      size="large"
                       disabled={loading}
-                      sx={{
-                        py: 1.8,
-                        px: 3,
-                        borderRadius: 6,
-                        textTransform: 'none',
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        color: buttonTextColor,
-                        backgroundColor: theme.palette.primary.main, // Use solid color
-                        position: 'relative',
-                        overflow: 'hidden',
-                        transition: 'all 0.25s ease-in-out',
-                        '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
-                          backgroundColor: theme.palette.primary.dark, // Darken on hover
-                        },
-                        '&:active': {
-                          transform: 'translateY(0)',
-                          boxShadow: `0 2px 10px ${alpha(theme.palette.primary.main, 0.2)}`,
-                        },
-                        '&:disabled': {
-                          background: theme.palette.grey[400],
-                          cursor: 'not-allowed',
-                        }
+                      sx={{ 
+                        py: 1.5,
                       }}
                     >
                       {loading ? (
                         <>
                           <LoadingSpinner size="small" color="inherit" />
-                          <Box sx={{ width: '100%', position: 'absolute', bottom: 0, left: 0 }}>
-                            <LinearProgress color="inherit" sx={{ height: 3, borderRadius: 3 }} />
-                          </Box>
                         </>
                       ) : 'Sign In'}
                     </Button>
@@ -479,16 +407,16 @@ const LoginPage: React.FC = () => {
                 </Stack>
               </form>
 
-              <Divider sx={{ my: 3, borderColor: 'rgba(0, 0, 0, 0.15)' }}>
-                <Typography variant="body2" color="text.secondary" sx={{ px: 1 }}>
+              <Divider sx={{ my: 3 }}>
+                <Typography variant="body2" color="text.secondary">
                   OR
                 </Typography>
               </Divider>
               
               <Slide direction="up" in={true} mountOnEnter unmountOnExit timeout={800}>
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
+                <Box sx={{ textAlign: 'center', mt: 1 }}>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                    Don't have an account yet?
+                    Don't have an account?
                   </Typography>
                   <motion.div
                     whileHover="hover"
@@ -499,25 +427,12 @@ const LoginPage: React.FC = () => {
                       component={Link}
                       to="/signup"
                       variant="outlined"
+                      color="primary"
                       fullWidth
+                      size="large"
                       disabled={loading}
                       sx={{ 
-                        py: 1.6,
-                        borderRadius: 6,
-                        textTransform: 'none',
-                        fontSize: '1rem',
-                        fontWeight: 500,
-                        borderColor: theme.palette.primary.main,
-                        color: theme.palette.primary.main,
-                        borderWidth: 1.5,
-                        transition: 'all 0.25s ease',
-                        '&:hover': {
-                          backgroundColor: `${theme.palette.primary.main}10`,
-                          borderColor: theme.palette.primary.dark,
-                          color: theme.palette.primary.dark,
-                          transform: 'translateY(-2px)',
-                          boxShadow: `0 4px 12px rgba(101, 168, 166, 0.15)`, // Updated to match theme teal
-                        }
+                        py: 1.5,
                       }}
                     >
                       Create New Account
@@ -529,6 +444,7 @@ const LoginPage: React.FC = () => {
           </Card>
         </MotionBox>
       </Container>
+      <PWAInstallButton />
     </Box>
   );
 };

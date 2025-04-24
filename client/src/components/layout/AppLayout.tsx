@@ -17,17 +17,19 @@ import Header from './Header';
 import Footer from './Footer';
 import Sidebar from './Sidebar';
 import { useAuth } from '../../contexts/AuthContext';
+import PWAInstallButton from '../common/PWAInstallButton';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const Main = styled(Box)(({ theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
-  transition: theme.transitions.create('margin', {
+  transition: theme.transitions.create(['margin', 'width'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   marginLeft: 0,
+  width: '100%',
 }));
 
 const AppLayout: React.FC = () => {
@@ -35,13 +37,14 @@ const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('xl'));
 
   const handleDrawerToggle = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default', width: '100%' }}>
       {isAuthenticated ? (
         <>
           {/* Mobile/tablet header */}
@@ -76,6 +79,27 @@ const AppLayout: React.FC = () => {
             </AppBar>
           )}
 
+          {/* Desktop header for non-mobile */}
+          {!isMobile && (
+            <AppBar
+              position="fixed"
+              elevation={0}
+              sx={{
+                width: `calc(100% - ${drawerWidth}px)`,
+                ml: `${drawerWidth}px`,
+                bgcolor: 'background.default',
+                borderBottom: 1,
+                borderColor: 'divider',
+                color: 'text.primary',
+                zIndex: theme.zIndex.drawer - 1,
+              }}
+            >
+              <Toolbar sx={{ justifyContent: 'flex-end' }}>
+                {/* Add desktop header elements if needed */}
+              </Toolbar>
+            </AppBar>
+          )}
+
           {/* Sidebar for mobile (drawer) and desktop (permanent) */}
           <Drawer
             variant={isMobile ? "temporary" : "permanent"}
@@ -103,15 +127,28 @@ const AppLayout: React.FC = () => {
           </Drawer>
 
           {/* Main content */}
-          <Main sx={{ 
-            mt: isMobile ? 8 : 0, // Add top margin for mobile to account for AppBar
-            ml: isMobile ? 0 : `${drawerWidth}px`, // Add left margin for desktop to account for drawer
-            width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
-            bgcolor: 'background.default',
-            flexGrow: 1,
-            p: 3
-          }}>
-            <Outlet />
+          <Main 
+            sx={{ 
+              mt: isMobile ? 8 : 8, // Add top margin for AppBar on both mobile and desktop
+              ml: isMobile ? 0 : `${drawerWidth}px`, // Add left margin for desktop to account for drawer
+              width: isMobile ? '100%' : `calc(100% - ${drawerWidth}px)`,
+              bgcolor: 'background.default',
+              flexGrow: 1,
+              p: { xs: 2, sm: 3, md: 4 }, // Responsive padding
+              maxWidth: isLargeScreen ? 'calc(1600px - 280px)' : 'none', // Limit max width on large screens
+              mx: isLargeScreen ? 'auto' : 0,
+            }}
+          >
+            <Box 
+              sx={{ 
+                maxWidth: isMobile ? 'none' : isLargeScreen ? '100%' : '1200px',
+                mx: 'auto', 
+                width: '100%'
+              }}
+            >
+              <Outlet />
+            </Box>
+            <PWAInstallButton />
           </Main>
         </>
       ) : (
@@ -121,15 +158,22 @@ const AppLayout: React.FC = () => {
           <Box 
             component="main" 
             sx={{ 
-              flexGrow: 1, 
-              maxWidth: 'lg', 
-              mx: 'auto', 
-              width: '100%', 
-              px: 2, 
-              py: 4 
+              flexGrow: 1,
+              width: '100%',
+              px: { xs: 2, sm: 3, md: 4 },
+              py: { xs: 3, md: 4 }
             }}
           >
-            <Outlet />
+            <Container 
+              maxWidth="lg" 
+              sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                width: '100%'
+              }}
+            >
+              <Outlet />
+            </Container>
           </Box>
           <Footer />
         </Box>
