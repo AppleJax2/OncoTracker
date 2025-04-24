@@ -1,7 +1,7 @@
-// Redesigned HomePage Component inspired by Hyperspace template
-import React, { useState, useEffect } from 'react';
+// Modern responsive HomePage for OncoTracker
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
   Box, 
   Button, 
@@ -9,20 +9,17 @@ import {
   Typography, 
   Grid, 
   Card, 
-  CardContent, 
+  CardContent,
+  CardMedia,
   useTheme, 
   alpha,
   useMediaQuery,
   Divider,
   Stack,
-  TextField,
   Paper,
   IconButton,
   Avatar,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
+  TextField,
   InputAdornment
 } from '@mui/material';
 import { 
@@ -31,9 +28,6 @@ import {
   Groups2Outlined, 
   Pets, 
   HealthAndSafetyOutlined,
-  MedicalInformationOutlined,
-  LocalHospitalOutlined,
-  PsychologyOutlined,
   FavoriteBorderOutlined,
   EmojiObjectsOutlined,
   ArrowForwardIos,
@@ -45,7 +39,6 @@ import {
   Facebook,
   Twitter,
   LinkedIn,
-  Security,
   DataSaverOn,
   BarChart,
   Share,
@@ -53,7 +46,10 @@ import {
   KeyboardArrowDown,
   HowToReg,
   TrackChanges,
-  Send
+  Send,
+  Phone,
+  LocationOn,
+  AccessTime
 } from '@mui/icons-material';
 
 const HomePage: React.FC = () => {
@@ -61,13 +57,31 @@ const HomePage: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isMedium = useMediaQuery(theme.breakpoints.down('md'));
 
-  // Simplified Animation variants
-  const fadeInVariants = {
-    hidden: { opacity: 0, y: 20 },
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 60 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" }
+      transition: {
+        staggerChildren: 0.2
+      }
     }
   };
 
@@ -130,377 +144,611 @@ const HomePage: React.FC = () => {
     }
   ];
 
+  // Benefits data
+  const benefits = [
+    { 
+      icon: <FavoriteBorderOutlined />, 
+      title: "Enhanced Quality of Life", 
+      description: "Monitor trends and adjust care plans proactively to maximize your pet's comfort and well-being." 
+    },
+    { 
+      icon: <Groups2Outlined />, 
+      title: "Improved Vet Collaboration", 
+      description: "Provide your veterinarian with clear, concise data for more informed decision-making." 
+    },
+    { 
+      icon: <HealthAndSafetyOutlined />, 
+      title: "Reduced Caregiver Stress", 
+      description: "Stay organized and feel more in control with reminders and centralized health records." 
+    },
+    { 
+      icon: <EmojiObjectsOutlined />, 
+      title: "Empowered Pet Advocacy", 
+      description: "Gain insights into your pet's condition, enabling better communication and advocacy for their needs." 
+    }
+  ];
+
+  // How it works steps
+  const steps = [
+    { 
+      icon: <HowToReg />, 
+      title: "Sign Up", 
+      description: "Create your free account and add your pet's profile.",
+      color: theme.palette.primary.main
+    },
+    { 
+      icon: <TrackChanges />, 
+      title: "Track Daily", 
+      description: "Log symptoms, medications, and activities easily.",
+      color: theme.palette.primary.dark
+    },
+    { 
+      icon: <Send />, 
+      title: "Share Insights", 
+      description: "Generate reports and share them with your vet.",
+      color: theme.palette.secondary.main
+    }
+  ];
+
   return (
-    <Box sx={{ 
-      minHeight: '100vh',
-      display: 'flex', 
-      flexDirection: 'column',
-      background: theme.palette.background.default, 
-      color: theme.palette.text.primary
-    }}>
-      {/* Redesigned Hero Section - Cleaner Approach */}
-      <Box
+    <Box sx={{ overflow: 'hidden' }}>
+      {/* Hero Section */}
+      <Box 
         sx={{
           position: 'relative',
-          minHeight: 'calc(100vh - 64px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          pt: { xs: 10, md: 0 },
-          pb: { xs: 10, md: 0 },
-          overflow: 'hidden',
-          color: '#fff',
-
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundImage: 'url(https://images.unsplash.com/photo-1559757141-f3a7f14635b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            zIndex: 1,
-          },
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: alpha(theme.palette.primary.dark, 0.55),
-            zIndex: 2,
-          }
+          bgcolor: 'background.paper',
+          pt: { xs: 8, sm: 12, md: 16 },
+          pb: { xs: 8, sm: 12, md: 16 },
         }}
       >
-        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 3 }}>
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInVariants}
-          >
-            <Typography
-              variant="h1"
-              component="h1"
-              sx={{
-                fontWeight: 800,
-                fontSize: { xs: '2.8rem', sm: '3.5rem', md: '4.2rem' },
-                mb: 2,
-                textShadow: '0 3px 8px rgba(0,0,0,0.4)'
-              }}
-            >
-              Navigate Your Pet's Cancer Journey with Confidence
-            </Typography>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInVariants}
-            transition={{ delay: 0.2 }}
-          >
-            <Typography
-              variant="h5"
-              component="p"
-              sx={{
-                fontWeight: 400,
-                fontSize: { xs: '1.1rem', sm: '1.3rem' },
-                color: 'rgba(255,255,255,0.95)',
-                mb: 5,
-                maxWidth: '750px',
-                mx: 'auto',
-                lineHeight: 1.7,
-                textShadow: '0 2px 5px rgba(0,0,0,0.2)'
-              }}
-            >
-              Managing cancer care can feel overwhelming. OncoTracker simplifies symptom tracking, streamlines vet communication, and empowers you to focus on your pet's comfort and quality of life.
-            </Typography>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInVariants}
-            transition={{ delay: 0.4 }}
-          >
-            <Stack 
-              direction={{ xs: 'column', sm: 'row' }} 
-              spacing={2}
-              sx={{
-                justifyContent: 'center',
-              }}
-            >
+        <Container maxWidth="lg">
+          <Grid container spacing={4} alignItems="center">
+            <Grid item xs={12} md={6}>
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
+                initial="hidden"
+                animate="visible"
+                variants={fadeInUp}
               >
-                <Button
-                  component={Link}
-                  to="/signup"
-                  variant="contained"
-                  size="large"
-                  color="primary"
-                  endIcon={<ArrowForwardIos sx={{ fontSize: '1rem' }}/>}
-                  sx={{
-                    py: 1.5,
-                    px: 4,
-                    borderRadius: '30px',
-                    textTransform: 'none',
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    backgroundColor: theme.palette.primary.main,
-                    color: theme.palette.primary.contrastText,
-                    boxShadow: `0 5px 15px ${alpha(theme.palette.primary.main, 0.3)}`,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.dark,
-                      boxShadow: `0 8px 20px ${alpha(theme.palette.primary.dark, 0.4)}`,
-                    }
+                <Typography
+                  component="h1"
+                  variant="h2"
+                  color="primary.main"
+                  fontWeight="700"
+                  sx={{ 
+                    mb: 2,
+                    fontSize: { xs: '2.5rem', sm: '3rem', md: '3.5rem' },
+                    lineHeight: 1.2
                   }}
                 >
-                  Get Started Free
-                </Button>
+                  Navigate Your Pet's Cancer Journey with Confidence
+                </Typography>
               </motion.div>
               
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
+                initial="hidden"
+                animate="visible"
+                variants={fadeInUp}
+                transition={{ delay: 0.2 }}
               >
-                <Button
-                  component={Link}
-                  to="/login"
-                  variant="outlined"
-                  size="large"
-                  sx={{
-                    py: 1.5,
-                    px: 4,
-                    borderRadius: '30px',
-                    textTransform: 'none',
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    borderColor: 'rgba(255,255,255,0.8)',
-                    color: '#fff',
-                    borderWidth: 2,
-                    '&:hover': {
-                      borderColor: '#fff',
-                      borderWidth: 2,
-                      backgroundColor: 'rgba(255,255,255,0.1)'
-                    }
+                <Typography 
+                  variant="h6" 
+                  color="text.secondary"
+                  sx={{ 
+                    mb: 4,
+                    lineHeight: 1.6,
+                    fontWeight: 400
                   }}
                 >
-                  Sign In
-                </Button>
+                  Managing cancer care can feel overwhelming. OncoTracker simplifies symptom tracking, streamlines vet communication, and empowers you to focus on your pet's comfort and quality of life.
+                </Typography>
               </motion.div>
-            </Stack>
-          </motion.div>
-        </Container>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{ 
-            delay: 2, 
-            duration: 2, 
-            repeat: Infinity,
-            repeatType: "loop" 
-          }}
-          style={{
-            position: 'absolute',
-            bottom: 40,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-          }}
-        >
-          <Typography 
-            variant="body2" 
-            color="rgba(255,255,255,0.7)"
-            sx={{ mb: 1 }}
-          >
-            Discover More
-          </Typography>
-          <KeyboardArrowDown sx={{ color: 'rgba(255,255,255,0.7)', fontSize: 24 }} />
-        </motion.div>
-      </Box>
-
-      {/* Feature Section - Needs review after gradient removal */}
-      <Box
-        sx={{
-          background: theme.palette.background.paper, 
-        }}
-        id="features"
-      >
-        <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
-              Key Features
-            </Typography>
-          </motion.div>
-          <Grid container spacing={4}>
-            {featureList.map((feature, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <motion.div 
-                  initial="hidden" 
-                  whileInView="visible" 
-                  viewport={{ once: true, amount: 0.3 }} 
-                  variants={fadeInVariants}
-                  transition={{ delay: index * 0.1 }}
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={fadeInUp}
+                transition={{ delay: 0.4 }}
+              >
+                <Stack 
+                  direction={{ xs: 'column', sm: 'row' }} 
+                  spacing={2}
+                  sx={{ mt: 4 }}
                 >
-                  <Card sx={{ 
-                    height: '100%', 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    textAlign: 'center', 
-                    p: 3, 
-                    boxShadow: theme.shadows[3], 
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    '&:hover': { 
-                      transform: 'translateY(-5px)', 
-                      boxShadow: theme.shadows[6] 
-                    } 
-                  }}>
-                    <Box sx={{ fontSize: 48, color: theme.palette.primary.main, mb: 2 }}>
-                      {feature.icon}
-                    </Box>
-                    <CardContent sx={{ flexGrow: 1, p: 0 }}>
-                      <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
-                        {feature.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {feature.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* Benefits Section */}
-      <Box sx={{ background: theme.palette.background.default, py: { xs: 6, md: 10 } }}>
-        <Container maxWidth="lg">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
-              Why Choose OncoTracker?
-            </Typography>
-          </motion.div>
-          <Grid container spacing={5} alignItems="center">
+                  <Button
+                    component={Link}
+                    to="/signup"
+                    variant="contained"
+                    size="large"
+                    endIcon={<ArrowForwardIos />}
+                    sx={{
+                      py: 2,
+                      px: 4,
+                      borderRadius: '50px',
+                      textTransform: 'none',
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      boxShadow: `0 8px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+                    }}
+                  >
+                    Get Started Free
+                  </Button>
+                  <Button
+                    component={Link}
+                    to="/login"
+                    variant="outlined"
+                    size="large"
+                    sx={{
+                      py: 2,
+                      px: 4,
+                      borderRadius: '50px',
+                      textTransform: 'none',
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      borderWidth: 2,
+                    }}
+                  >
+                    Sign In
+                  </Button>
+                </Stack>
+              </motion.div>
+            </Grid>
             <Grid item xs={12} md={6}>
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-                <img 
-                  src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
-                  alt="Happy dog" 
-                  style={{ width: '100%', borderRadius: '12px', boxShadow: theme.shadows[4] }} 
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <Box
+                  component="img"
+                  src="https://images.unsplash.com/photo-1559757146-5c227217afda?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="A dog being examined by a veterinarian"
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: 4,
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                    transform: 'perspective(1000px) rotateY(-5deg)',
+                  }}
                 />
               </motion.div>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={3}>
-                {[
-                  { icon: <FavoriteBorderOutlined color="primary" />, title: "Enhanced Quality of Life", description: "Monitor trends and adjust care plans proactively to maximize your pet's comfort and well-being." },
-                  { icon: <Groups2Outlined color="primary" />, title: "Improved Vet Collaboration", description: "Provide your veterinarian with clear, concise data for more informed decision-making." },
-                  { icon: <PsychologyOutlined color="primary" />, title: "Reduced Caregiver Stress", description: "Stay organized and feel more in control with reminders and centralized health records." },
-                  { icon: <EmojiObjectsOutlined color="primary" />, title: "Empowered Pet Advocacy", description: "Gain insights into your pet's condition, enabling better communication and advocacy for their needs." }
-                ].map((benefit, index) => (
-                  <motion.div 
-                    key={index} 
-                    initial="hidden" 
-                    whileInView="visible" 
-                    viewport={{ once: true, amount: 0.2 }} 
-                    variants={fadeInVariants}
-                    transition={{ delay: index * 0.15 }}
-                  >
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main }}>
-                        {benefit.icon}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>{benefit.title}</Typography>
-                        <Typography variant="body2" color="text.secondary">{benefit.description}</Typography>
-                      </Box>
-                    </Stack>
-                  </motion.div>
-                ))}
-              </Stack>
-            </Grid>
           </Grid>
+        </Container>
+
+        {/* Decorative elements */}
+        <Box 
+          sx={{
+            position: 'absolute',
+            top: '15%',
+            left: '5%',
+            width: '150px',
+            height: '150px',
+            borderRadius: '50%',
+            background: `linear-gradient(45deg, ${alpha(theme.palette.primary.light, 0.2)}, ${alpha(theme.palette.primary.main, 0.1)})`,
+            filter: 'blur(40px)',
+            zIndex: -1,
+          }}
+        />
+        <Box 
+          sx={{
+            position: 'absolute',
+            bottom: '10%',
+            right: '8%',
+            width: '200px',
+            height: '200px',
+            borderRadius: '50%',
+            background: `linear-gradient(45deg, ${alpha(theme.palette.secondary.light, 0.2)}, ${alpha(theme.palette.secondary.main, 0.1)})`,
+            filter: 'blur(50px)',
+            zIndex: -1,
+          }}
+        />
+      </Box>
+
+      {/* Trusted by Section */}
+      <Box sx={{ py: 6, bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
+        <Container>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeIn}
+          >
+            <Typography 
+              variant="subtitle1" 
+              color="text.secondary" 
+              align="center" 
+              sx={{ mb: 4 }}
+            >
+              Trusted by pet owners and veterinarians across the country
+            </Typography>
+            <Stack 
+              direction={{ xs: 'column', sm: 'row' }} 
+              spacing={{ xs: 4, md: 8 }}
+              alignItems="center"
+              justifyContent="center"
+              sx={{ 
+                opacity: 0.7,
+              }}
+            >
+              {['PetCare Alliance', 'VetMed Association', 'PetWell Clinics', 'Animal Health Network'].map((partner, index) => (
+                <Typography 
+                  key={index} 
+                  variant="h6" 
+                  color="text.secondary"
+                  sx={{ 
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: 1
+                  }}
+                >
+                  {partner}
+                </Typography>
+              ))}
+            </Stack>
+          </motion.div>
+        </Container>
+      </Box>
+
+      {/* Features Section */}
+      <Box id="features" sx={{ py: { xs: 8, md: 12 } }}>
+        <Container>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUp}
+          >
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              align="center"
+              fontWeight={700}
+              sx={{ mb: 2 }}
+            >
+              Key Features
+            </Typography>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              align="center"
+              fontWeight={400}
+              sx={{ mb: 8, maxWidth: 800, mx: 'auto' }}
+            >
+              Our comprehensive suite of tools designed specifically for pet cancer management
+            </Typography>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={staggerContainer}
+          >
+            <Grid container spacing={4}>
+              {featureList.map((feature, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <motion.div variants={fadeInUp}>
+                    <Card 
+                      elevation={0} 
+                      sx={{ 
+                        height: '100%',
+                        p: 3,
+                        borderRadius: 4,
+                        transition: 'all 0.3s ease',
+                        backgroundColor: alpha(theme.palette.background.paper, 0.6),
+                        border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+                        '&:hover': {
+                          boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+                          transform: 'translateY(-5px)',
+                        }
+                      }}
+                    >
+                      <Box 
+                        sx={{ 
+                          mb: 2, 
+                          color: 'primary.main',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: 70,
+                          height: 70,
+                          borderRadius: '20px',
+                          backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                        }}
+                      >
+                        <Box sx={{ fontSize: 32 }}>
+                          {feature.icon}
+                        </Box>
+                      </Box>
+                      <CardContent sx={{ p: 0 }}>
+                        <Typography variant="h6" component="h3" fontWeight={600} gutterBottom>
+                          {feature.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {feature.description}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </Grid>
+              ))}
+            </Grid>
+          </motion.div>
         </Container>
       </Box>
 
       {/* How It Works Section */}
-      <Box sx={{ background: theme.palette.background.paper, py: { xs: 6, md: 10 } }}>
-        <Container maxWidth="md">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
+        <Container>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUp}
+          >
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              align="center"
+              fontWeight={700}
+              sx={{ mb: 2 }}
+            >
               Simple Steps to Better Care
             </Typography>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              align="center"
+              fontWeight={400}
+              sx={{ mb: 8, maxWidth: 800, mx: 'auto' }}
+            >
+              Getting started with OncoTracker is quick and easy
+            </Typography>
           </motion.div>
-          <Grid container spacing={4} textAlign="center">
-            {[
-              { icon: <HowToReg />, title: "Sign Up", description: "Create your free account and add your pet's profile." },
-              { icon: <TrackChanges />, title: "Track Daily", description: "Log symptoms, medications, and activities easily." },
-              { icon: <Send />, title: "Share Insights", description: "Generate reports and share them with your vet." }
-            ].map((step, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                 <motion.div 
-                    initial="hidden" 
-                    whileInView="visible" 
-                    viewport={{ once: true, amount: 0.3 }} 
-                    variants={fadeInVariants}
-                    transition={{ delay: index * 0.1 }}
+
+          <Box sx={{ position: 'relative' }}>
+            {/* Progress Line */}
+            {!isMobile && (
+              <Box sx={{
+                position: 'absolute',
+                top: '35%',
+                left: '15%',
+                right: '15%',
+                height: 4,
+                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                zIndex: 0,
+              }} />
+            )}
+
+            <Grid container spacing={6} justifyContent="center">
+              {steps.map((step, index) => (
+                <Grid item xs={12} md={4} key={index}>
+                  <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.3 }}
+                    variants={fadeInUp}
+                    transition={{ delay: index * 0.2 }}
                   >
-                  <Stack spacing={2} alignItems="center">
-                    <Avatar sx={{ bgcolor: theme.palette.secondary.main, width: 60, height: 60, mb: 2 }}>
-                      {React.cloneElement(step.icon, { sx: { fontSize: 30 } })}
-                    </Avatar>
-                    <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>{step.title}</Typography>
-                    <Typography variant="body2" color="text.secondary">{step.description}</Typography>
-                  </Stack>
-                 </motion.div>
-              </Grid>
-            ))}
+                    <Box sx={{ 
+                      textAlign: 'center',
+                      position: 'relative',
+                      zIndex: 1,
+                      py: 2,
+                    }}>
+                      <Box sx={{ 
+                        width: 80,
+                        height: 80,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '50%',
+                        bgcolor: step.color,
+                        color: 'white',
+                        fontSize: 32,
+                        mx: 'auto',
+                        mb: 2,
+                        boxShadow: `0 10px 20px ${alpha(step.color, 0.3)}`,
+                      }}>
+                        <Typography variant="h5" component="span" fontWeight={700}>
+                          {index + 1}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ mt: 2 }}>
+                        <Typography variant="h5" component="h3" fontWeight={600} gutterBottom>
+                          {step.title}
+                        </Typography>
+                        <Typography color="text.secondary">
+                          {step.description}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </motion.div>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
+
+      {/* Benefits/Why Choose Us Section with Image */}
+      <Box sx={{ py: { xs: 8, md: 12 } }}>
+        <Container>
+          <Grid container spacing={6} alignItems="center">
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={fadeInUp}
+              >
+                <Typography 
+                  variant="h3" 
+                  component="h2"
+                  fontWeight={700}
+                  sx={{ mb: 4 }}
+                >
+                  Why Choose OncoTracker?
+                </Typography>
+                
+                <Stack spacing={4}>
+                  {benefits.map((benefit, index) => (
+                    <motion.div 
+                      key={index}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.3 }}
+                      variants={fadeInUp}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Stack direction="row" spacing={3} alignItems="flex-start">
+                        <Box 
+                          sx={{ 
+                            color: 'primary.main',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 48,
+                            height: 48,
+                            borderRadius: '12px',
+                            backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                            flexShrink: 0,
+                          }}
+                        >
+                          <Box sx={{ fontSize: 24 }}>
+                            {benefit.icon}
+                          </Box>
+                        </Box>
+                        <Box>
+                          <Typography variant="h6" component="h3" fontWeight={600} gutterBottom>
+                            {benefit.title}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {benefit.description}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </motion.div>
+                  ))}
+                </Stack>
+              </motion.div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <Box
+                  component="img"
+                  src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                  alt="Happy dog with owner" 
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    borderRadius: 4,
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                  }}
+                />
+              </motion.div>
+            </Grid>
           </Grid>
         </Container>
       </Box>
 
       {/* Testimonials Section */}
-      <Box sx={{ background: theme.palette.background.default, py: { xs: 6, md: 10 } }}>
-        <Container maxWidth="md">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: alpha(theme.palette.primary.main, 0.03) }}>
+        <Container>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeInUp}
+          >
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              align="center"
+              fontWeight={700}
+              sx={{ mb: 2 }}
+            >
               Hear From Our Community
             </Typography>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              align="center"
+              fontWeight={400}
+              sx={{ mb: 8, maxWidth: 800, mx: 'auto' }}
+            >
+              Real stories from pet owners and veterinarians using OncoTracker
+            </Typography>
           </motion.div>
-          <Grid container spacing={4} justifyContent="center">
+
+          <Grid container spacing={4}>
             {testimonials.map((testimonial, index) => (
-              <Grid item xs={12} sm={6} md={4} key={testimonial.id}>
-                <motion.div 
-                  initial="hidden" 
-                  whileInView="visible" 
-                  viewport={{ once: true, amount: 0.3 }} 
-                  variants={fadeInVariants}
-                  transition={{ delay: index * 0.15 }}
+              <Grid item xs={12} md={4} key={testimonial.id}>
+                <motion.div
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.3 }}
+                  variants={fadeInUp}
+                  transition={{ delay: index * 0.2 }}
                   style={{ height: '100%' }}
                 >
-                  <Paper elevation={3} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <Typography variant="body1" sx={{ fontStyle: 'italic', mb: 2, flexGrow: 1 }}>
+                  <Paper 
+                    elevation={0} 
+                    sx={{ 
+                      p: 4, 
+                      height: '100%', 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      justifyContent: 'space-between',
+                      borderRadius: 4,
+                      border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+                        transform: 'translateY(-5px)',
+                      },
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '4px',
+                        background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                      }
+                    }}
+                  >
+                    <Box sx={{ fontSize: 60, color: alpha(theme.palette.primary.main, 0.1), position: 'absolute', top: 16, right: 16 }}>
+                      "
+                    </Box>
+                    <Typography 
+                      variant="body1" 
+                      sx={{ 
+                        fontStyle: 'italic', 
+                        mb: 4, 
+                        flexGrow: 1,
+                        position: 'relative',
+                        zIndex: 1,
+                      }}
+                    >
                       "{testimonial.content}"
                     </Typography>
                     <Stack direction="row" alignItems="center" spacing={2}>
-                      <Avatar src={testimonial.avatar} alt={testimonial.name} />
+                      <Avatar src={testimonial.avatar} alt={testimonial.name} sx={{ width: 48, height: 48 }} />
                       <Box>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{testimonial.name}</Typography>
-                        <Typography variant="body2" color="text.secondary">{testimonial.role}</Typography>
+                        <Typography variant="subtitle1" fontWeight={600}>
+                          {testimonial.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {testimonial.role}
+                        </Typography>
                       </Box>
                     </Stack>
                   </Paper>
@@ -511,86 +759,377 @@ const HomePage: React.FC = () => {
         </Container>
       </Box>
 
-      {/* Call to Action Section */}
-      <Box sx={{ background: theme.palette.primary.main, color: theme.palette.primary.contrastText, py: { xs: 6, md: 8 }, textAlign: 'center' }}>
-        <Container maxWidth="md">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} variants={fadeInVariants}>
-            <Typography variant="h4" component="h2" sx={{ fontWeight: 700, mb: 3 }}>
-              Ready to Improve Your Pet's Care Journey?
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 4, color: alpha(theme.palette.primary.contrastText, 0.85) }}>
-              Join the OncoTracker community today and start making a difference in your pet's health management.
-            </Typography>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Button
-                component={Link}
-                to="/signup"
-                variant="contained"
-                size="large"
-                color="secondary"
-                endIcon={<ArrowForwardIos sx={{ fontSize: '1rem' }}/>}
-                sx={{
-                  py: 1.5,
-                  px: 5,
-                  borderRadius: '30px',
-                  textTransform: 'none',
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  boxShadow: `0 5px 15px ${alpha(theme.palette.secondary.main, 0.4)}`,
-                  '&:hover': {
-                    backgroundColor: theme.palette.secondary.dark,
-                    boxShadow: `0 8px 20px ${alpha(theme.palette.secondary.dark, 0.5)}`,
-                  }
-                }}
+      {/* CTA Section */}
+      <Box 
+        sx={{ 
+          py: { xs: 8, md: 10 }, 
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: 'white',
+          borderRadius: { sm: '0 100px 0 0' }
+        }}
+      >
+        <Container>
+          <Grid container spacing={6} alignItems="center">
+            <Grid item xs={12} md={7}>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={fadeInUp}
               >
-                Sign Up Now - It's Free!
-              </Button>
-            </motion.div>
-          </motion.div>
+                <Typography 
+                  variant="h3" 
+                  component="h2"
+                  fontWeight={700}
+                  sx={{ color: 'white', mb: 2 }}
+                >
+                  Ready to Improve Your Pet's Care Journey?
+                </Typography>
+                <Typography 
+                  variant="h6"
+                  fontWeight={400}
+                  sx={{ 
+                    color: alpha('#fff', 0.8),
+                    mb: 4
+                  }}
+                >
+                  Join the OncoTracker community today and start making a difference in your pet's health management.
+                </Typography>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    component={Link}
+                    to="/signup"
+                    variant="contained"
+                    size="large"
+                    color="secondary"
+                    endIcon={<ArrowForwardIos />}
+                    sx={{
+                      py: 2,
+                      px: 4,
+                      borderRadius: '50px',
+                      textTransform: 'none',
+                      fontSize: '1.1rem',
+                      fontWeight: 600,
+                      boxShadow: `0 8px 20px ${alpha(theme.palette.secondary.main, 0.3)}`,
+                      backgroundColor: theme.palette.secondary.main,
+                      '&:hover': {
+                        backgroundColor: theme.palette.secondary.dark
+                      }
+                    }}
+                  >
+                    Sign Up Now - It's Free!
+                  </Button>
+                </motion.div>
+              </motion.div>
+            </Grid>
+            <Grid item xs={12} md={5} sx={{ display: { xs: 'none', md: 'block' } }}>
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                <Pets sx={{ fontSize: 280, color: alpha('#fff', 0.1), mt: -8 }} />
+              </motion.div>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Contact Section */}
+      <Box sx={{ py: { xs: 8, md: 12 } }}>
+        <Container>
+          <Grid container spacing={6}>
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={fadeInUp}
+              >
+                <Typography 
+                  variant="h3" 
+                  component="h2"
+                  fontWeight={700}
+                  sx={{ mb: 2 }}
+                >
+                  Get in Touch
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  color="text.secondary"
+                  sx={{ mb: 5 }}
+                >
+                  Have questions about OncoTracker? We're here to help. Send us a message and we'll get back to you as soon as possible.
+                </Typography>
+
+                <Stack spacing={4}>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Box 
+                      sx={{ 
+                        p: 1.5, 
+                        borderRadius: 2, 
+                        bgcolor: alpha(theme.palette.primary.main, 0.08),
+                        color: theme.palette.primary.main
+                      }}
+                    >
+                      <EmailOutlined />
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">Email</Typography>
+                      <Typography variant="body1">support@oncotracker.com</Typography>
+                    </Box>
+                  </Stack>
+                  
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Box 
+                      sx={{ 
+                        p: 1.5, 
+                        borderRadius: 2, 
+                        bgcolor: alpha(theme.palette.primary.main, 0.08),
+                        color: theme.palette.primary.main
+                      }}
+                    >
+                      <Phone />
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">Phone</Typography>
+                      <Typography variant="body1">(555) 123-4567</Typography>
+                    </Box>
+                  </Stack>
+                  
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Box 
+                      sx={{ 
+                        p: 1.5, 
+                        borderRadius: 2, 
+                        bgcolor: alpha(theme.palette.primary.main, 0.08),
+                        color: theme.palette.primary.main
+                      }}
+                    >
+                      <AccessTime />
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">Support Hours</Typography>
+                      <Typography variant="body1">Monday - Friday: 9AM - 5PM EST</Typography>
+                    </Box>
+                  </Stack>
+                </Stack>
+              </motion.div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={fadeInUp}
+              >
+                <Paper
+                  elevation={0}
+                  sx={{ 
+                    p: 4, 
+                    borderRadius: 4, 
+                    border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+                    boxShadow: '0 10px 40px rgba(0,0,0,0.06)',
+                  }}
+                >
+                  <Stack spacing={3}>
+                    <Typography variant="h5" fontWeight={600}>Send us a message</Typography>
+                    
+                    <TextField
+                      fullWidth
+                      label="Your Name"
+                      variant="outlined"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <PersonOutline color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    
+                    <TextField
+                      fullWidth
+                      label="Your Email"
+                      variant="outlined"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <EmailOutlined color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    
+                    <TextField
+                      fullWidth
+                      label="Your Message"
+                      multiline
+                      rows={4}
+                      variant="outlined"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start" sx={{ alignSelf: 'flex-start', mt: 1.5 }}>
+                            <MessageOutlined color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    
+                    <Button
+                      variant="contained"
+                      size="large"
+                      startIcon={<Send />}
+                      sx={{
+                        py: 1.5,
+                        borderRadius: '30px',
+                        textTransform: 'none',
+                        alignSelf: 'flex-start'
+                      }}
+                    >
+                      Send Message
+                    </Button>
+                  </Stack>
+                </Paper>
+              </motion.div>
+            </Grid>
+          </Grid>
         </Container>
       </Box>
 
       {/* Footer */}
-      <Box component="footer" sx={{ background: theme.palette.grey[900], color: theme.palette.grey[400], py: 4 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={4} justifyContent="space-between">
-            <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="h6" gutterBottom sx={{ color: theme.palette.common.white }}>OncoTracker</Typography>
-              <Typography variant="body2" sx={{ mb: 2 }}>
-                Empowering pet owners and veterinarians in the journey of cancer care.
-              </Typography>
-              <Stack direction="row" spacing={1}>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><Facebook /></IconButton>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><Twitter /></IconButton>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><Instagram /></IconButton>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><LinkedIn /></IconButton>
+      <Box 
+        component="footer" 
+        sx={{ 
+          backgroundColor: theme.palette.grey[900], 
+          color: theme.palette.grey[400], 
+          py: 6,
+          borderRadius: { sm: '100px 0 0 0' }
+        }}
+      >
+        <Container>
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <Stack spacing={3}>
+                <Typography variant="h5" sx={{ color: 'white', fontWeight: 600 }}>
+                  OncoTracker
+                </Typography>
+                <Typography variant="body2">
+                  Empowering pet owners and veterinarians in the journey of cancer care.
+                </Typography>
+                <Stack direction="row" spacing={1}>
+                  <IconButton size="small" aria-label="Facebook" sx={{ color: theme.palette.grey[400] }}>
+                    <Facebook />
+                  </IconButton>
+                  <IconButton size="small" aria-label="Twitter" sx={{ color: theme.palette.grey[400] }}>
+                    <Twitter />
+                  </IconButton>
+                  <IconButton size="small" aria-label="Instagram" sx={{ color: theme.palette.grey[400] }}>
+                    <Instagram />
+                  </IconButton>
+                  <IconButton size="small" aria-label="LinkedIn" sx={{ color: theme.palette.grey[400] }}>
+                    <LinkedIn />
+                  </IconButton>
+                </Stack>
               </Stack>
             </Grid>
+            
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" gutterBottom sx={{ color: theme.palette.common.white, fontWeight: 600 }}>Product</Typography>
-              <Link component="a" href="#features" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>Features</Link>
-              <Link component="a" href="/pricing" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>Pricing</Link>
+              <Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 600, mb: 2 }}>
+                Product
+              </Typography>
+              <Link component="a" href="#features" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1.5 }}>
+                Features
+              </Link>
+              <Link component="a" href="/pricing" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1.5 }}>
+                Pricing
+              </Link>
+              <Link component="a" href="/faq" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1.5 }}>
+                FAQ
+              </Link>
             </Grid>
+            
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" gutterBottom sx={{ color: theme.palette.common.white, fontWeight: 600 }}>Company</Typography>
-              <Link component="a" href="/about" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>About Us</Link>
-              <Link component="a" href="/contact" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>Contact</Link>
+              <Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 600, mb: 2 }}>
+                Company
+              </Typography>
+              <Link component="a" href="/about" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1.5 }}>
+                About Us
+              </Link>
+              <Link component="a" href="/blog" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1.5 }}>
+                Blog
+              </Link>
+              <Link component="a" href="/contact" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1.5 }}>
+                Contact
+              </Link>
             </Grid>
-            <Grid item xs={12} md={4}>
+            
+            <Grid item xs={12} sm={6} md={4}>
+              <Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 600, mb: 2 }}>
+                Subscribe to our newsletter
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                Get the latest news and updates about pet cancer care
+              </Typography>
+              <Stack direction="row" spacing={1}>
+                <TextField
+                  variant="outlined"
+                  placeholder="Your email"
+                  size="small"
+                  fullWidth
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      bgcolor: alpha(theme.palette.common.white, 0.05),
+                      '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: alpha(theme.palette.common.white, 0.2),
+                      },
+                      '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: alpha(theme.palette.common.white, 0.1),
+                      },
+                    },
+                    '& input': {
+                      color: theme.palette.common.white,
+                    }
+                  }}
+                />
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  sx={{ px: 2 }}
+                >
+                  <Send />
+                </Button>
+              </Stack>
             </Grid>
           </Grid>
-          <Divider sx={{ my: 3, borderColor: theme.palette.grey[700] }} />
-          <Typography variant="body2" textAlign="center">
-            © {new Date().getFullYear()} OncoTracker. All rights reserved. |
-            <Link component="a" href="/privacy" sx={{ color: 'inherit', mx: 1 }}>Privacy Policy</Link> |
-            <Link component="a" href="/terms" sx={{ color: 'inherit', mx: 1 }}>Terms of Service</Link>
-          </Typography>
+          
+          <Divider sx={{ my: 4, borderColor: alpha(theme.palette.common.white, 0.1) }} />
+          
+          <Stack 
+            direction={{ xs: 'column', sm: 'row' }} 
+            justifyContent="space-between" 
+            alignItems={{ xs: 'center', sm: 'flex-start' }}
+            spacing={2}
+          >
+            <Typography variant="body2" textAlign={{ xs: 'center', sm: 'left' }}>
+              © {new Date().getFullYear()} OncoTracker. All rights reserved.
+            </Typography>
+            <Stack 
+              direction="row" 
+              spacing={2}
+              divider={<Box component="span" sx={{ color: alpha(theme.palette.common.white, 0.3) }}>•</Box>}
+            >
+              <Link component="a" href="/privacy" sx={{ color: 'inherit', textDecoration: 'none' }}>
+                Privacy Policy
+              </Link>
+              <Link component="a" href="/terms" sx={{ color: 'inherit', textDecoration: 'none' }}>
+                Terms of Service
+              </Link>
+            </Stack>
+          </Stack>
         </Container>
       </Box>
-
     </Box>
   );
 };
