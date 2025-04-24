@@ -10,7 +10,8 @@ import {
   Link, 
   useTheme, 
   alpha,
-  Chip
+  Chip,
+  useMediaQuery
 } from '@mui/material';
 import { 
   ArrowForward as ArrowForwardIcon,
@@ -24,6 +25,8 @@ import {
 
 const ResourcesPage: React.FC = () => {
   const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('xl'));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   // Animation variants
   const pageVariants = {
@@ -131,10 +134,18 @@ const ResourcesPage: React.FC = () => {
       variants={pageVariants}
       initial="initial"
       animate="animate"
+      style={{ width: '100%' }}
     >
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container 
+        maxWidth={false}
+        sx={{ 
+          py: { xs: 4, md: 6 },
+          maxWidth: isLargeScreen ? '1600px' : isMediumScreen ? '1200px' : 'lg',
+          px: { xs: 2, sm: 3, md: 4 }
+        }}
+      >
         {/* Header */}
-        <Box sx={{ mb: 6, textAlign: 'center' }}>
+        <Box sx={{ mb: { xs: 4, md: 6 }, textAlign: 'center' }}>
           <Typography 
             variant="h3" 
             component="h1" 
@@ -142,7 +153,8 @@ const ResourcesPage: React.FC = () => {
             sx={{ 
               fontWeight: 700,
               color: theme.palette.text.primary,
-              mb: 2
+              mb: 2,
+              fontSize: { xs: '2rem', md: '2.5rem' }
             }}
           >
             Cancer Resources for Pet Parents
@@ -151,10 +163,11 @@ const ResourcesPage: React.FC = () => {
             variant="h6" 
             color="text.secondary" 
             sx={{ 
-              maxWidth: 800, 
+              maxWidth: { xs: '100%', md: 800 }, 
               mx: 'auto', 
               lineHeight: 1.6,
-              fontWeight: 400
+              fontWeight: 400,
+              fontSize: { xs: '1rem', md: '1.1rem' }
             }}
           >
             Browse our collection of trusted resources to help you navigate your pet's cancer journey. 
@@ -163,83 +176,79 @@ const ResourcesPage: React.FC = () => {
         </Box>
 
         {/* Resource Categories */}
-        <Box sx={{ mb: 8 }}>
+        <Box sx={{ mb: { xs: 6, md: 8 } }}>
           <Box sx={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: 3
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+              lg: 'repeat(4, 1fr)',
+              xl: 'repeat(4, 1fr)'
+            },
+            gap: { xs: 3, md: 4 }
           }}>
             {resourceCategories.map((category, index) => (
-              <Box 
-                key={index} 
-                sx={{ 
-                  flex: { 
-                    xs: '1 1 100%', 
-                    sm: '1 1 calc(50% - 12px)', 
-                    md: '1 1 calc(25% - 18px)' 
-                  }
-                }}
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                whileHover="hover"
               >
-                <motion.div
-                  variants={itemVariants}
-                  whileHover="hover"
+                <Card 
+                  sx={{ 
+                    height: '100%',
+                    borderRadius: 3,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    transition: 'all 0.3s ease',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '4px',
+                      backgroundColor: category.color
+                    }
+                  }}
                 >
-                  <Card 
-                    sx={{ 
-                      height: '100%',
-                      borderRadius: 3,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      transition: 'all 0.3s ease',
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '4px',
-                        backgroundColor: category.color
-                      }
-                    }}
-                  >
-                    <CardContent sx={{ p: 3 }}>
-                      <Box 
-                        sx={{ 
-                          display: 'flex', 
-                          justifyContent: 'center', 
-                          mb: 2,
-                          color: category.color,
-                          backgroundColor: alpha(category.color, 0.1),
-                          width: 70,
-                          height: 70,
-                          borderRadius: '50%',
-                          alignItems: 'center',
-                          mx: 'auto'
-                        }}
-                      >
-                        {category.icon}
-                      </Box>
-                      <Typography variant="h6" align="center" gutterBottom sx={{ fontWeight: 600 }}>
-                        {category.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" align="center">
-                        {category.description}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Box>
+                  <CardContent sx={{ p: 3 }}>
+                    <Box 
+                      sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        mb: 2,
+                        color: category.color,
+                        backgroundColor: alpha(category.color, 0.1),
+                        width: 70,
+                        height: 70,
+                        borderRadius: '50%',
+                        alignItems: 'center',
+                        mx: 'auto'
+                      }}
+                    >
+                      {category.icon}
+                    </Box>
+                    <Typography variant="h6" align="center" gutterBottom sx={{ fontWeight: 600 }}>
+                      {category.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" align="center">
+                      {category.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </Box>
         </Box>
 
         {/* Featured Resources */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: { xs: 4, md: 6 } }}>
           <Typography 
             variant="h4" 
             sx={{ 
-              mb: 4, 
+              mb: { xs: 3, md: 4 }, 
               fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
@@ -258,101 +267,102 @@ const ResourcesPage: React.FC = () => {
           </Typography>
           
           <Box sx={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: 3
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+              lg: 'repeat(3, 1fr)',
+              xl: 'repeat(4, 1fr)'
+            },
+            gap: { xs: 3, md: 4 }
           }}>
             {featuredResources.map((resource, index) => (
-              <Box 
-                key={index} 
-                sx={{ 
-                  flex: { 
-                    xs: '1 1 100%', 
-                    sm: '1 1 calc(50% - 12px)', 
-                    md: '1 1 calc(33.333% - 16px)' 
-                  }
-                }}
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                whileHover="hover"
               >
-                <motion.div
-                  variants={itemVariants}
-                  whileHover="hover"
+                <Card 
+                  sx={{ 
+                    height: '100%',
+                    borderRadius: 2,
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
                 >
-                  <Card 
-                    sx={{ 
-                      height: '100%',
-                      borderRadius: 2,
-                      overflow: 'hidden',
-                      boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
+                  <Box 
+                    sx={{
+                      height: 140,
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
                       display: 'flex',
-                      flexDirection: 'column'
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}
                   >
-                    <Box 
-                      sx={{
-                        height: 140,
-                        bgcolor: alpha(theme.palette.primary.main, 0.1),
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      <PetsIcon sx={{ fontSize: 60, color: alpha(theme.palette.primary.main, 0.5) }} />
-                    </Box>
-                    <CardContent sx={{ p: 3, flexGrow: 1 }}>
-                      <Box sx={{ mb: 1 }}>
-                        {resource.tags.map((tag, i) => (
-                          <Chip 
-                            key={i}
-                            label={tag}
-                            size="small"
-                            sx={{ 
-                              mr: 0.5, 
-                              mb: 0.5,
-                              bgcolor: alpha(theme.palette.primary.main, 0.1),
-                              color: theme.palette.primary.main,
-                              fontWeight: 500,
-                              fontSize: '0.7rem'
-                            }}
-                          />
-                        ))}
-                      </Box>
-                      <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
-                        {resource.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {resource.description}
-                      </Typography>
-                      <Box sx={{ mt: 'auto' }}>
-                        <Button 
-                          component="a"
-                          href={resource.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          endIcon={<ArrowForwardIcon />}
+                    <PetsIcon sx={{ fontSize: 60, color: alpha(theme.palette.primary.main, 0.5) }} />
+                  </Box>
+                  <CardContent sx={{ p: 3, flexGrow: 1 }}>
+                    <Box sx={{ mb: 1 }}>
+                      {resource.tags.map((tag, i) => (
+                        <Chip 
+                          key={i}
+                          label={tag}
+                          size="small"
                           sx={{ 
-                            textTransform: 'none',
-                            fontWeight: 600,
+                            mr: 0.5, 
+                            mb: 0.5,
+                            bgcolor: alpha(theme.palette.primary.main, 0.1),
                             color: theme.palette.primary.main,
-                            p: 0,
-                            '&:hover': {
-                              backgroundColor: 'transparent',
-                              textDecoration: 'underline'
-                            }
+                            fontWeight: 500,
+                            fontSize: '0.7rem'
                           }}
-                        >
-                          Visit Resource
-                        </Button>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Box>
+                        />
+                      ))}
+                    </Box>
+                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+                      {resource.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      {resource.description}
+                    </Typography>
+                    <Box sx={{ mt: 'auto' }}>
+                      <Button 
+                        component="a"
+                        href={resource.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        endIcon={<ArrowForwardIcon />}
+                        sx={{ 
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          color: theme.palette.primary.main,
+                          p: 0,
+                          '&:hover': {
+                            backgroundColor: 'transparent',
+                            textDecoration: 'underline'
+                          }
+                        }}
+                      >
+                        Visit Resource
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </Box>
         </Box>
 
         {/* Additional Resources */}
-        <Box sx={{ mt: 8, p: 4, bgcolor: alpha(theme.palette.primary.main, 0.05), borderRadius: 3 }}>
+        <Box sx={{ 
+          mt: { xs: 6, md: 8 }, 
+          p: { xs: 3, md: 4 }, 
+          bgcolor: alpha(theme.palette.primary.main, 0.05), 
+          borderRadius: 3 
+        }}>
           <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
             <MenuBookIcon sx={{ mr: 1, verticalAlign: 'middle', color: theme.palette.primary.main }} />
             Additional Reading
