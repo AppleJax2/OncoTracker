@@ -171,7 +171,7 @@ const HomePage: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: alpha(theme.palette.primary.dark, 0.55),
+            backgroundColor: alpha(theme.palette.primary.dark, 0.65),
             zIndex: 2,
           }
         }}
@@ -187,8 +187,8 @@ const HomePage: React.FC = () => {
               component="h1"
               sx={{
                 fontWeight: 800,
-                fontSize: { xs: '2.8rem', sm: '3.5rem', md: '4.2rem' },
-                mb: 2,
+                fontSize: { xs: '3.5rem', sm: '4rem', md: '4.5rem' },
+                mb: 3,
                 textShadow: '0 3px 8px rgba(0,0,0,0.4)'
               }}
             >
@@ -207,12 +207,12 @@ const HomePage: React.FC = () => {
               component="p"
               sx={{
                 fontWeight: 400,
-                fontSize: { xs: '1.1rem', sm: '1.3rem' },
+                fontSize: { xs: '1.4rem', sm: '1.5rem', md: '1.6rem' },
                 color: 'rgba(255,255,255,0.95)',
                 mb: 5,
-                maxWidth: '750px',
+                maxWidth: '850px',
                 mx: 'auto',
-                lineHeight: 1.7,
+                lineHeight: 1.6,
                 textShadow: '0 2px 5px rgba(0,0,0,0.2)'
               }}
             >
@@ -228,7 +228,7 @@ const HomePage: React.FC = () => {
           >
             <Stack 
               direction={{ xs: 'column', sm: 'row' }} 
-              spacing={2}
+              spacing={3}
               sx={{
                 justifyContent: 'center',
               }}
@@ -243,13 +243,13 @@ const HomePage: React.FC = () => {
                   variant="contained"
                   size="large"
                   color="primary"
-                  endIcon={<ArrowForwardIos sx={{ fontSize: '1rem' }}/>}
+                  endIcon={<ArrowForwardIos sx={{ fontSize: '1.2rem' }}/>}
                   sx={{
-                    py: 1.5,
-                    px: 4,
+                    py: 2,
+                    px: 5,
                     borderRadius: '30px',
                     textTransform: 'none',
-                    fontSize: '1.1rem',
+                    fontSize: '1.25rem',
                     fontWeight: 600,
                     backgroundColor: theme.palette.primary.main,
                     color: theme.palette.primary.contrastText,
@@ -274,13 +274,13 @@ const HomePage: React.FC = () => {
                   variant="outlined"
                   size="large"
                   sx={{
-                    py: 1.5,
-                    px: 4,
+                    py: 2,
+                    px: 5,
                     borderRadius: '30px',
                     textTransform: 'none',
-                    fontSize: '1.1rem',
+                    fontSize: '1.25rem',
                     fontWeight: 600,
-                    borderColor: 'rgba(255,255,255,0.8)',
+                    borderColor: 'rgba(255,255,255,0.9)',
                     color: '#fff',
                     borderWidth: 2,
                     '&:hover': {
@@ -322,12 +322,12 @@ const HomePage: React.FC = () => {
         >
           <Typography 
             variant="body2" 
-            color="rgba(255,255,255,0.7)"
-            sx={{ mb: 1 }}
+            color="rgba(255,255,255,0.85)"
+            sx={{ mb: 1, fontSize: '1rem' }}
           >
             Discover More
           </Typography>
-          <KeyboardArrowDown sx={{ color: 'rgba(255,255,255,0.7)', fontSize: 24 }} />
+          <KeyboardArrowDown sx={{ color: 'rgba(255,255,255,0.85)', fontSize: 28 }} />
         </motion.div>
       </Box>
 
@@ -335,16 +335,17 @@ const HomePage: React.FC = () => {
       <Box
         sx={{
           background: theme.palette.background.paper, 
+          py: { xs: 8, md: 12 },
         }}
         id="features"
       >
         <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
+            <Typography variant="h2" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 8 }}>
               Key Features
             </Typography>
           </motion.div>
-          <Grid container spacing={4}>
+          <Grid container spacing={5}>
             {featureList.map((feature, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <motion.div 
@@ -359,7 +360,7 @@ const HomePage: React.FC = () => {
                     display: 'flex', 
                     flexDirection: 'column', 
                     textAlign: 'center', 
-                    p: 3, 
+                    p: 4,
                     boxShadow: theme.shadows[3], 
                     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                     '&:hover': { 
@@ -367,14 +368,14 @@ const HomePage: React.FC = () => {
                       boxShadow: theme.shadows[6] 
                     } 
                   }}>
-                    <Box sx={{ fontSize: 48, color: theme.palette.primary.main, mb: 2 }}>
+                    <Box sx={{ fontSize: 64, color: theme.palette.primary.main, mb: 3 }}>
                       {feature.icon}
                     </Box>
                     <CardContent sx={{ flexGrow: 1, p: 0 }}>
-                      <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 600 }}>
+                      <Typography variant="h5" component="h3" gutterBottom sx={{ fontWeight: 600, mb: 2 }}>
                         {feature.title}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body1" color="text.secondary">
                         {feature.description}
                       </Typography>
                     </CardContent>
@@ -387,10 +388,10 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* Benefits Section */}
-      <Box sx={{ background: theme.palette.background.default, py: { xs: 6, md: 10 } }}>
+      <Box sx={{ background: theme.palette.background.default, py: { xs: 8, md: 12 } }}>
         <Container maxWidth="lg">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
+            <Typography variant="h2" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 8 }}>
               Why Choose OncoTracker?
             </Typography>
           </motion.div>
@@ -405,7 +406,7 @@ const HomePage: React.FC = () => {
               </motion.div>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Stack spacing={3}>
+              <Stack spacing={4}>
                 {[
                   { icon: <FavoriteBorderOutlined color="primary" />, title: "Enhanced Quality of Life", description: "Monitor trends and adjust care plans proactively to maximize your pet's comfort and well-being." },
                   { icon: <Groups2Outlined color="primary" />, title: "Improved Vet Collaboration", description: "Provide your veterinarian with clear, concise data for more informed decision-making." },
@@ -420,13 +421,13 @@ const HomePage: React.FC = () => {
                     variants={fadeInVariants}
                     transition={{ delay: index * 0.15 }}
                   >
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main }}>
-                        {benefit.icon}
+                    <Stack direction="row" spacing={3} alignItems="center">
+                      <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main, width: 60, height: 60 }}>
+                        {React.cloneElement(benefit.icon, { fontSize: 'large' })}
                       </Avatar>
                       <Box>
-                        <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>{benefit.title}</Typography>
-                        <Typography variant="body2" color="text.secondary">{benefit.description}</Typography>
+                        <Typography variant="h5" component="h3" sx={{ fontWeight: 600, mb: 1 }}>{benefit.title}</Typography>
+                        <Typography variant="body1" color="text.secondary">{benefit.description}</Typography>
                       </Box>
                     </Stack>
                   </motion.div>
@@ -438,14 +439,14 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* How It Works Section */}
-      <Box sx={{ background: theme.palette.background.paper, py: { xs: 6, md: 10 } }}>
+      <Box sx={{ background: theme.palette.background.paper, py: { xs: 8, md: 12 } }}>
         <Container maxWidth="md">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
+            <Typography variant="h2" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 8 }}>
               Simple Steps to Better Care
             </Typography>
           </motion.div>
-          <Grid container spacing={4} textAlign="center">
+          <Grid container spacing={5} textAlign="center">
             {[
               { icon: <HowToReg />, title: "Sign Up", description: "Create your free account and add your pet's profile." },
               { icon: <TrackChanges />, title: "Track Daily", description: "Log symptoms, medications, and activities easily." },
@@ -459,12 +460,12 @@ const HomePage: React.FC = () => {
                     variants={fadeInVariants}
                     transition={{ delay: index * 0.1 }}
                   >
-                  <Stack spacing={2} alignItems="center">
-                    <Avatar sx={{ bgcolor: theme.palette.secondary.main, width: 60, height: 60, mb: 2 }}>
-                      {React.cloneElement(step.icon, { sx: { fontSize: 30 } })}
+                  <Stack spacing={3} alignItems="center">
+                    <Avatar sx={{ bgcolor: theme.palette.secondary.main, width: 80, height: 80, mb: 3 }}>
+                      {React.cloneElement(step.icon, { sx: { fontSize: 40 } })}
                     </Avatar>
-                    <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>{step.title}</Typography>
-                    <Typography variant="body2" color="text.secondary">{step.description}</Typography>
+                    <Typography variant="h5" component="h3" sx={{ fontWeight: 600, mb: 2 }}>{step.title}</Typography>
+                    <Typography variant="body1" color="text.secondary">{step.description}</Typography>
                   </Stack>
                  </motion.div>
               </Grid>
@@ -474,14 +475,14 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* Testimonials Section */}
-      <Box sx={{ background: theme.palette.background.default, py: { xs: 6, md: 10 } }}>
+      <Box sx={{ background: theme.palette.background.default, py: { xs: 8, md: 12 } }}>
         <Container maxWidth="md">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} variants={fadeInVariants}>
-            <Typography variant="h3" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 6 }}>
+            <Typography variant="h2" component="h2" gutterBottom textAlign="center" sx={{ fontWeight: 700, mb: 8 }}>
               Hear From Our Community
             </Typography>
           </motion.div>
-          <Grid container spacing={4} justifyContent="center">
+          <Grid container spacing={5} justifyContent="center">
             {testimonials.map((testimonial, index) => (
               <Grid item xs={12} sm={6} md={4} key={testimonial.id}>
                 <motion.div 
@@ -492,15 +493,15 @@ const HomePage: React.FC = () => {
                   transition={{ delay: index * 0.15 }}
                   style={{ height: '100%' }}
                 >
-                  <Paper elevation={3} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                    <Typography variant="body1" sx={{ fontStyle: 'italic', mb: 2, flexGrow: 1 }}>
+                  <Paper elevation={3} sx={{ p: 4, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <Typography variant="body1" sx={{ fontStyle: 'italic', mb: 3, flexGrow: 1, fontSize: '1.125rem' }}>
                       "{testimonial.content}"
                     </Typography>
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                      <Avatar src={testimonial.avatar} alt={testimonial.name} />
+                    <Stack direction="row" alignItems="center" spacing={3}>
+                      <Avatar src={testimonial.avatar} alt={testimonial.name} sx={{ width: 60, height: 60 }} />
                       <Box>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{testimonial.name}</Typography>
-                        <Typography variant="body2" color="text.secondary">{testimonial.role}</Typography>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600, fontSize: '1.125rem' }}>{testimonial.name}</Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontSize: '1rem' }}>{testimonial.role}</Typography>
                       </Box>
                     </Stack>
                   </Paper>
@@ -512,13 +513,13 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* Call to Action Section */}
-      <Box sx={{ background: theme.palette.primary.main, color: theme.palette.primary.contrastText, py: { xs: 6, md: 8 }, textAlign: 'center' }}>
+      <Box sx={{ background: theme.palette.primary.main, color: theme.palette.primary.contrastText, py: { xs: 8, md: 10 }, textAlign: 'center' }}>
         <Container maxWidth="md">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} variants={fadeInVariants}>
-            <Typography variant="h4" component="h2" sx={{ fontWeight: 700, mb: 3 }}>
+            <Typography variant="h3" component="h2" sx={{ fontWeight: 700, mb: 4, fontSize: { xs: '2rem', md: '2.5rem' } }}>
               Ready to Improve Your Pet's Care Journey?
             </Typography>
-            <Typography variant="body1" sx={{ mb: 4, color: alpha(theme.palette.primary.contrastText, 0.85) }}>
+            <Typography variant="body1" sx={{ mb: 5, color: alpha(theme.palette.primary.contrastText, 0.9), fontSize: '1.25rem', maxWidth: '850px', mx: 'auto' }}>
               Join the OncoTracker community today and start making a difference in your pet's health management.
             </Typography>
             <motion.div
@@ -531,13 +532,13 @@ const HomePage: React.FC = () => {
                 variant="contained"
                 size="large"
                 color="secondary"
-                endIcon={<ArrowForwardIos sx={{ fontSize: '1rem' }}/>}
+                endIcon={<ArrowForwardIos sx={{ fontSize: '1.2rem' }}/>}
                 sx={{
-                  py: 1.5,
-                  px: 5,
+                  py: 2,
+                  px: 6,
                   borderRadius: '30px',
                   textTransform: 'none',
-                  fontSize: '1.1rem',
+                  fontSize: '1.25rem',
                   fontWeight: 600,
                   boxShadow: `0 5px 15px ${alpha(theme.palette.secondary.main, 0.4)}`,
                   '&:hover': {
@@ -554,39 +555,45 @@ const HomePage: React.FC = () => {
       </Box>
 
       {/* Footer */}
-      <Box component="footer" sx={{ background: theme.palette.grey[900], color: theme.palette.grey[400], py: 4 }}>
+      <Box component="footer" sx={{ background: theme.palette.grey[900], color: theme.palette.grey[400], py: 6 }}>
         <Container maxWidth="lg">
-          <Grid container spacing={4} justifyContent="space-between">
+          <Grid container spacing={5} justifyContent="space-between">
             <Grid item xs={12} sm={6} md={4}>
-              <Typography variant="h6" gutterBottom sx={{ color: theme.palette.common.white }}>OncoTracker</Typography>
-              <Typography variant="body2" sx={{ mb: 2 }}>
+              <Typography variant="h6" gutterBottom sx={{ color: theme.palette.common.white, fontSize: '1.25rem', mb: 2 }}>
+                OncoTracker
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 3, fontSize: '1rem' }}>
                 Empowering pet owners and veterinarians in the journey of cancer care.
               </Typography>
-              <Stack direction="row" spacing={1}>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><Facebook /></IconButton>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><Twitter /></IconButton>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><Instagram /></IconButton>
-                <IconButton size="small" href="#" sx={{ color: theme.palette.grey[400] }}><LinkedIn /></IconButton>
+              <Stack direction="row" spacing={2}>
+                <IconButton size="medium" href="#" sx={{ color: theme.palette.grey[400] }}><Facebook fontSize="medium" /></IconButton>
+                <IconButton size="medium" href="#" sx={{ color: theme.palette.grey[400] }}><Twitter fontSize="medium" /></IconButton>
+                <IconButton size="medium" href="#" sx={{ color: theme.palette.grey[400] }}><Instagram fontSize="medium" /></IconButton>
+                <IconButton size="medium" href="#" sx={{ color: theme.palette.grey[400] }}><LinkedIn fontSize="medium" /></IconButton>
               </Stack>
             </Grid>
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" gutterBottom sx={{ color: theme.palette.common.white, fontWeight: 600 }}>Product</Typography>
-              <Link component="a" href="#features" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>Features</Link>
-              <Link component="a" href="/pricing" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>Pricing</Link>
+              <Typography variant="subtitle1" gutterBottom sx={{ color: theme.palette.common.white, fontWeight: 600, fontSize: '1.125rem', mb: 2 }}>
+                Product
+              </Typography>
+              <Link to="#features" style={{ display: 'block', color: 'inherit', textDecoration: 'none', marginBottom: '12px', fontSize: '1rem' }}>Features</Link>
+              <Link to="/pricing" style={{ display: 'block', color: 'inherit', textDecoration: 'none', marginBottom: '12px', fontSize: '1rem' }}>Pricing</Link>
             </Grid>
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" gutterBottom sx={{ color: theme.palette.common.white, fontWeight: 600 }}>Company</Typography>
-              <Link component="a" href="/about" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>About Us</Link>
-              <Link component="a" href="/contact" sx={{ display: 'block', color: 'inherit', textDecoration: 'none', mb: 1 }}>Contact</Link>
+              <Typography variant="subtitle1" gutterBottom sx={{ color: theme.palette.common.white, fontWeight: 600, fontSize: '1.125rem', mb: 2 }}>
+                Company
+              </Typography>
+              <Link to="/about" style={{ display: 'block', color: 'inherit', textDecoration: 'none', marginBottom: '12px', fontSize: '1rem' }}>About Us</Link>
+              <Link to="/contact" style={{ display: 'block', color: 'inherit', textDecoration: 'none', marginBottom: '12px', fontSize: '1rem' }}>Contact</Link>
             </Grid>
             <Grid item xs={12} md={4}>
             </Grid>
           </Grid>
-          <Divider sx={{ my: 3, borderColor: theme.palette.grey[700] }} />
-          <Typography variant="body2" textAlign="center">
+          <Divider sx={{ my: 4, borderColor: theme.palette.grey[700] }} />
+          <Typography variant="body2" textAlign="center" sx={{ fontSize: '1rem' }}>
             © {new Date().getFullYear()} OncoTracker. All rights reserved. |
-            <Link component="a" href="/privacy" sx={{ color: 'inherit', mx: 1 }}>Privacy Policy</Link> |
-            <Link component="a" href="/terms" sx={{ color: 'inherit', mx: 1 }}>Terms of Service</Link>
+            <Link to="/privacy" style={{ color: 'inherit', margin: '0 8px', fontSize: '1rem' }}>Privacy Policy</Link> |
+            <Link to="/terms" style={{ color: 'inherit', margin: '0 8px', fontSize: '1rem' }}>Terms of Service</Link>
           </Typography>
         </Container>
       </Box>

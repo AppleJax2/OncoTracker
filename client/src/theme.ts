@@ -63,51 +63,51 @@ const theme = createTheme({
     // Implement Roboto as the primary font with consistent weights
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
-      fontSize: '2.2rem',
+      fontSize: '3rem',
       fontWeight: 700,
       lineHeight: 1.2,
       color: darkText,
       letterSpacing: '-0.01em',
     },
     h2: {
-      fontSize: '1.8rem',
+      fontSize: '2.5rem',
       fontWeight: 700,
       lineHeight: 1.3,
       color: darkText,
       letterSpacing: '-0.01em',
     },
     h3: {
-      fontSize: '1.4rem',
+      fontSize: '2rem',
       fontWeight: 600,
       lineHeight: 1.4,
       color: darkText,
     },
     h4: {
-      fontSize: '1.1rem',
+      fontSize: '1.5rem',
       fontWeight: 600,
       lineHeight: 1.5,
       color: darkText,
     },
     h5: {
-      fontSize: '1rem',
+      fontSize: '1.25rem',
       fontWeight: 600,
       lineHeight: 1.5,
       color: darkText,
     },
     h6: {
-      fontSize: '0.875rem',
+      fontSize: '1.1rem',
       fontWeight: 600,
       lineHeight: 1.6,
       color: darkText,
     },
     body1: {
-      fontSize: '1rem',
+      fontSize: '1.125rem',
       fontWeight: 400,
       lineHeight: 1.6,
       color: mediumText,
     },
     body2: {
-      fontSize: '0.875rem',
+      fontSize: '1rem',
       fontWeight: 400,
       lineHeight: 1.6,
       color: mediumText,
@@ -116,29 +116,33 @@ const theme = createTheme({
       textTransform: 'none',
       fontWeight: 600,
       letterSpacing: '0.5px',
+      fontSize: '1.125rem',
     },
     subtitle1: {
       fontWeight: 500,
       lineHeight: 1.6,
+      fontSize: '1.125rem',
     },
     subtitle2: {
       fontWeight: 500,
       lineHeight: 1.6,
+      fontSize: '1rem',
     },
   },
   shape: {
-    borderRadius: 12, // Increase border radius for softer corners
+    borderRadius: 12, // Maintain border radius for softer corners
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           boxShadow: 'none', // Start with no shadow
-          padding: '10px 24px', // Increase padding slightly
+          padding: '12px 28px', // Increased padding for better touch targets
           transition: 'background-color 0.3s ease, box-shadow 0.3s ease', // Smooth transitions
           '&:hover': {
             boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.1)', // Softer hover shadow
           },
+          fontSize: '1.125rem', // Ensure consistent button text size
         },
         containedPrimary: {
           '&:hover': {
@@ -191,6 +195,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderBottom: '1px solid rgba(0, 0, 0, 0.07)', // Lighter table cell border
+          padding: '16px', // Increased padding for better readability
+          fontSize: '1rem', // Ensure consistent font size
+        },
+        head: {
+          fontWeight: 600, // Make headers more prominent
+          fontSize: '1.1rem',
         },
       },
     },
@@ -206,11 +216,13 @@ const theme = createTheme({
     MuiLink: { // Style links to match the theme
       styleOverrides: {
         root: {
-          color: softTeal,
+          color: darkTeal, // Darker for better contrast
           textDecorationColor: 'rgba(101, 168, 166, 0.4)', // Lighter underline
-           '&:hover': {
-            textDecorationColor: softTeal, // Stronger underline on hover
-           },
+          fontSize: '1.125rem', // Consistent sizing
+          fontWeight: 500, // Slightly bolder for better visibility
+          '&:hover': {
+            textDecorationColor: darkTeal, // Stronger underline on hover
+          },
         },
       },
     },
@@ -219,6 +231,14 @@ const theme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             transition: 'all 0.3s ease',
+            fontSize: '1.125rem', // Consistent with body text
+          },
+          '& .MuiInputLabel-root': {
+            fontSize: '1.125rem', // Match input text size
+          },
+          '& .MuiFormHelperText-root': {
+            fontSize: '0.875rem', // Slightly smaller but still readable
+            marginTop: '4px',
           },
         },
       },
@@ -226,23 +246,74 @@ const theme = createTheme({
     MuiInputBase: {
       styleOverrides: {
         root: {
-          fontSize: '1rem',
+          fontSize: '1.125rem', // Consistent with body text
+        },
+        input: {
+          padding: '14px', // Increased padding for better touch targets
         },
       },
     },
     MuiListItemIcon: {
       styleOverrides: {
         root: {
-          minWidth: '40px', // Ensure consistent alignment for list icons
+          minWidth: '48px', // Increased for better alignment with larger text
           display: 'flex',
           alignItems: 'center',
+          '& .MuiSvgIcon-root': {
+            fontSize: '1.5rem', // Larger icons for better visibility
+          },
         },
       },
     },
     MuiListItemText: {
       styleOverrides: {
         root: {
-          margin: '4px 0',
+          margin: '6px 0', // Slightly increased
+        },
+        primary: {
+          fontSize: '1.125rem', // Match body1
+        },
+        secondary: {
+          fontSize: '1rem', // Match body2
+        },
+      },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          padding: '12px 16px', // Increased padding for better touch targets
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: '0.875rem', // Ensure tooltip text is readable
+          padding: '8px 12px', // More padding for better readability
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.875rem', // Slightly larger for better readability
+          height: '32px', // Taller for better touch targets
+        },
+        label: {
+          padding: '0 12px', // More horizontal padding
+        },
+      },
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          fontSize: '1.5rem', // Larger default icon size
+        },
+        fontSizeSmall: {
+          fontSize: '1.25rem', // Increased small icon size
+        },
+        fontSizeLarge: {
+          fontSize: '2rem', // Increased large icon size
         },
       },
     },
