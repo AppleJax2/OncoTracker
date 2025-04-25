@@ -7,6 +7,8 @@ import api from '../../services/api';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { PlusIcon, HeartIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import { useAuth } from '../../contexts/AuthContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './OwnerDashboard.css';
 
 const OwnerDashboard: React.FC = () => {
   const [pets, setPets] = useState<Pet[]>([]);
@@ -62,191 +64,154 @@ const OwnerDashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Welcome Section - Animate */}
-      <motion.div
-        variants={sectionVariants}
-        initial="hidden"
-        animate="visible"
-        custom={0} // First element
-        className="bg-gradient-to-r from-primary-50 to-warm-50 rounded-2xl p-6 shadow-soft"
-       >
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome back, {user?.firstName || 'Pet Parent'}
-            </h1>
-            <p className="text-gray-600 max-w-2xl">
-              Track your pet's cancer treatment progress, monitor symptoms, and share reports with your veterinarian all in one place.
-            </p>
+    <div className="container py-5">
+      {/* Welcome Section */}
+      <div className="row mb-5 animate__animated animate__fadeIn">
+        <div className="col-12">
+          <div className="card shadow-sm border-0 rounded-4 bg-primary bg-opacity-10">
+            <div className="card-body p-4 p-md-5">
+              <div className="row align-items-center">
+                <div className="col-md-8 mb-3 mb-md-0">
+                  <h1 className="display-6 fw-bold mb-2">
+                    Welcome back, {user?.firstName || 'Pet Parent'}
+                  </h1>
+                  <p className="lead text-muted">
+                    Track your pet's cancer treatment progress, monitor symptoms, and share reports with your veterinarian all in one place.
+                  </p>
+                </div>
+                <div className="col-md-4 text-center text-md-end">
+                  <Link to="/owner/pets/new" className="btn btn-primary px-4 py-2 rounded-pill shadow-sm">
+                    <i className="bi bi-plus-circle me-2"></i>
+                    Add New Pet
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
-          <motion.div whileHover="hover" whileTap="tap" variants={buttonHoverTap}>
-            <Link
-              to="/owner/pets/new"
-              className="mt-4 md:mt-0 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200"
-            >
-              <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              Add New Pet
-            </Link>
-          </motion.div>
         </div>
-      </motion.div>
+      </div>
       
       {loading && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="text-center py-12 bg-white rounded-xl shadow-card">
-          <LoadingSpinner size="large" />
-          <p className="mt-4 text-gray-500">Loading your pets...</p>
-        </motion.div>
+        <div className="text-center py-5 animate__animated animate__fadeIn">
+          <div className="spinner-border text-primary mb-3" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+          <p className="text-muted mt-2">Loading your pets...</p>
+        </div>
       )}
 
       {error && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="bg-red-50 border border-red-200 text-red-700 px-6 py-5 rounded-xl shadow-soft mb-6" role="alert">
-          <div className="flex">
+        <div className="alert alert-danger animate__animated animate__fadeIn" role="alert">
+          <div className="d-flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
+              <i className="bi bi-exclamation-circle text-danger me-2"></i>
             </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">There was an error loading your pets</h3>
-              <div className="mt-2 text-sm text-red-700">{error}</div>
+            <div>
+              <h5 className="alert-heading fs-6 fw-semibold">There was an error loading your pets</h5>
+              <p className="mb-0">{error}</p>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {!loading && !error && pets.length === 0 && (
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          custom={1} // Second potential section
-          className="text-center py-12 bg-white rounded-xl shadow-card"
-        >
-          <div className="rounded-full bg-primary-100 p-3 inline-flex mx-auto">
-            <HeartIcon className="h-8 w-8 text-primary-600" />
+        <div className="text-center py-5 bg-white rounded-4 shadow-sm animate__animated animate__fadeIn">
+          <div className="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-flex mb-3">
+            <i className="bi bi-heart text-primary fs-4"></i>
           </div>
-          <h3 className="mt-4 text-lg font-medium text-gray-800">No pets found</h3>
-          <p className="mt-2 text-gray-500 max-w-md mx-auto">
+          <h3 className="mt-4 fs-4 fw-medium text-dark">No pets found</h3>
+          <p className="mt-2 text-muted mx-auto" style={{ maxWidth: '500px' }}>
             Get started by adding your pet's information. This will help us track their cancer treatment and symptoms.
           </p>
-          <motion.div whileHover="hover" whileTap="tap" variants={buttonHoverTap} className="inline-block mt-6">
-            <Link
-              to="/owner/pets/new"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all"
-            >
-              <PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-              Add Pet
-            </Link>
-          </motion.div>
-        </motion.div>
+          <Link to="/owner/pets/new" className="btn btn-primary px-4 py-2 rounded-pill mt-3">
+            <i className="bi bi-plus-circle me-2"></i>
+            Add Pet
+          </Link>
+        </div>
       )}
 
       {!loading && !error && pets.length > 0 && (
-        <motion.div
-          variants={sectionVariants}
-          initial="hidden"
-          animate="visible"
-          custom={1} // Second section
-        >
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Pets</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="animate__animated animate__fadeIn">
+          <h2 className="fw-bold mb-4">Your Pets</h2>
+          <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mb-5">
             {pets.map((pet, index) => (
-              <motion.div
-                key={pet._id}
-                variants={cardHoverTap}
-                whileHover="hover"
-                whileTap="tap"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.05, duration: 0.4, ease: "easeOut" }}
-              >
-                <Link to={`/owner/pets/${pet._id}`} className="block group h-full">
-                  <div className="bg-white rounded-xl shadow-card overflow-hidden transition duration-300 ease-in-out group-hover:shadow-hover border border-gray-100 h-full flex flex-col justify-between">
-                    <div className="p-6">
-                      <div className="flex items-center mb-3">
-                        <div className="rounded-full bg-warm-100 p-2 mr-3 flex-shrink-0">
-                          <HeartIcon className="h-5 w-5 text-warm-600" />
+              <div key={pet._id} className="col animate__animated animate__fadeInUp" style={{ animationDelay: `${index * 0.1}s` }}>
+                <Link to={`/owner/pets/${pet._id}`} className="text-decoration-none">
+                  <div className="card h-100 border-0 shadow-sm rounded-4 pet-card">
+                    <div className="card-body p-4">
+                      <div className="d-flex align-items-center mb-3">
+                        <div className="bg-warning bg-opacity-10 p-2 rounded-circle me-3">
+                          <i className="bi bi-heart text-warning"></i>
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-800 group-hover:text-primary-600 truncate">{pet.name || 'Unnamed Pet'}</h3>
+                        <h3 className="fs-5 fw-semibold mb-0 text-dark">{pet.name || 'Unnamed Pet'}</h3>
                       </div>
-                      <div className="space-y-2">
-                        <p className="text-sm text-gray-600 capitalize flex items-center">
-                          <span className="font-medium text-gray-700 mr-2 w-16 inline-block flex-shrink-0">Type:</span>
-                          <span>{pet.species || 'N/A'} - {pet.breed || 'N/A'}</span>
-                        </p>
-                        <p className="text-sm text-gray-600 flex items-center">
-                          <span className="font-medium text-gray-700 mr-2 w-16 inline-block flex-shrink-0">Age:</span>
+                      <div className="small text-muted mb-3">
+                        <div className="mb-2">
+                          <span className="fw-medium text-dark me-2">Type:</span>
+                          <span className="text-capitalize">{pet.species || 'N/A'} - {pet.breed || 'N/A'}</span>
+                        </div>
+                        <div className="mb-2">
+                          <span className="fw-medium text-dark me-2">Age:</span>
                           <span>{pet.age || 'N/A'}</span>
-                        </p>
-                        <p className="text-sm text-gray-600 capitalize flex items-center">
-                          <span className="font-medium text-gray-700 mr-2 w-16 inline-block flex-shrink-0">Treatment:</span>
-                          <span className="truncate">{pet.treatmentType || 'Not specified'}</span>
-                        </p>
+                        </div>
+                        <div>
+                          <span className="fw-medium text-dark me-2">Treatment:</span>
+                          <span className="text-capitalize">{pet.treatmentType || 'Not specified'}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="bg-gray-50 px-6 py-4 text-right border-t border-gray-100 mt-auto">
-                      <span className="text-sm font-medium text-primary-600 flex items-center justify-end">
-                        View Details <ArrowRightIcon className="ml-1 h-4 w-4" />
+                    <div className="card-footer bg-light p-3 border-top d-flex justify-content-end align-items-center">
+                      <span className="small fw-medium text-primary">
+                        View Details <i className="bi bi-arrow-right ms-1"></i>
                       </span>
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
-            <motion.div
-              className="relative block w-full h-full min-h-[200px] rounded-xl border-2 border-dashed border-gray-300 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors duration-200"
-              variants={cardHoverTap}
-              whileHover="hover"
-              whileTap="tap"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + pets.length * 0.05, duration: 0.4, ease: "easeOut" }}
-            >
-              <Link to="/owner/pets/new" className="h-full w-full flex flex-col items-center justify-center p-6">
-                <div className="rounded-full bg-primary-50 p-3 mb-4">
-                  <PlusIcon className="h-8 w-8 text-primary-600" aria-hidden="true" />
+            <div className="col animate__animated animate__fadeInUp" style={{ animationDelay: `${pets.length * 0.1}s` }}>
+              <Link to="/owner/pets/new" className="text-decoration-none">
+                <div className="card h-100 border-0 border-dashed shadow-hover rounded-4 add-pet-card d-flex flex-column align-items-center justify-content-center p-4">
+                  <div className="bg-primary bg-opacity-10 rounded-circle p-3 mb-3">
+                    <i className="bi bi-plus-lg text-primary fs-4"></i>
+                  </div>
+                  <span className="fw-medium text-dark">Add another pet</span>
                 </div>
-                <span className="mt-2 block text-sm font-medium text-gray-900">Add another pet</span>
               </Link>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
-      {/* Quick Resources Section - Animate */}
+      {/* Quick Resources Section */}
       {!loading && !error && pets.length > 0 && (
-         <motion.div
-           variants={sectionVariants}
-           initial="hidden"
-           animate="visible"
-           custom={2} // Third section
-           className="mt-12"
-         >
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Helpful Resources</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div
-              variants={cardHoverTap} whileHover="hover" whileTap="tap"
-              className="bg-teal-50 rounded-xl p-6 shadow-soft border border-teal-100"
-            >
-              <h3 className="text-lg font-semibold text-teal-800 mb-2">Symptom Tracking Guide</h3>
-              <p className="text-teal-700 mb-4">Learn how to effectively track and report your pet's symptoms to help your veterinarian provide the best care.</p>
-              <motion.button variants={buttonHoverTap} whileHover="hover" whileTap="tap" className="text-teal-600 font-medium text-sm hover:text-teal-800">
-                Read Guide →
-              </motion.button>
-            </motion.div>
-            <motion.div
-              variants={cardHoverTap} whileHover="hover" whileTap="tap"
-              className="bg-warm-50 rounded-xl p-6 shadow-soft border border-warm-100"
-            >
-              <h3 className="text-lg font-semibold text-warm-800 mb-2">Support for Pet Parents</h3>
-              <p className="text-warm-700 mb-4">Find resources and support groups to help you navigate your pet's cancer journey.</p>
-              <motion.button variants={buttonHoverTap} whileHover="hover" whileTap="tap" className="text-warm-600 font-medium text-sm hover:text-warm-800">
-                Find Support →
-              </motion.button>
-            </motion.div>
+        <div className="mt-5 animate__animated animate__fadeIn">
+          <h2 className="fw-bold mb-4">Helpful Resources</h2>
+          <div className="row g-4">
+            <div className="col-md-6">
+              <div className="card h-100 border-0 shadow-sm rounded-4 bg-info bg-opacity-10 resource-card">
+                <div className="card-body p-4">
+                  <h3 className="fs-5 fw-semibold text-info mb-3">Symptom Tracking Guide</h3>
+                  <p className="text-dark mb-4">Learn how to effectively track and report your pet's symptoms to help your veterinarian provide the best care.</p>
+                  <button className="btn btn-link text-info p-0 text-decoration-none fw-medium">
+                    Read Guide <i className="bi bi-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="card h-100 border-0 shadow-sm rounded-4 bg-warning bg-opacity-10 resource-card">
+                <div className="card-body p-4">
+                  <h3 className="fs-5 fw-semibold text-warning mb-3">Support for Pet Parents</h3>
+                  <p className="text-dark mb-4">Find resources and support groups to help you navigate your pet's cancer journey.</p>
+                  <button className="btn btn-link text-warning p-0 text-decoration-none fw-medium">
+                    Find Support <i className="bi bi-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

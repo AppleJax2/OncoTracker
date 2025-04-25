@@ -2,46 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { 
-  Box, 
-  Container, 
-  TextField, 
-  Button, 
-  Typography, 
-  Paper, 
-  InputAdornment, 
-  IconButton,
-  Alert,
-  Divider,
-  Stack,
-  useTheme,
-  Checkbox,
-  FormControlLabel,
-  Card,
-  CardContent,
-  CardHeader,
-  Fade,
-  Grow,
-  Slide,
-  useMediaQuery,
-  LinearProgress,
-  Avatar
-} from '@mui/material';
-import { 
-  Visibility, 
-  VisibilityOff, 
-  Email, 
-  Lock, 
-  ErrorOutline, 
-  Pets,
-  CheckCircleOutline
-} from '@mui/icons-material';
-import { motion } from 'framer-motion';
-import { alpha } from '@mui/material/styles';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './LoginPage.css'; // We'll create this file for custom styling
 import PWAInstallButton from '../../components/common/PWAInstallButton';
-
-// Animation component wrapper
-const MotionBox = motion(Box);
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -57,11 +20,6 @@ const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  // Use theme colors and styles
-  const backgroundColor = theme.palette.background.default;
 
   // Check for success message from signup
   useEffect(() => {
@@ -142,310 +100,140 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Animation variants for elements
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1,
-      transition: { 
-        duration: 0.5,
-        when: "beforeChildren",
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" }
-    }
-  };
-
-  const buttonHoverTap = {
-    hover: { scale: 1.03, transition: { duration: 0.2 } },
-    tap: { scale: 0.98 }
-  };
-
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: backgroundColor,
-        py: { xs: 4, sm: 6, md: 8 },
-        px: 2,
-      }}
-    >
-      <Container maxWidth="xs">
-        <MotionBox
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Card 
-            elevation={6} 
-            sx={{ 
-              borderRadius: theme.shape.borderRadius,
-              overflow: 'visible',
-              boxShadow: theme.shadows[6],
-              bgcolor: 'background.paper',
-              border: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            <CardHeader
-              title={
-                <Box sx={{ textAlign: 'center', mt: 2, mb: 1 }}>
-                  <Fade in={true} timeout={800}>
-                    <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                      >
-                        <Avatar 
-                          sx={{ 
-                            width: 72, 
-                            height: 72, 
-                            bgcolor: alpha(theme.palette.primary.main, 0.1), 
-                            border: `2px solid ${theme.palette.primary.light}`,
-                          }}
-                        >
-                          <Pets sx={{ fontSize: 38, color: theme.palette.primary.main }} />
-                        </Avatar>
-                      </motion.div>
-                    </Box>
-                  </Fade>
-                  <motion.div variants={itemVariants}>
-                    <Typography 
-                      variant="h4"
-                      component="h1" 
-                      fontWeight={700}
-                      color="text.primary"
-                    >
-                      Welcome Back
-                    </Typography>
-                  </motion.div>
-                  <motion.div variants={itemVariants}>
-                    <Typography 
-                      variant="body1"
-                      color="text.secondary" 
-                      sx={{ mt: 0.5 }}
-                    >
-                      Sign in to access OncoTracker
-                    </Typography>
-                  </motion.div>
-                </Box>
-              }
-              sx={{ pb: 0 }}
-            />
-            
-            <CardContent sx={{ pt: 2 }}>
-              {success && (
-                <Grow in={true} timeout={800}>
-                  <Alert 
-                    severity="success" 
-                    icon={<CheckCircleOutline fontSize="inherit" />}
-                    sx={{ 
-                      mb: 3, 
-                      borderRadius: 2, 
-                      backgroundColor: 'success.light',
-                      color: 'success.dark',
-                      border: `1px solid ${theme.palette.success.main}`
-                    }}
-                    onClose={() => setSuccess(null)}
-                  >
-                    {success}
-                  </Alert>
-                </Grow>
-              )}
-
-              {error && (
-                <Grow in={true} timeout={800}>
-                  <Alert 
-                    severity="error" 
-                    icon={<ErrorOutline fontSize="inherit" />}
-                    sx={{ 
-                      mb: 3, 
-                      borderRadius: 2, 
-                      backgroundColor: 'error.light',
-                      color: 'error.dark',
-                      border: `1px solid ${theme.palette.error.main}`
-                    }}
-                    variant="filled"
-                    onClose={() => setError(null)}
-                  >
-                    {error}
-                  </Alert>
-                </Grow>
-              )}
-
-              <form onSubmit={handleSubmit}>
-                <Stack spacing={2.5}>
-                  <motion.div variants={itemVariants}>
-                    <TextField
-                      fullWidth
-                      id="email-address"
-                      name="email"
-                      type="email"
-                      label="Email Address"
-                      variant="outlined"
-                      autoComplete="email"
-                      required
-                      value={email}
-                      onChange={handleEmailChange}
-                      disabled={loading}
-                      error={!!emailError}
-                      helperText={emailError}
-                      onFocus={() => setEmailFocused(true)}
-                      onBlur={() => {
-                        setEmailFocused(false);
-                        if (email) validateEmail(email);
-                      }}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                            <Email color={emailFocused ? "primary" : "action"} />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </motion.div>
-
-                  <motion.div variants={itemVariants}>
-                    <TextField
-                      fullWidth
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      label="Password"
-                      variant="outlined"
-                      autoComplete="current-password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      disabled={loading}
-                      onFocus={() => setPasswordFocused(true)}
-                      onBlur={() => setPasswordFocused(false)}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                            <Lock color={passwordFocused ? "primary" : "action"} />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="toggle password visibility"
-                              onClick={handleTogglePasswordVisibility}
-                              edge="end"
-                              color={showPassword ? "primary" : "default"}
-                            >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </motion.div>
-                  
-                  <motion.div variants={itemVariants}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5 }}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={rememberMe}
-                            onChange={(e) => setRememberMe(e.target.checked)}
-                            color="primary"
-                            size="small"
-                          />
-                        }
-                        label="Remember me"
-                      />
-                      <Button 
-                        component={Link} 
-                        to="/forgot-password" 
-                        size="small" 
-                        sx={{ 
-                          textTransform: 'none', 
-                          fontWeight: 500,
-                          p: 0.5
-                        }}
-                      >
-                        Forgot password?
-                      </Button>
-                    </Box>
-                  </motion.div>
-
-                  <motion.div 
-                    variants={buttonHoverTap}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      disabled={loading}
-                      sx={{ 
-                        py: 1.5,
-                      }}
-                    >
-                      {loading ? (
-                        <>
-                          <LoadingSpinner size="small" color="inherit" />
-                        </>
-                      ) : 'Sign In'}
-                    </Button>
-                  </motion.div>
-                </Stack>
-              </form>
-
-              <Divider sx={{ my: 3 }}>
-                <Typography variant="body2" color="text.secondary">
-                  OR
-                </Typography>
-              </Divider>
+    <div className="login-page">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-lg-5 col-md-7 col-sm-9">
+            <div className="card shadow-lg border-0 rounded-lg mt-5 mb-5 login-card animate__animated animate__fadeIn">
+              <div className="card-header bg-white text-center p-4 border-0">
+                <div className="mb-3 animate__animated animate__fadeInDown">
+                  <div className="avatar-circle mx-auto">
+                    <i className="bi bi-person-fill avatar-icon"></i>
+                  </div>
+                </div>
+                <h1 className="text-center fw-bold mb-0">Welcome Back</h1>
+                <p className="text-muted mt-2">Sign in to access OncoTracker</p>
+              </div>
               
-              <Slide direction="up" in={true} mountOnEnter unmountOnExit timeout={800}>
-                <Box sx={{ textAlign: 'center', mt: 1 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                    Don't have an account?
-                  </Typography>
-                  <motion.div
-                    whileHover="hover"
-                    whileTap="tap"
-                    variants={buttonHoverTap}
+              <div className="card-body p-4 p-md-5">
+                {success && (
+                  <div className="alert alert-success alert-dismissible fade show" role="alert">
+                    <i className="bi bi-check-circle-fill me-2"></i>
+                    {success}
+                    <button type="button" className="btn-close" onClick={() => setSuccess(null)}></button>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                    {error}
+                    <button type="button" className="btn-close" onClick={() => setError(null)}></button>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-4">
+                    <div className="form-floating">
+                      <input 
+                        type="email" 
+                        className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                        id="email-address" 
+                        placeholder="name@example.com"
+                        value={email}
+                        onChange={handleEmailChange}
+                        disabled={loading}
+                        onFocus={() => setEmailFocused(true)}
+                        onBlur={() => {
+                          setEmailFocused(false);
+                          if (email) validateEmail(email);
+                        }}
+                        required
+                      />
+                      <label htmlFor="email-address">
+                        <i className="bi bi-envelope me-2"></i>Email Address
+                      </label>
+                      {emailError && <div className="invalid-feedback">{emailError}</div>}
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="form-floating">
+                      <input 
+                        type={showPassword ? 'text' : 'password'} 
+                        className="form-control" 
+                        id="password" 
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
+                        onFocus={() => setPasswordFocused(true)}
+                        onBlur={() => setPasswordFocused(false)}
+                        required
+                      />
+                      <label htmlFor="password">
+                        <i className="bi bi-lock me-2"></i>Password
+                      </label>
+                      <button 
+                        type="button" 
+                        className="btn btn-link password-toggle" 
+                        onClick={handleTogglePasswordVisibility}
+                      >
+                        <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="d-flex justify-content-between align-items-center mb-4">
+                    <div className="form-check">
+                      <input 
+                        className="form-check-input" 
+                        type="checkbox" 
+                        id="rememberMe" 
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                      />
+                      <label className="form-check-label" htmlFor="rememberMe">
+                        Remember me
+                      </label>
+                    </div>
+                    <Link to="/forgot-password" className="text-decoration-none small">Forgot password?</Link>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary w-100 py-3 mb-4"
+                    disabled={loading}
                   >
-                    <Button
-                      component={Link}
-                      to="/signup"
-                      variant="outlined"
-                      color="primary"
-                      fullWidth
-                      size="large"
-                      disabled={loading}
-                      sx={{ 
-                        py: 1.5,
-                      }}
-                    >
+                    {loading ? (
+                      <span className="d-flex align-items-center justify-content-center">
+                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Signing in...
+                      </span>
+                    ) : 'Sign In'}
+                  </button>
+
+                  <div className="divider-container mb-4">
+                    <hr className="divider-line" />
+                    <span className="divider-text text-muted">OR</span>
+                    <hr className="divider-line" />
+                  </div>
+
+                  <div className="text-center">
+                    <p className="text-muted mb-3">Don't have an account?</p>
+                    <Link to="/signup" className="btn btn-outline-primary w-100 py-3">
                       Create New Account
-                    </Button>
-                  </motion.div>
-                </Box>
-              </Slide>
-            </CardContent>
-          </Card>
-        </MotionBox>
-      </Container>
+                    </Link>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <PWAInstallButton />
-    </Box>
+    </div>
   );
 };
 

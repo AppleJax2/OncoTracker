@@ -3,270 +3,12 @@ import React, { useState, ChangeEvent, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
-import { 
-  Box, 
-  Container, 
-  TextField, 
-  Button, 
-  Typography, 
-  InputAdornment, 
-  IconButton,
-  Alert,
-  Divider,
-  Stack,
-  Grid as MuiGrid,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Stepper,
-  Step,
-  StepLabel,
-  useTheme,
-  styled,
-  alpha,
-  Collapse,
-  FormHelperText,
-  Card,
-  CardHeader,
-  CardContent,
-  Checkbox,
-  Tab,
-  Tabs,
-  CircularProgress,
-  StepConnector,
-  StepIconProps,
-  LinearProgress,
-  Tooltip,
-  Fade,
-  Grow,
-  Zoom,
-  useMediaQuery,
-  Avatar
-} from '@mui/material';
-import { 
-  Visibility, 
-  VisibilityOff, 
-  Email, 
-  Lock, 
-  Person, 
-  Business, 
-  MedicalServices,
-  Pets,
-  ErrorOutline,
-  ArrowBack,
-  ChevronRight,
-  CheckCircle,
-  AccountCircle,
-  Badge,
-  VpnKey,
-  Check
-} from '@mui/icons-material';
-import { motion } from 'framer-motion';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './SignupPage.css';
 import PWAInstallButton from '../../components/common/PWAInstallButton';
-
-// Define the MotionBox component
-const MotionBox = motion(Box);
-const MotionDiv = motion.div;
-
-// Animation variants for elements
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { 
-    opacity: 1,
-    transition: { 
-      duration: 0.5,
-      when: "beforeChildren",
-      staggerChildren: 0.1
-    }
-  }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.5, ease: "easeOut" }
-  }
-};
-
-const buttonHoverTap = {
-  hover: { scale: 1.03, transition: { duration: 0.2 } },
-  tap: { scale: 0.98 }
-};
-
-// Custom step connector
-const QontoConnector = styled(StepConnector)(({ theme }) => ({
-  [`&.MuiStepConnector-alternativeLabel`]: {
-    top: 10,
-    left: 'calc(-50% + 16px)',
-    right: 'calc(50% + 16px)',
-  },
-  [`&.MuiStepConnector-active`]: {
-    [`& .MuiStepConnector-line`]: {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  [`&.MuiStepConnector-completed`]: {
-    [`& .MuiStepConnector-line`]: {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-  [`& .MuiStepConnector-line`]: {
-    borderColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : '#eaeaf0',
-    borderTopWidth: 3,
-    borderRadius: 1,
-  },
-}));
-
-// Custom step icon
-const QontoStepIcon = (props: StepIconProps) => {
-  const { active, completed, className } = props;
-  const theme = useTheme();
-
-  const icons: { [index: string]: React.ReactElement } = {
-    1: <VpnKey />,
-    2: <Badge />,
-    3: <AccountCircle />,
-  };
-
-  return (
-    <Box
-      className={className}
-      sx={{
-        height: 22,
-        display: 'flex',
-        color: active ? theme.palette.primary.main : theme.palette.text.disabled,
-        alignItems: 'center',
-        ...(active && {
-          color: theme.palette.primary.main,
-        }),
-        ...(completed && {
-          color: theme.palette.primary.main,
-        }),
-      }}
-    >
-      {completed ? (
-        <CheckCircle sx={{ fontSize: 26 }} />
-      ) : (
-        <Box
-          sx={{
-            width: 26,
-            height: 26,
-            borderRadius: '50%',
-            bgcolor: active ? 'rgba(5, 150, 105, 0.1)' : 'transparent',
-            border: `2px solid ${active ? theme.palette.primary.main : theme.palette.divider}`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {icons[String(props.icon)]}
-        </Box>
-      )}
-    </Box>
-  );
-};
-
-// Custom styled radio for better appearance
-const StyledRadio = styled(Radio)(({ theme }) => ({
-  padding: 8,
-  '& .MuiSvgIcon-root': {
-    fontSize: 24,
-  },
-}));
-
-// Custom radio option component
-const RoleRadioOption = styled(FormControlLabel)(({ theme }) => ({
-  margin: 0,
-  width: '100%',
-  borderRadius: theme.shape.borderRadius * 2,
-  padding: theme.spacing(1.5),
-  transition: 'all 0.2s ease',
-  border: `1px solid ${theme.palette.divider}`,
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.04),
-  },
-  '&.Mui-checked': {
-    backgroundColor: alpha(theme.palette.primary.main, 0.08),
-    borderColor: theme.palette.primary.main,
-  },
-}));
-
-// Password strength component
-const PasswordStrengthMeter = ({ password }: { password: string }) => {
-  const theme = useTheme();
-  
-  // Calculate password strength
-  const calculateStrength = (password: string): number => {
-    if (!password) return 0;
-    
-    let strength = 0;
-    
-    // Length check
-    if (password.length >= 8) strength += 25;
-    
-    // Contains lowercase
-    if (/[a-z]/.test(password)) strength += 25;
-    
-    // Contains uppercase
-    if (/[A-Z]/.test(password)) strength += 25;
-    
-    // Contains number or special char
-    if (/[0-9]|[^a-zA-Z0-9]/.test(password)) strength += 25;
-    
-    return strength;
-  };
-  
-  const strength = calculateStrength(password);
-  
-  // Determine color based on strength
-  const getColor = () => {
-    if (strength < 25) return theme.palette.error.main;
-    if (strength < 50) return theme.palette.error.light;
-    if (strength < 75) return theme.palette.warning.main;
-    return theme.palette.success.main;
-  };
-  
-  // Determine label based on strength
-  const getLabel = () => {
-    if (strength < 25) return 'Very weak';
-    if (strength < 50) return 'Weak';
-    if (strength < 75) return 'Good';
-    return 'Strong';
-  };
-  
-  return (
-    <Box sx={{ mt: 1, mb: 1, display: password ? 'block' : 'none' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-        <Typography variant="caption" color="text.secondary">
-          Password strength:
-        </Typography>
-        <Typography variant="caption" sx={{ color: getColor(), fontWeight: 600 }}>
-          {getLabel()}
-        </Typography>
-      </Box>
-      <Box sx={{ width: '100%', bgcolor: alpha(theme.palette.divider, 0.5), borderRadius: 5, height: 6, overflow: 'hidden' }}>
-        <Box
-          sx={{
-            width: `${strength}%`,
-            bgcolor: getColor(),
-            height: '100%',
-            transition: 'width 0.3s ease, background-color 0.3s ease',
-            borderRadius: 5,
-          }}
-        />
-      </Box>
-    </Box>
-  );
-};
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -480,486 +222,397 @@ const SignupPage: React.FC = () => {
     return true; // Should not happen
   }, [activeStep, role, clinicName, firstName, lastName, email, password, passwordConfirm, agreeToTerms, formErrors, loading]);
 
-  // Use theme colors
-  const backgroundColor = theme.palette.background.default;
+  // Password Strength Meter
+  const calculatePasswordStrength = (password: string): number => {
+    if (!password) return 0;
+    
+    let strength = 0;
+    
+    // Length check
+    if (password.length >= 8) strength += 25;
+    
+    // Contains lowercase
+    if (/[a-z]/.test(password)) strength += 25;
+    
+    // Contains uppercase
+    if (/[A-Z]/.test(password)) strength += 25;
+    
+    // Contains number or special char
+    if (/[0-9]|[^a-zA-Z0-9]/.test(password)) strength += 25;
+    
+    return strength;
+  };
   
-  // Custom Grid component that works with 'item' prop
-  const Grid = MuiGrid;
+  const getPasswordStrengthLabel = (strength: number) => {
+    if (strength < 25) return { text: 'Very weak', colorClass: 'text-danger' };
+    if (strength < 50) return { text: 'Weak', colorClass: 'text-danger' };
+    if (strength < 75) return { text: 'Good', colorClass: 'text-warning' };
+    return { text: 'Strong', colorClass: 'text-success' };
+  };
+  
+  const passwordStrength = calculatePasswordStrength(password);
+  const strengthInfo = getPasswordStrengthLabel(passwordStrength);
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: backgroundColor,
-        py: { xs: 4, sm: 6, md: 8 },
-        px: 2,
-      }}
-    >
-      <Container maxWidth="sm">
-        <MotionBox
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Card 
-            elevation={6} 
-            sx={{ 
-              borderRadius: theme.shape.borderRadius,
-              overflow: 'visible', 
-              boxShadow: theme.shadows[6],
-              bgcolor: 'background.paper',
-              border: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            <CardHeader
-              title={
-                <Box sx={{ textAlign: 'center', mt: 2, mb: 1 }}>
-                   <Fade in={true} timeout={800}>
-                    <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
+    <div className="signup-page">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-lg-6 col-md-8 col-sm-10">
+            <div className="card shadow-lg border-0 rounded-lg my-5 signup-card animate__animated animate__fadeIn">
+              <div className="card-header bg-white text-center p-4 border-0">
+                <div className="mb-3 animate__animated animate__fadeInDown">
+                  <div className="avatar-circle mx-auto">
+                    <i className="bi bi-person-plus-fill avatar-icon"></i>
+                  </div>
+                </div>
+                <h1 className="text-center fw-bold mb-0">Create Account</h1>
+                <p className="text-muted mt-2">Join OncoTracker today</p>
+              </div>
+              
+              <div className="card-body p-4 p-md-5">
+                {/* Progress bar */}
+                <div className="mb-4">
+                  <div className="progress-steps d-flex justify-content-between position-relative">
+                    {steps.map((label, index) => (
+                      <div 
+                        key={label} 
+                        className={`progress-step ${activeStep === index ? 'active' : ''} ${activeStep > index ? 'completed' : ''}`}
                       >
-                        <Avatar 
-                          sx={{ 
-                            width: 72, 
-                            height: 72, 
-                            bgcolor: alpha(theme.palette.primary.main, 0.1), 
-                            border: `2px solid ${theme.palette.primary.light}`,
-                          }}
-                        >
-                          <Person sx={{ fontSize: 38, color: theme.palette.primary.main }} />
-                        </Avatar>
-                      </motion.div>
-                    </Box>
-                  </Fade>
-                  <motion.div variants={itemVariants}>
-                    <Typography 
-                      variant="h4"
-                      component="h1" 
-                      fontWeight={700}
-                      color="text.primary"
-                    >
-                      Create Account
-                    </Typography>
-                  </motion.div>
-                  <motion.div variants={itemVariants}>
-                    <Typography 
-                      variant="body1"
-                      color="text.secondary" 
-                      sx={{ mt: 0.5 }}
-                    >
-                      Join OncoTracker today
-                    </Typography>
-                  </motion.div>
-                </Box>
-              }
-              sx={{ pb: 2 }}
-            />
-
-            <Stepper 
-              activeStep={activeStep} 
-              connector={<QontoConnector />}
-              sx={{ px: { xs: 2, sm: 4 }, pb: 2 }}
-              alternativeLabel={!isMobile}
-            >
-              {steps.map((label, index) => (
-                <Step key={label}>
-                  <StepLabel StepIconComponent={QontoStepIcon}>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-
-            <CardContent sx={{ pt: 2 }}>
-              {apiError && (
-                <Grow in={true} timeout={800}>
-                  <Alert
-                    severity="error"
-                    icon={<ErrorOutline fontSize="inherit" />}
-                    sx={{
-                      mb: 3,
-                      borderRadius: 2,
-                      backgroundColor: 'error.light',
-                      color: 'error.dark',
-                      border: `1px solid ${theme.palette.error.main}`
-                    }}
-                    variant="filled"
-                    onClose={() => setApiError(null)}
-                  >
-                    {apiError}
-                  </Alert>
-                </Grow>
-              )}
-
-              <form onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
-                <Box sx={{ minHeight: 280, position: 'relative' }}>
-                  <Collapse in={activeStep === 0} timeout={500} unmountOnExit>
-                    <Stack spacing={3} sx={{ width: '100%' }}>
-                      <Zoom in={true} timeout={500}>
-                        <FormControl component="fieldset" error={!!formErrors.role}>
-                          <FormLabel component="legend" sx={{ mb: 1.5, fontWeight: 500, color: 'text.primary' }}>
-                            I am a:
-                          </FormLabel>
-                          <RadioGroup
-                            name="role"
-                            value={role}
-                            onChange={handleRoleChange}
-                            sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}
-                          >
-                            <RoleRadioOption
-                              value="owner"
-                              control={<StyledRadio />} 
-                              label={<Box sx={{display: 'flex', alignItems: 'center'}}><Pets sx={{ mr: 1.5, color: role === 'owner' ? 'primary.main' : 'action' }} /> Pet Owner</Box>}
-                              checked={role === 'owner'}
-                            />
-                            <RoleRadioOption
-                              value="vet"
-                              control={<StyledRadio />} 
-                              label={<Box sx={{display: 'flex', alignItems: 'center'}}><MedicalServices sx={{ mr: 1.5, color: role === 'vet' ? 'primary.main' : 'action' }} /> Veterinarian</Box>}
-                              checked={role === 'vet'}
-                            />
-                          </RadioGroup>
-                          {formErrors.role && (
-                            <FormHelperText error sx={{ mt: 1, ml: 1, fontWeight: 500 }}>
-                              {formErrors.role}
-                            </FormHelperText>
+                        <div className="step-indicator">
+                          {activeStep > index ? (
+                            <i className="bi bi-check-lg"></i>
+                          ) : (
+                            index + 1
                           )}
-                        </FormControl>
-                      </Zoom>
+                        </div>
+                        <div className="step-label">{label}</div>
+                      </div>
+                    ))}
+                    <div className="progress-line"></div>
+                  </div>
+                </div>
 
-                      {/* Conditional Clinic Name Field */}
-                      <Collapse in={role === 'vet'} timeout={500} unmountOnExit>
-                        <Zoom in={role === 'vet'} timeout={300}>
-                          <TextField
-                            fullWidth
-                            id="clinicName"
-                            name="clinicName"
-                            label="Clinic Name"
-                            variant="outlined"
-                            required={role === 'vet'}
-                            value={clinicName}
-                            onChange={handleChange}
-                            disabled={loading}
-                            error={!!formErrors.clinicName}
-                            helperText={formErrors.clinicName || ''}
-                            onFocus={() => handleFocus('clinicName')}
-                            onBlur={() => handleBlur('clinicName')}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                                  <Business color={fieldFocus.clinicName ? "primary" : "action"} />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={{ mt: 1 }}
-                          />
-                        </Zoom>
-                      </Collapse>
-                    </Stack>
-                  </Collapse>
+                {apiError && (
+                  <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                    {apiError}
+                    <button type="button" className="btn-close" onClick={() => setApiError(null)}></button>
+                  </div>
+                )}
+
+                <form onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}>
+                  {/* Step 0: Account Type */}
+                  {activeStep === 0 && (
+                    <div className="animate__animated animate__fadeIn">
+                      <div className="mb-4">
+                        <p className="fw-bold mb-3">I am a:</p>
+                        <div className="row g-3">
+                          <div className="col-12 col-md-6">
+                            <div className={`role-option ${role === 'owner' ? 'role-selected' : ''}`}>
+                              <input
+                                type="radio"
+                                className="btn-check"
+                                name="role"
+                                id="owner"
+                                value="owner"
+                                checked={role === 'owner'}
+                                onChange={handleRoleChange}
+                              />
+                              <label className="btn role-btn w-100" htmlFor="owner">
+                                <i className="bi bi-person-heart me-2"></i>
+                                Pet Owner
+                              </label>
+                            </div>
+                          </div>
+                          <div className="col-12 col-md-6">
+                            <div className={`role-option ${role === 'vet' ? 'role-selected' : ''}`}>
+                              <input
+                                type="radio"
+                                className="btn-check"
+                                name="role"
+                                id="vet"
+                                value="vet"
+                                checked={role === 'vet'}
+                                onChange={handleRoleChange}
+                              />
+                              <label className="btn role-btn w-100" htmlFor="vet">
+                                <i className="bi bi-clipboard2-pulse me-2"></i>
+                                Veterinarian
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+                        {formErrors.role && (
+                          <div className="text-danger small mt-2">{formErrors.role}</div>
+                        )}
+                      </div>
+
+                      {role === 'vet' && (
+                        <div className="mb-4 animate__animated animate__fadeIn">
+                          <div className="form-floating">
+                            <input
+                              type="text"
+                              className={`form-control ${formErrors.clinicName ? 'is-invalid' : ''}`}
+                              id="clinicName"
+                              name="clinicName"
+                              placeholder="Clinic Name"
+                              value={clinicName}
+                              onChange={handleChange}
+                              disabled={loading}
+                              onFocus={() => handleFocus('clinicName')}
+                              onBlur={() => handleBlur('clinicName')}
+                              required={role === 'vet'}
+                            />
+                            <label htmlFor="clinicName">
+                              <i className="bi bi-building me-2"></i>
+                              Clinic Name
+                            </label>
+                            {formErrors.clinicName && (
+                              <div className="invalid-feedback">{formErrors.clinicName}</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* Step 1: Personal Details */}
-                  <Collapse in={activeStep === 1} timeout={500} unmountOnExit>
-                    <Stack spacing={2.5} sx={{ width: '100%' }}>
-                      <Zoom in={true} timeout={500}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} sm={6}>
-                            <TextField
-                              fullWidth
+                  {activeStep === 1 && (
+                    <div className="animate__animated animate__fadeIn">
+                      <div className="row g-3">
+                        <div className="col-md-6">
+                          <div className="form-floating mb-3">
+                            <input
+                              type="text"
+                              className={`form-control ${formErrors.firstName ? 'is-invalid' : ''}`}
                               id="firstName"
                               name="firstName"
-                              label="First Name"
-                              variant="outlined"
-                              required
+                              placeholder="First Name"
                               value={firstName}
                               onChange={handleChange}
                               disabled={loading}
-                              error={!!formErrors.firstName}
-                              helperText={formErrors.firstName || ''}
                               onFocus={() => handleFocus('firstName')}
                               onBlur={() => handleBlur('firstName')}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                                    <Person color={fieldFocus.firstName ? "primary" : "action"} />
-                                  </InputAdornment>
-                                ),
-                              }}
+                              required
                             />
-                          </Grid>
-                          <Grid item xs={12} sm={6}>
-                            <TextField
-                              fullWidth
+                            <label htmlFor="firstName">
+                              <i className="bi bi-person me-2"></i>
+                              First Name
+                            </label>
+                            {formErrors.firstName && (
+                              <div className="invalid-feedback">{formErrors.firstName}</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-floating mb-3">
+                            <input
+                              type="text"
+                              className={`form-control ${formErrors.lastName ? 'is-invalid' : ''}`}
                               id="lastName"
                               name="lastName"
-                              label="Last Name"
-                              variant="outlined"
-                              required
+                              placeholder="Last Name"
                               value={lastName}
                               onChange={handleChange}
                               disabled={loading}
-                              error={!!formErrors.lastName}
-                              helperText={formErrors.lastName || ''}
                               onFocus={() => handleFocus('lastName')}
                               onBlur={() => handleBlur('lastName')}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                                    <Person color={fieldFocus.lastName ? "primary" : "action"} />
-                                  </InputAdornment>
-                                ),
-                              }}
+                              required
                             />
-                          </Grid>
-                        </Grid>
-                      </Zoom>
+                            <label htmlFor="lastName">
+                              <i className="bi bi-person me-2"></i>
+                              Last Name
+                            </label>
+                            {formErrors.lastName && (
+                              <div className="invalid-feedback">{formErrors.lastName}</div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
 
-                      <Zoom in={true} timeout={600}>
-                        <TextField
-                          fullWidth
+                      <div className="form-floating mb-3">
+                        <input
+                          type="email"
+                          className={`form-control ${formErrors.email ? 'is-invalid' : ''}`}
                           id="email"
                           name="email"
-                          type="email"
-                          label="Email Address"
-                          variant="outlined"
-                          autoComplete="email"
-                          required
+                          placeholder="Email Address"
                           value={email}
                           onChange={handleChange}
                           disabled={loading}
-                          error={!!formErrors.email}
-                          helperText={formErrors.email || ''}
                           onFocus={() => handleFocus('email')}
                           onBlur={() => handleBlur('email')}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                                <Email color={fieldFocus.email ? "primary" : "action"} />
-                              </InputAdornment>
-                            ),
-                          }}
+                          required
                         />
-                      </Zoom>
-                    </Stack>
-                  </Collapse>
+                        <label htmlFor="email">
+                          <i className="bi bi-envelope me-2"></i>
+                          Email Address
+                        </label>
+                        {formErrors.email && (
+                          <div className="invalid-feedback">{formErrors.email}</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Step 2: Set Password */}
-                  <Collapse in={activeStep === 2} timeout={500} unmountOnExit>
-                    <Stack spacing={2.5} sx={{ width: '100%' }}>
-                      <Zoom in={true} timeout={500}>
-                        <TextField
-                          fullWidth
+                  {activeStep === 2 && (
+                    <div className="animate__animated animate__fadeIn">
+                      <div className="form-floating mb-3">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          className={`form-control ${formErrors.password ? 'is-invalid' : ''}`}
                           id="password"
                           name="password"
-                          type={showPassword ? 'text' : 'password'}
-                          label="Password"
-                          variant="outlined"
-                          autoComplete="new-password"
-                          required
+                          placeholder="Password"
                           value={password}
                           onChange={handleChange}
                           disabled={loading}
-                          error={!!formErrors.password}
-                          helperText={formErrors.password || ''}
                           onFocus={() => handleFocus('password')}
                           onBlur={() => handleBlur('password')}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                                <Lock color={fieldFocus.password ? "primary" : "action"} />
-                              </InputAdornment>
-                            ),
-                            endAdornment: (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  aria-label="toggle password visibility"
-                                  onClick={handleTogglePasswordVisibility}
-                                  edge="end"
-                                  color={showPassword ? "primary" : "default"}
-                                >
-                                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                              </InputAdornment>
-                            ),
-                          }}
+                          required
                         />
-                      </Zoom>
+                        <label htmlFor="password">
+                          <i className="bi bi-lock me-2"></i>
+                          Password
+                        </label>
+                        <button
+                          type="button"
+                          className="btn btn-link password-toggle"
+                          onClick={handleTogglePasswordVisibility}
+                        >
+                          <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+                        </button>
+                        {formErrors.password && (
+                          <div className="invalid-feedback">{formErrors.password}</div>
+                        )}
+                      </div>
 
-                      {/* Password strength meter */}
-                      <Fade in={password.length > 0} timeout={300}>
-                        <Box>
-                          <PasswordStrengthMeter password={password} />
-                        </Box>
-                      </Fade>
+                      {/* Password Strength Meter */}
+                      {password && (
+                        <div className="mb-4">
+                          <div className="d-flex justify-content-between align-items-center mb-1">
+                            <small className="text-muted">Password strength:</small>
+                            <small className={strengthInfo.colorClass}><strong>{strengthInfo.text}</strong></small>
+                          </div>
+                          <div className="progress" style={{ height: '6px' }}>
+                            <div
+                              className={`progress-bar ${
+                                passwordStrength < 50 ? 'bg-danger' : 
+                                passwordStrength < 75 ? 'bg-warning' : 
+                                'bg-success'
+                              }`}
+                              role="progressbar"
+                              style={{ width: `${passwordStrength}%` }}
+                              aria-valuenow={passwordStrength}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
 
-                      <Zoom in={true} timeout={600}>
-                        <TextField
-                          fullWidth
+                      <div className="form-floating mb-4">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          className={`form-control ${formErrors.passwordConfirm ? 'is-invalid' : ''}`}
                           id="passwordConfirm"
                           name="passwordConfirm"
-                          type={showPassword ? 'text' : 'password'}
-                          label="Confirm Password"
-                          variant="outlined"
-                          autoComplete="new-password"
-                          required
+                          placeholder="Confirm Password"
                           value={passwordConfirm}
                           onChange={handleChange}
                           disabled={loading}
-                          error={!!formErrors.passwordConfirm}
-                          helperText={formErrors.passwordConfirm || ''}
                           onFocus={() => handleFocus('passwordConfirm')}
                           onBlur={() => handleBlur('passwordConfirm')}
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start" sx={{ ml: 0.5 }}>
-                                <Lock color={fieldFocus.passwordConfirm ? "primary" : "action"} />
-                              </InputAdornment>
-                            ),
-                          }}
+                          required
                         />
-                      </Zoom>
+                        <label htmlFor="passwordConfirm">
+                          <i className="bi bi-lock me-2"></i>
+                          Confirm Password
+                        </label>
+                        {formErrors.passwordConfirm && (
+                          <div className="invalid-feedback">{formErrors.passwordConfirm}</div>
+                        )}
+                      </div>
 
-                      <Zoom in={true} timeout={700}>
-                        <FormControl error={!!formErrors.agreeToTerms} sx={{ mt: -1 }}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={agreeToTerms}
-                                onChange={handleCheckboxChange}
-                                name="agreeToTerms"
-                                color="primary"
-                                size="small" 
-                              />
-                            }
-                            label={
-                              <Typography variant="body2">
-                                I agree to the{' '}
-                                <Button 
-                                  component={Link} 
-                                  to="/terms" 
-                                  variant="text" 
-                                  size="small" 
-                                  sx={{ 
-                                    p: 0, 
-                                    minWidth: 0, 
-                                    textTransform: 'none', 
-                                    verticalAlign: 'baseline',
-                                    fontWeight: 500
-                                  }}
-                                >
-                                  Terms and Conditions
-                                </Button>
-                              </Typography>
-                            }
+                      <div className="mb-4">
+                        <div className="form-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="agreeToTerms"
+                            name="agreeToTerms"
+                            checked={agreeToTerms}
+                            onChange={handleCheckboxChange}
                           />
-                          {formErrors.agreeToTerms && (
-                            <FormHelperText error sx={{ ml: 4, fontWeight: 500 }}>
-                              {formErrors.agreeToTerms}
-                            </FormHelperText>
-                          )}
-                        </FormControl>
-                      </Zoom>
+                          <label className="form-check-label" htmlFor="agreeToTerms">
+                            I agree to the{' '}
+                            <Link to="/terms" className="text-decoration-none">
+                              Terms and Conditions
+                            </Link>
+                          </label>
+                        </div>
+                        {formErrors.agreeToTerms && (
+                          <div className="text-danger small mt-1">{formErrors.agreeToTerms}</div>
+                        )}
+                      </div>
 
-                      {/* Veterinarian Note */}
-                      <Collapse in={role === 'vet'} timeout={300} unmountOnExit>
-                        <Fade in={role === 'vet'} timeout={400}>
-                          <Alert 
-                            severity="info" 
-                            sx={{ 
-                              mt: 1, 
-                              borderRadius: 2,
-                              border: `1px solid ${theme.palette.info.main}40`,
-                            }}
-                            icon={<MedicalServices />}
-                          >
-                            <Typography variant="body2" fontWeight={500}>
-                              Note: Veterinarian accounts require manual verification after signup.
-                            </Typography>
-                          </Alert>
-                        </Fade>
-                      </Collapse>
-                    </Stack>
-                  </Collapse>
-                </Box>
+                      {role === 'vet' && (
+                        <div className="alert alert-info d-flex align-items-center" role="alert">
+                          <i className="bi bi-info-circle-fill me-2"></i>
+                          <div>
+                            <strong>Note:</strong> Veterinarian accounts require manual verification after signup.
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                {/* Navigation Buttons */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, pt: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
-                  <motion.div
-                    variants={buttonHoverTap}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button
+                  <div className="d-flex justify-content-between mt-4 pt-3 border-top">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
                       onClick={handleBack}
                       disabled={activeStep === 0 || loading}
-                      startIcon={<ArrowBack />}
-                      size="large"
                     >
+                      <i className="bi bi-arrow-left me-1"></i>
                       Back
-                    </Button>
-                  </motion.div>
-                  <motion.div
-                    variants={buttonHoverTap}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button
+                    </button>
+                    <button
                       type="submit"
-                      variant="contained"
-                      color="primary"
-                      size="large"
+                      className="btn btn-primary"
                       disabled={isNextDisabled}
-                      endIcon={activeStep === steps.length - 1 ? undefined : <ChevronRight />}
                     >
                       {loading && activeStep === steps.length - 1 ? (
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <LoadingSpinner size="small" color="inherit" />
-                        </Box>
+                        <span className="d-flex align-items-center justify-content-center">
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Creating account...
+                        </span>
                       ) : activeStep === steps.length - 1 ? (
                         'Create Account'
                       ) : (
-                        'Next'
+                        <>
+                          Next
+                          <i className="bi bi-arrow-right ms-1"></i>
+                        </>
                       )}
-                    </Button>
-                  </motion.div>
-                </Box>
-              </form>
+                    </button>
+                  </div>
+                </form>
 
-              {/* Link to Login */}
-              <Fade in={true} timeout={1000}>
-                <Box sx={{ textAlign: 'center', mt: 3 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                    Already have an account?
-                  </Typography>
-                  <motion.div
-                    variants={buttonHoverTap}
-                    whileHover="hover"
-                    whileTap="tap"
-                  >
-                    <Button
-                      component={Link}
-                      to="/login"
-                      variant="outlined"
-                      color="primary"
-                      size="large"
-                      fullWidth
-                      disabled={loading}
-                    >
-                      Sign In Instead
-                    </Button>
-                  </motion.div>
-                </Box>
-              </Fade>
-            </CardContent>
-          </Card>
-        </MotionBox>
-      </Container>
+                <div className="text-center mt-4">
+                  <p className="text-muted mb-3">Already have an account?</p>
+                  <Link to="/login" className="btn btn-outline-primary w-100">
+                    Sign In Instead
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <PWAInstallButton />
-    </Box>
+    </div>
   );
 };
 
